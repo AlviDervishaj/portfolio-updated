@@ -72,6 +72,13 @@ export const adminGetAllPostsServerFn = createServerFn({
 	return createSuccessResponse(allPosts)
 })
 
+export const adminHasAccessServerFn = createServerFn({
+	method: 'GET',
+}).handler(async (): Promise<boolean> => {
+	const admin = await requireAdmin()
+	return Boolean(admin)
+})
+
 export const adminCreatePostServerFn = createServerFn({ method: 'POST' })
 	.inputValidator((input: unknown) => CreatePostInputSchema.parse(input))
 	.handler(async ({ data }): Promise<ApiResponse<PostDetail>> => {

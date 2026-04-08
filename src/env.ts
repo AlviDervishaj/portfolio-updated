@@ -21,7 +21,6 @@ export const env = createEnv({
 
 	client: {
 		VITE_APP_URL: z.url(),
-		VITE_ADMIN_EMAIL: z.email(),
 		VITE_UMAMI_URL: z.url().optional(),
 		VITE_UMAMI_WEBSITE_ID: z.string().min(1).optional(),
 	},
@@ -40,7 +39,6 @@ export const env = createEnv({
 		CLOUDFLARE_R2_BUCKET_NAME: process.env.CLOUDFLARE_R2_BUCKET_NAME,
 		CLOUDFLARE_R2_PUBLIC_URL: process.env.CLOUDFLARE_R2_PUBLIC_URL,
 		VITE_APP_URL: import.meta.env.VITE_APP_URL,
-		VITE_ADMIN_EMAIL: import.meta.env.VITE_ADMIN_EMAIL,
 		VITE_UMAMI_URL: import.meta.env.VITE_UMAMI_URL,
 		VITE_UMAMI_WEBSITE_ID: import.meta.env.VITE_UMAMI_WEBSITE_ID,
 	},

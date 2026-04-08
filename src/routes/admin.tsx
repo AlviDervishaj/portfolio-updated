@@ -2,24 +2,23 @@ import { createFileRoute, Link } from '@tanstack/react-router'
 import { ArrowRight, Check, RefreshCw, Upload } from 'lucide-react'
 import { useCallback, useEffect, useState } from 'react'
 import { USER } from '#/constants/user'
-import { env } from '#/env.ts'
 import { authClient } from '#/lib/auth-client.ts'
 import {
 	adminCreatePostServerFn,
 	adminGetAllPostsServerFn,
 	adminGetPresignedUploadUrlServerFn,
+	adminHasAccessServerFn,
 	adminPublishPostServerFn,
 	adminUnpublishPostServerFn,
 	adminUpdatePostServerFn,
 } from '#/server/admin.ts'
 
-const ADMIN_EMAIL = env.VITE_ADMIN_EMAIL
-
 export const Route = createFileRoute('/admin')({
 	component: AdminPage,
 	head: () => ({ meta: [{ title: `Admin — ${USER.FULL_NAME}` }] }),
 	loader: async () => {
-		return null
+		const isAuthorized = await adminHasAccessServerFn()
+		return { isAuthorized }
 	},
 })
 
@@ -196,7 +195,8 @@ function PostListSidebar({
 }
 
 function AdminPage() {
-	const { data: session, isPending } = authClient.useSession()
+	const { isAuthorized } = Route.useLoaderData()
+	const { isPending } = authClient.useSession()
 	const [mode, setMode] = useState<EditorMode>('new')
 	const [editPostId, setEditPostId] = useState<string | null>(null)
 	const [form, setForm] = useState<PostForm>(EMPTY_FORM)
@@ -230,10 +230,10 @@ function AdminPage() {
 	}, [])
 
 	useEffect(() => {
-		if (session?.user?.email === ADMIN_EMAIL) {
+		if (isAuthorized) {
 			fetchAllPosts()
 		}
-	}, [session, fetchAllPosts])
+	}, [isAuthorized, fetchAllPosts])
 
 	function handleSelectPost(post: AdminPostItem) {
 		setMode('edit')
@@ -262,7 +262,7 @@ function AdminPage() {
 		)
 	}
 
-	if (!session?.user || session.user.email !== ADMIN_EMAIL) {
+	if (!isAuthorized) {
 		return (
 			<main
 				style={{

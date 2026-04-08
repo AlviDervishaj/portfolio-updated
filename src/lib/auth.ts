@@ -10,6 +10,7 @@ import * as schema from '#/db/schema.ts'
 import PasswordResetEmail from '#/emails/PasswordResetEmail.tsx'
 import { env } from '#/env.ts'
 import { sendEmail } from '#/lib/email.ts'
+
 export const auth = betterAuth({
 	baseURL: env.BETTER_AUTH_URL,
 	trustedOrigins: [env.BETTER_AUTH_URL, env.VITE_APP_URL],

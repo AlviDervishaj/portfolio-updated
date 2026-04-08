@@ -5,6 +5,7 @@ import {
 	HeadContent,
 	Scripts,
 } from '@tanstack/react-router'
+import { Analytics } from '@vercel/analytics/react'
 import { ArrowLeft } from 'lucide-react'
 import { USER } from '#/constants/user'
 import { env } from '#/env.ts'
@@ -167,6 +168,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 					/>
 				)}
 				<Scripts />
+				<Analytics />
 			</body>
 		</html>
 	)
