@@ -1,0 +1,43 @@
+{
+	"nav": {
+		"home": "Home",
+		"about": "About",
+		"blog": "Blog",
+		"now": "Now"
+	},
+	"home": {
+		"hero": {
+			"greeting": "Hi, I'm Alvi",
+			"tagline": "Software developer building things for the web."
+		},
+		"projects": {
+			"title": "Projects",
+			"viewSource": "View source",
+			"viewLive": "View live"
+		}
+	},
+	"about": {
+		"title": "About me"
+	},
+	"blog": {
+		"title": "Blog",
+		"post": {
+			"readMore": "Read more",
+			"publishedOn": "Published on",
+			"likes": "Likes",
+			"dislikes": "Dislikes",
+			"comments": "Comments",
+			"reply": "Reply",
+			"submitComment": "Post comment"
+		}
+	},
+	"now": {
+		"title": "Now",
+		"lastUpdated": "Last updated"
+	},
+	"common": {
+		"loading": "Loading...",
+		"error": "Something went wrong.",
+		"retry": "Try again"
+	}
+}

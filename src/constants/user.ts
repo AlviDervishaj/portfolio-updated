@@ -1,0 +1,14 @@
+export const USER = {
+	USERNAME: 'Shunger',
+	FIRST_NAME: 'Alvi',
+	LAST_NAME: 'Dervishaj',
+	FULL_NAME: 'Alvi Dervishaj',
+	PHONE_NUMBER: '+355 676993780',
+	EMAIL: 'alvidervishaj@icloud.com',
+	LOCATION: 'Tirana, Albania',
+	CURRENT_WORK_POSITION: 'Frontend Developer',
+	POSITION: 'Full-Stack Developer',
+	CURRENT_COMPANY: 'TeamSystem',
+	SITE_NAME: 'shunger.dev',
+	FULL_SITE_URL: 'https://shunger.dev',
+} as const

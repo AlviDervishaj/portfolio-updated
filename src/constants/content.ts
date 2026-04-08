@@ -1,0 +1,5 @@
+export const MAX_COMMENT_LENGTH = 2000
+export const MAX_POST_TITLE_LENGTH = 200
+export const MAX_POST_SLUG_LENGTH = 100
+export const MAX_POST_EXCERPT_LENGTH = 500
+export const MAX_POST_CONTENT_LENGTH = 200_000

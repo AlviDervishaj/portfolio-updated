@@ -1,0 +1,7 @@
+# https://www.robotstxt.org/robotstxt.html
+User-agent: *
+Disallow: /admin
+Disallow: /sign-in
+Disallow: /api/auth/
+
+Sitemap: https://alvidervishaj.com/api/sitemap
