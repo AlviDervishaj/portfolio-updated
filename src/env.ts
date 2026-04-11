@@ -3,10 +3,11 @@ import { z } from 'zod'
 
 export const env = createEnv({
 	server: {
-		DATABASE_URL: z.url(),
+		BETTER_AUTH_API_KEY: z.string().min(10),
 		BETTER_AUTH_SECRET: z.string().min(32),
 		BETTER_AUTH_URL: z.url(),
 		ADMIN_EMAIL: z.email(),
+		DATABASE_URL: z.url(),
 		RESEND_API_KEY: z.string().startsWith('re_'),
 		UPSTASH_REDIS_REST_URL: z.url(),
 		UPSTASH_REDIS_REST_TOKEN: z.string().min(1),
@@ -15,6 +16,8 @@ export const env = createEnv({
 		CLOUDFLARE_R2_ACCOUNT_ID: z.string().min(1),
 		CLOUDFLARE_R2_BUCKET_NAME: z.string().min(1),
 		CLOUDFLARE_R2_PUBLIC_URL: z.url(),
+		CLAUDFLARE_R2_JURISDICTION_ENDPOINT: z.url(),
+		CLAUDFLARE_R2_TOKEN: z.string(),
 	},
 
 	clientPrefix: 'VITE_',
@@ -26,9 +29,10 @@ export const env = createEnv({
 	},
 
 	runtimeEnv: {
-		DATABASE_URL: process.env.DATABASE_URL,
+		BETTER_AUTH_API_KEY: process.env.BETTER_AUTH_API_KEY,
 		BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET,
 		BETTER_AUTH_URL: process.env.BETTER_AUTH_URL,
+		DATABASE_URL: process.env.DATABASE_URL,
 		ADMIN_EMAIL: process.env.ADMIN_EMAIL,
 		RESEND_API_KEY: process.env.RESEND_API_KEY,
 		UPSTASH_REDIS_REST_URL: process.env.UPSTASH_REDIS_REST_URL,
@@ -38,6 +42,9 @@ export const env = createEnv({
 		CLOUDFLARE_R2_ACCOUNT_ID: process.env.CLOUDFLARE_R2_ACCOUNT_ID,
 		CLOUDFLARE_R2_BUCKET_NAME: process.env.CLOUDFLARE_R2_BUCKET_NAME,
 		CLOUDFLARE_R2_PUBLIC_URL: process.env.CLOUDFLARE_R2_PUBLIC_URL,
+		CLAUDFLARE_R2_TOKEN: process.env.CLAUDFLARE_R2_TOKEN,
+		CLAUDFLARE_R2_JURISDICTION_ENDPOINT: process.env.CLAUDFLARE_R2_JURISDICTION_ENDPOINT,
+
 		VITE_APP_URL: import.meta.env.VITE_APP_URL,
 		VITE_UMAMI_URL: import.meta.env.VITE_UMAMI_URL,
 		VITE_UMAMI_WEBSITE_ID: import.meta.env.VITE_UMAMI_WEBSITE_ID,
