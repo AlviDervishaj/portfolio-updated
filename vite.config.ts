@@ -61,11 +61,7 @@ const config = defineConfig(({ mode }) => {
 			mode !== 'production' && devtools(),
 			tsconfigPaths({ projects: ['./tsconfig.json'] }),
 			tailwindcss(),
-			tanstackStart({
-				server: {
-					preset: 'vercel',
-				},
-			}),
+			tanstackStart(),
 			viteReact({
 				babel: {
 					plugins: ['babel-plugin-react-compiler'],
