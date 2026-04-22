@@ -196,7 +196,7 @@ function UserMenu({ name, onSignOut }: UserMenuProps) {
 						height: '22px',
 						borderRadius: '50%',
 						backgroundColor: 'var(--acid)',
-						color: 'var(--void)',
+						color: 'var(--on-acid)',
 						display: 'flex',
 						alignItems: 'center',
 						justifyContent: 'center',
@@ -253,7 +253,7 @@ function UserMenu({ name, onSignOut }: UserMenuProps) {
 							}}
 							onMouseEnter={(e) => {
 								e.currentTarget.style.color = 'var(--foreground)'
-								e.currentTarget.style.backgroundColor = 'var(--void-hover)'
+								e.currentTarget.style.backgroundColor = 'var(--hover-surface)'
 							}}
 							onMouseLeave={(e) => {
 								e.currentTarget.style.color = 'var(--muted-foreground)'
@@ -286,7 +286,7 @@ function UserMenu({ name, onSignOut }: UserMenuProps) {
 							}}
 							onMouseEnter={(e) => {
 								e.currentTarget.style.color = 'var(--foreground)'
-								e.currentTarget.style.backgroundColor = 'var(--void-hover)'
+								e.currentTarget.style.backgroundColor = 'var(--hover-surface)'
 							}}
 							onMouseLeave={(e) => {
 								e.currentTarget.style.color = 'var(--muted-foreground)'

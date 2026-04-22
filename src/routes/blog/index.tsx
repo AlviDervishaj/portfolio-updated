@@ -239,7 +239,7 @@ function BlogPage() {
 								border: '1px solid',
 								borderColor: strategy === opt.value ? 'var(--acid)' : 'transparent',
 								backgroundColor: strategy === opt.value ? 'var(--acid)' : 'transparent',
-								color: strategy === opt.value ? 'var(--void)' : 'var(--muted-foreground)',
+								color: strategy === opt.value ? 'var(--on-acid)' : 'var(--muted-foreground)',
 								cursor: 'pointer',
 								transition: 'all 0.15s ease',
 							}}

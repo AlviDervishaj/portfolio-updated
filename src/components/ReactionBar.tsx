@@ -164,7 +164,7 @@ function ReactionButton({ icon, label, count, active, disabled, onClick }: React
 				border: '1px solid',
 				borderColor: active ? 'var(--acid)' : 'var(--line-strong)',
 				backgroundColor: active ? 'var(--acid)' : 'transparent',
-				color: active ? 'var(--void)' : 'var(--muted-foreground)',
+				color: active ? 'var(--on-acid)' : 'var(--muted-foreground)',
 				fontFamily: 'var(--font-mono)',
 				fontSize: '0.72rem',
 				letterSpacing: '0.08em',
@@ -174,8 +174,8 @@ function ReactionButton({ icon, label, count, active, disabled, onClick }: React
 			}}
 			onMouseEnter={(e) => {
 				if (!active && !disabled) {
-					;(e.currentTarget as HTMLElement).style.borderColor = 'var(--acid-border)'
-					;(e.currentTarget as HTMLElement).style.backgroundColor = 'var(--acid-dim)'
+					;(e.currentTarget as HTMLElement).style.borderColor = 'var(--accent-strong-border)'
+					;(e.currentTarget as HTMLElement).style.backgroundColor = 'var(--accent-strong-dim)'
 					;(e.currentTarget as HTMLElement).style.color = 'var(--foreground)'
 				}
 			}}

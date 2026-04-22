@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { ArrowRight, ArrowUpRight, ChevronDown, Diamond } from 'lucide-react'
+import { ArrowRight, ArrowUpRight, ChevronDown, Diamond, Github, Twitter } from 'lucide-react'
 import { USER } from '#/constants/user'
 
 export const Route = createFileRoute('/')({
@@ -236,7 +236,7 @@ function TickerSection() {
 								fontWeight: 500,
 								letterSpacing: '0.14em',
 								textTransform: 'uppercase',
-								color: 'var(--void)',
+								color: 'var(--on-acid)',
 								padding: '0 2rem',
 								whiteSpace: 'nowrap',
 								display: 'inline-flex',
@@ -421,26 +421,63 @@ function ContactSection() {
 		<section
 			style={{
 				borderTop: '1px solid var(--line-strong)',
+				position: 'relative',
+				overflow: 'hidden',
 			}}
 		>
+			<span
+				aria-hidden="true"
+				style={{
+					position: 'absolute',
+					top: 0,
+					right: '1.5rem',
+					width: '1px',
+					height: '6rem',
+					backgroundColor: 'var(--acid)',
+					opacity: 0.55,
+				}}
+			/>
+
 			<div
 				style={{
 					maxWidth: '1200px',
 					margin: '0 auto',
-					padding: '8rem 1.5rem',
+					padding: '9rem 1.5rem',
 				}}
 			>
 				<div
 					style={{
+						display: 'inline-flex',
+						alignItems: 'center',
+						gap: '0.75rem',
 						fontFamily: 'var(--font-mono)',
-						fontSize: '0.68rem',
-						letterSpacing: '0.2em',
+						fontSize: '0.7rem',
+						letterSpacing: '0.22em',
 						textTransform: 'uppercase',
-						color: 'var(--acid)',
-						marginBottom: '2rem',
+						color: 'var(--muted-foreground)',
+						marginBottom: '2.5rem',
 					}}
 				>
-					— Let's talk
+					<span
+						aria-hidden="true"
+						style={{
+							display: 'inline-block',
+							width: '0.55rem',
+							height: '0.55rem',
+							backgroundColor: 'var(--acid)',
+							transform: 'rotate(45deg)',
+						}}
+					/>
+					Let's talk
+					<span
+						aria-hidden="true"
+						style={{
+							display: 'inline-block',
+							width: '2.5rem',
+							height: '1px',
+							backgroundColor: 'var(--line-strong)',
+						}}
+					/>
 				</div>
 
 				<h2
@@ -450,7 +487,7 @@ function ContactSection() {
 						fontWeight: 700,
 						letterSpacing: '-0.03em',
 						lineHeight: 0.88,
-						margin: '0 0 3rem',
+						margin: '0 0 2rem',
 						color: 'var(--foreground)',
 					}}
 				>
@@ -466,14 +503,102 @@ function ContactSection() {
 					</span>
 				</h2>
 
-				<a
-					href={`mailto:${USER.EMAIL}`}
-					className="acid-btn w-full justify-center sm:w-auto"
-					style={{ fontSize: '0.75rem' }}
+				<p
+					style={{
+						fontFamily: 'var(--font-sans)',
+						fontSize: 'clamp(1rem, 1.6vw, 1.15rem)',
+						lineHeight: 1.55,
+						color: 'var(--muted-foreground)',
+						maxWidth: '38ch',
+						margin: '0 0 3.5rem',
+					}}
 				>
-					{USER.EMAIL}
-					<ArrowUpRight aria-hidden="true" className="size-4" />
-				</a>
+					Open to freelance projects, full-stack collaborations, and full-time roles. Drop a line —
+					I read everything.
+				</p>
+
+				<div
+					className="flex flex-wrap items-center"
+					style={{ gap: '0.75rem', marginBottom: '4rem' }}
+				>
+					<a
+						href={`mailto:${USER.EMAIL}`}
+						className="acid-btn w-full justify-center sm:w-auto"
+						style={{ fontSize: '0.75rem' }}
+					>
+						{USER.EMAIL}
+						<ArrowUpRight aria-hidden="true" className="size-4" />
+					</a>
+
+					<a
+						href={USER.GITHUB_URL}
+						target="_blank"
+						rel="noreferrer"
+						aria-label="GitHub"
+						className="ghost-btn justify-center"
+						style={{ padding: '0.875rem 1.1rem' }}
+					>
+						<Github aria-hidden="true" className="size-4" />
+					</a>
+
+					<a
+						href={USER.X_URL}
+						target="_blank"
+						rel="noreferrer"
+						aria-label="X (Twitter)"
+						className="ghost-btn justify-center"
+						style={{ padding: '0.875rem 1.1rem' }}
+					>
+						<Twitter aria-hidden="true" className="size-4" />
+					</a>
+				</div>
+
+				<div
+					style={{
+						display: 'flex',
+						flexWrap: 'wrap',
+						alignItems: 'center',
+						gap: '1.5rem',
+						paddingTop: '2rem',
+						borderTop: '1px solid var(--line-strong)',
+						fontFamily: 'var(--font-mono)',
+						fontSize: '0.68rem',
+						letterSpacing: '0.14em',
+						textTransform: 'uppercase',
+						color: 'var(--muted-foreground)',
+					}}
+				>
+					<span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.55rem' }}>
+						<span
+							aria-hidden="true"
+							style={{
+								position: 'relative',
+								display: 'inline-block',
+								width: '0.5rem',
+								height: '0.5rem',
+								borderRadius: '50%',
+								backgroundColor: 'var(--acid)',
+							}}
+						>
+							<span
+								aria-hidden="true"
+								style={{
+									position: 'absolute',
+									inset: 0,
+									borderRadius: '50%',
+									backgroundColor: 'var(--acid)',
+									opacity: 0.55,
+									animation: 'blink 1.6s ease-in-out infinite',
+								}}
+							/>
+						</span>
+						Available for new work
+					</span>
+					<span aria-hidden="true">·</span>
+					<span>{USER.LOCATION}</span>
+					<span aria-hidden="true">·</span>
+					<span>Replies within 24h</span>
+				</div>
 			</div>
 		</section>
 	)

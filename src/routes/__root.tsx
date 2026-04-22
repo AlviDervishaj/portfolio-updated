@@ -49,7 +49,7 @@ function RootErrorComponent({ error }: ErrorComponentProps) {
 					fontSize: 'clamp(4rem, 15vw, 10rem)',
 					fontWeight: 700,
 					lineHeight: 1,
-					color: 'var(--acid)',
+					color: 'var(--accent-strong)',
 					opacity: 0.2,
 					display: 'block',
 					marginBottom: '2rem',
@@ -91,15 +91,15 @@ function RootErrorComponent({ error }: ErrorComponentProps) {
 function NotFound() {
 	return (
 		<main className="flex min-h-[60vh] flex-col items-center justify-center gap-4">
-			<span className="font-mono text-[clamp(4rem,15vw,10rem)] font-bold leading-none text-[var(--acid)] opacity-20">
+			<span className="font-mono text-[clamp(4rem,15vw,10rem)] font-bold leading-none text-[var(--accent-strong)] opacity-20">
 				404
 			</span>
-			<p className="font-mono text-sm uppercase tracking-widest text-[var(--ink-muted)]">
+			<p className="font-mono text-sm uppercase tracking-widest text-[var(--muted-foreground)]">
 				Page not found
 			</p>
 			<a
 				href="/"
-				className="mt-4 font-mono text-xs uppercase tracking-widest text-[var(--ink)] underline underline-offset-4 hover:text-[var(--acid)]"
+				className="mt-4 font-mono text-xs uppercase tracking-widest text-[var(--foreground)] underline underline-offset-4 hover:text-[var(--accent-strong)]"
 			>
 				<ArrowLeft aria-hidden="true" className="size-4" />
 				Back home
@@ -153,7 +153,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 				)}
 			</head>
 			<body
-				className="font-sans antialiased [overflow-wrap:anywhere] selection:bg-[var(--acid)] selection:text-[var(--void)]"
+				className="font-sans antialiased [overflow-wrap:anywhere] selection:bg-[var(--acid)] selection:text-[var(--on-acid)]"
 				suppressHydrationWarning
 			>
 				<Header />
