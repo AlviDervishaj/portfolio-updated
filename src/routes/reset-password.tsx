@@ -76,52 +76,19 @@ function ResetPasswordPage() {
 	}
 
 	return (
-		<main
-			style={{
-				minHeight: 'calc(100vh - 57px)',
-				display: 'flex',
-				alignItems: 'center',
-				justifyContent: 'center',
-				padding: '4rem 1.5rem',
-			}}
-		>
-			<div style={{ width: '100%', maxWidth: '420px' }}>
-				<div style={{ marginBottom: '3rem', textAlign: 'center' }}>
-					<Diamond
-						aria-hidden="true"
-						className="size-6 inline-block"
-						style={{ color: 'var(--acid)', marginBottom: '1.25rem' }}
-					/>
-					<h1
-						style={{
-							fontFamily: 'var(--font-display)',
-							fontSize: 'clamp(1.75rem, 5vw, 2.5rem)',
-							fontWeight: 700,
-							letterSpacing: '-0.02em',
-							lineHeight: 1.05,
-							margin: '0 0 0.5rem',
-						}}
-					>
+		<main className="flex min-h-[calc(100vh-57px)] items-center justify-center px-6 py-16">
+			<div className="w-full max-w-[420px]">
+				<div className="mb-12 text-center">
+					<Diamond aria-hidden="true" className="mb-5 inline-block size-6 text-acid" />
+					<h1 className="mb-2 font-display text-[clamp(1.75rem,5vw,2.5rem)] font-bold leading-[1.05] tracking-display-tight">
 						{AUTH_RESET_PASSWORD_TITLE}
 					</h1>
-					<p
-						style={{
-							fontFamily: 'var(--font-mono)',
-							fontSize: '0.68rem',
-							letterSpacing: '0.1em',
-							textTransform: 'uppercase',
-							color: 'var(--muted-foreground)',
-							margin: 0,
-						}}
-					>
+					<p className="m-0 font-mono text-mono-md uppercase tracking-mono text-muted-foreground">
 						{AUTH_RESET_PASSWORD_INSTRUCTION}
 					</p>
 				</div>
 
-				<form
-					onSubmit={handleSubmit}
-					style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}
-				>
+				<form onSubmit={handleSubmit} className="flex flex-col gap-5">
 					{(!token || routeError || error) && (
 						<ErrorBanner message={error ?? AUTH_RESET_PASSWORD_INVALID_TOKEN} />
 					)}
@@ -146,14 +113,7 @@ function ResetPasswordPage() {
 					<button
 						type="submit"
 						disabled={loading || !token}
-						className="acid-btn"
-						style={{
-							width: '100%',
-							justifyContent: 'center',
-							marginTop: '0.25rem',
-							opacity: loading || !token ? 0.6 : 1,
-							cursor: loading || !token ? 'not-allowed' : 'pointer',
-						}}
+						className="acid-btn mt-1 w-full justify-center disabled:cursor-not-allowed disabled:opacity-60"
 					>
 						{AUTH_RESET_PASSWORD_SUBMIT}
 					</button>
@@ -174,16 +134,10 @@ type FieldProps = {
 
 function Field({ id, label, value, onChange, placeholder, disabled }: FieldProps) {
 	return (
-		<div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+		<div className="flex flex-col gap-2">
 			<label
 				htmlFor={id}
-				style={{
-					fontFamily: 'var(--font-mono)',
-					fontSize: '0.62rem',
-					letterSpacing: '0.14em',
-					textTransform: 'uppercase',
-					color: 'var(--muted-foreground)',
-				}}
+				className="font-mono text-mono-xs uppercase tracking-mono-md text-muted-foreground"
 			>
 				{label}
 			</label>
@@ -196,18 +150,7 @@ function Field({ id, label, value, onChange, placeholder, disabled }: FieldProps
 				autoComplete="new-password"
 				required
 				disabled={disabled}
-				style={{
-					width: '100%',
-					padding: '0.875rem 1rem',
-					background: 'transparent',
-					border: '1px solid var(--line-strong)',
-					color: 'var(--foreground)',
-					fontFamily: 'var(--font-sans)',
-					fontSize: '0.9375rem',
-					outline: 'none',
-					boxSizing: 'border-box',
-					opacity: disabled ? 0.5 : 1,
-				}}
+				className="w-full border border-line-strong bg-transparent px-4 py-3.5 font-sans text-[0.9375rem] text-foreground outline-none disabled:opacity-50"
 			/>
 		</div>
 	)
@@ -217,16 +160,7 @@ function ErrorBanner({ message }: { message: string }) {
 	return (
 		<div
 			role="alert"
-			style={{
-				padding: '0.875rem 1rem',
-				border: '1px solid oklch(0.577 0.245 27.325)',
-				backgroundColor: 'rgba(220, 38, 38, 0.06)',
-				fontFamily: 'var(--font-mono)',
-				fontSize: '0.7rem',
-				letterSpacing: '0.04em',
-				color: 'oklch(0.637 0.237 25.331)',
-				lineHeight: 1.5,
-			}}
+			className="border border-[oklch(0.577_0.245_27.325)] bg-[rgba(220,38,38,0.06)] px-4 py-3.5 font-mono text-mono-lg leading-[1.5] tracking-[0.04em] text-[oklch(0.637_0.237_25.331)]"
 		>
 			{message}
 		</div>

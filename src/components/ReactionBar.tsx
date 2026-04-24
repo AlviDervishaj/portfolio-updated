@@ -106,7 +106,7 @@ export default function ReactionBar({ postId, initialLikeCount, initialDislikeCo
 	const isDisabled = mutation.isPending
 
 	return (
-		<div className="flex flex-wrap items-center gap-3" style={{}}>
+		<div className="flex flex-wrap items-center gap-3">
 			<ReactionButton
 				icon={<Heart className="size-4" />}
 				label="Like"
@@ -124,15 +124,7 @@ export default function ReactionBar({ postId, initialLikeCount, initialDislikeCo
 				onClick={() => handleReaction('dislike')}
 			/>
 
-			<span
-				style={{
-					fontFamily: 'var(--font-mono)',
-					fontSize: '0.62rem',
-					letterSpacing: '0.1em',
-					textTransform: 'uppercase',
-					color: 'var(--muted-foreground)',
-				}}
-			>
+			<span className="font-mono text-mono-xs uppercase tracking-mono text-muted-foreground">
 				No account required
 			</span>
 		</div>
@@ -149,6 +141,12 @@ type ReactionButtonProps = {
 }
 
 function ReactionButton({ icon, label, count, active, disabled, onClick }: ReactionButtonProps) {
+	const base =
+		'inline-flex items-center gap-2 px-4 py-2 border font-mono text-[0.72rem] tracking-mono-sm transition-all duration-150 disabled:cursor-not-allowed disabled:opacity-60'
+	const variant = active
+		? 'border-acid bg-acid text-on-acid'
+		: 'border-line-strong bg-transparent text-muted-foreground hover:border-accent-strong-border hover:bg-accent-strong-dim hover:text-foreground'
+
 	return (
 		<button
 			type="button"
@@ -156,36 +154,7 @@ function ReactionButton({ icon, label, count, active, disabled, onClick }: React
 			disabled={disabled}
 			aria-label={label}
 			aria-pressed={active}
-			style={{
-				display: 'inline-flex',
-				alignItems: 'center',
-				gap: '0.5rem',
-				padding: '0.5rem 1rem',
-				border: '1px solid',
-				borderColor: active ? 'var(--acid)' : 'var(--line-strong)',
-				backgroundColor: active ? 'var(--acid)' : 'transparent',
-				color: active ? 'var(--on-acid)' : 'var(--muted-foreground)',
-				fontFamily: 'var(--font-mono)',
-				fontSize: '0.72rem',
-				letterSpacing: '0.08em',
-				cursor: disabled ? 'not-allowed' : 'pointer',
-				transition: 'all 150ms ease',
-				opacity: disabled ? 0.6 : 1,
-			}}
-			onMouseEnter={(e) => {
-				if (!active && !disabled) {
-					;(e.currentTarget as HTMLElement).style.borderColor = 'var(--accent-strong-border)'
-					;(e.currentTarget as HTMLElement).style.backgroundColor = 'var(--accent-strong-dim)'
-					;(e.currentTarget as HTMLElement).style.color = 'var(--foreground)'
-				}
-			}}
-			onMouseLeave={(e) => {
-				if (!active) {
-					;(e.currentTarget as HTMLElement).style.borderColor = 'var(--line-strong)'
-					;(e.currentTarget as HTMLElement).style.backgroundColor = 'transparent'
-					;(e.currentTarget as HTMLElement).style.color = 'var(--muted-foreground)'
-				}
-			}}
+			className={`${base} ${variant}`}
 		>
 			<span aria-hidden="true" className="flex items-center">
 				{icon}

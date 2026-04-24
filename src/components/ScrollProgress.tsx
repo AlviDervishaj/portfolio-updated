@@ -22,18 +22,8 @@ export default function ScrollProgress() {
 	return (
 		<div
 			aria-hidden="true"
-			style={{
-				position: 'fixed',
-				top: 0,
-				left: 0,
-				width: `${progress}%`,
-				height: '2px',
-				backgroundColor: 'var(--acid)',
-				zIndex: 100,
-				transition: 'width 80ms linear',
-				transformOrigin: 'left',
-				boxShadow: '0 0 8px var(--acid)',
-			}}
+			style={{ width: `${progress}%` }}
+			className="fixed top-0 left-0 z-[100] h-0.5 origin-left bg-acid shadow-[0_0_8px_var(--acid)] transition-[width] duration-[80ms] ease-linear"
 		/>
 	)
 }

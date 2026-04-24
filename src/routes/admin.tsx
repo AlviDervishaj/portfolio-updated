@@ -49,6 +49,12 @@ const EMPTY_FORM: PostForm = {
 	coverImageKey: '',
 }
 
+const INPUT_CLASS =
+	'w-full border border-line-strong bg-transparent px-4 py-3 font-sans text-[0.9rem] text-foreground outline-none transition-colors duration-150 focus:border-acid-border'
+
+const LABEL_CLASS =
+	'mb-2 block font-mono text-mono-xs uppercase tracking-mono-md text-muted-foreground'
+
 function PostListSidebar({
 	posts,
 	loading,
@@ -63,69 +69,35 @@ function PostListSidebar({
 	onRefresh: () => void
 }) {
 	return (
-		<aside
-			className="border-b pb-4 md:border-b-0 md:border-r md:pb-0 md:pr-6"
-			style={{
-				borderColor: 'var(--line-strong)',
-				maxHeight: 'calc(100vh - 14rem)',
-				overflowY: 'auto',
-			}}
-		>
-			<div className="flex items-center justify-between" style={{ marginBottom: '1rem' }}>
-				<p
-					style={{
-						fontFamily: 'var(--font-mono)',
-						fontSize: '0.62rem',
-						letterSpacing: '0.2em',
-						textTransform: 'uppercase',
-						color: 'var(--muted-foreground)',
-						margin: 0,
-					}}
-				>
+		<aside className="max-h-[calc(100vh-14rem)] overflow-y-auto border-b border-line-strong pb-4 md:border-b-0 md:border-r md:pb-0 md:pr-6">
+			<div className="mb-4 flex items-center justify-between">
+				<p className="m-0 font-mono text-mono-xs uppercase tracking-mono-lg text-muted-foreground">
 					All Posts ({posts.length})
 				</p>
 				<button
 					type="button"
 					onClick={onRefresh}
 					disabled={loading}
-					style={{
-						background: 'none',
-						border: 'none',
-						fontFamily: 'var(--font-mono)',
-						fontSize: '0.6rem',
-						color: 'var(--muted-foreground)',
-						cursor: 'pointer',
-						opacity: loading ? 0.4 : 1,
-						padding: '0.25rem',
-					}}
 					aria-label="Refresh posts"
+					className="cursor-pointer border-none bg-transparent p-1 font-mono text-[0.6rem] text-muted-foreground disabled:opacity-40"
 				>
 					<RefreshCw aria-hidden="true" className="size-4" />
 				</button>
 			</div>
 
 			{loading && posts.length === 0 && (
-				<div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+				<div className="flex flex-col gap-3">
 					{[1, 2, 3].map((i) => (
-						<div key={i} className="skeleton" style={{ height: '3rem', borderRadius: '2px' }} />
+						<div key={i} className="skeleton h-12 rounded-sm" />
 					))}
 				</div>
 			)}
 
 			{!loading && posts.length === 0 && (
-				<p
-					style={{
-						fontFamily: 'var(--font-mono)',
-						fontSize: '0.7rem',
-						color: 'var(--muted-foreground)',
-						padding: '1rem 0',
-					}}
-				>
-					No posts yet.
-				</p>
+				<p className="py-4 font-mono text-mono-lg text-muted-foreground">No posts yet.</p>
 			)}
 
-			<div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+			<div className="flex flex-col gap-1">
 				{posts.map((post) => {
 					const isActive = post.id === activePostId
 					const isDraft = post.status === 'draft'
@@ -139,48 +111,16 @@ function PostListSidebar({
 							type="button"
 							key={post.id}
 							onClick={() => onSelectPost(post)}
-							style={{
-								display: 'block',
-								width: '100%',
-								textAlign: 'left',
-								background: isActive ? 'var(--acid-dim, rgba(212, 247, 1, 0.08))' : 'transparent',
-								border: '1px solid',
-								borderColor: isActive ? 'var(--acid-border)' : 'transparent',
-								padding: '0.75rem',
-								cursor: 'pointer',
-								transition: 'all 150ms ease',
-							}}
+							className={`block w-full cursor-pointer border p-3 text-left transition-all duration-150 ${
+								isActive ? 'border-acid-border bg-acid-dim' : 'border-transparent bg-transparent'
+							}`}
 						>
-							<p
-								style={{
-									fontFamily: 'var(--font-sans)',
-									fontSize: '0.82rem',
-									fontWeight: 600,
-									margin: '0 0 0.35rem',
-									color: 'var(--foreground)',
-									lineHeight: 1.3,
-									overflow: 'hidden',
-									textOverflow: 'ellipsis',
-									whiteSpace: 'nowrap',
-								}}
-							>
+							<p className="mb-1.5 mt-0 truncate font-sans text-[0.82rem] font-semibold leading-[1.3] text-foreground">
 								{post.title}
 							</p>
-							<div
-								className="flex items-center gap-3"
-								style={{
-									fontFamily: 'var(--font-mono)',
-									fontSize: '0.58rem',
-									letterSpacing: '0.1em',
-									textTransform: 'uppercase',
-									color: 'var(--muted-foreground)',
-								}}
-							>
+							<div className="flex items-center gap-3 font-mono text-[0.58rem] uppercase tracking-mono text-muted-foreground">
 								<span
-									style={{
-										color: isDraft ? 'oklch(0.75 0.15 55)' : 'var(--acid)',
-										fontWeight: 500,
-									}}
+									className={`font-medium ${isDraft ? 'text-[oklch(0.75_0.15_55)]' : 'text-acid'}`}
 								>
 									{isDraft ? 'draft' : 'published'}
 								</span>
@@ -256,32 +196,16 @@ function AdminPage() {
 
 	if (isPending) {
 		return (
-			<main style={{ maxWidth: '1200px', margin: '0 auto', padding: '6rem 1.5rem' }}>
-				<div className="skeleton" style={{ height: '2rem', width: '30%', borderRadius: '2px' }} />
+			<main className="mx-auto max-w-[1200px] px-6 py-24">
+				<div className="skeleton h-8 w-[30%] rounded-sm" />
 			</main>
 		)
 	}
 
 	if (!isAuthorized) {
 		return (
-			<main
-				style={{
-					maxWidth: '1200px',
-					margin: '0 auto',
-					padding: '6rem 1.5rem',
-					textAlign: 'center',
-				}}
-			>
-				<p
-					style={{
-						fontFamily: 'var(--font-mono)',
-						fontSize: '0.75rem',
-						letterSpacing: '0.1em',
-						textTransform: 'uppercase',
-						color: 'var(--muted-foreground)',
-						marginBottom: '2rem',
-					}}
-				>
+			<main className="mx-auto max-w-[1200px] px-6 py-24 text-center">
+				<p className="mb-8 font-mono text-[0.75rem] uppercase tracking-mono text-muted-foreground">
 					Access denied
 				</p>
 				<Link to="/sign-in" className="acid-btn">
@@ -416,37 +340,9 @@ function AdminPage() {
 		}
 	}
 
-	const inputStyle: React.CSSProperties = {
-		width: '100%',
-		padding: '0.75rem 1rem',
-		background: 'transparent',
-		border: '1px solid var(--line-strong)',
-		color: 'var(--foreground)',
-		fontFamily: 'var(--font-sans)',
-		fontSize: '0.9rem',
-		outline: 'none',
-		transition: 'border-color 150ms ease',
-		boxSizing: 'border-box',
-	}
-
-	const labelStyle: React.CSSProperties = {
-		fontFamily: 'var(--font-mono)',
-		fontSize: '0.62rem',
-		letterSpacing: '0.14em',
-		textTransform: 'uppercase',
-		color: 'var(--muted-foreground)',
-		display: 'block',
-		marginBottom: '0.5rem',
-	}
-
 	return (
-		<main style={{ maxWidth: '1400px', margin: '0 auto', padding: '6rem 1.5rem' }}>
-			<div
-				className="grid grid-cols-1 gap-8 md:grid-cols-[280px_1fr] md:gap-10"
-				style={{
-					alignItems: 'start',
-				}}
-			>
+		<main className="mx-auto max-w-[1400px] px-6 py-24">
+			<div className="grid grid-cols-1 items-start gap-8 md:grid-cols-[280px_1fr] md:gap-10">
 				<PostListSidebar
 					posts={sidebarPosts}
 					loading={loadingPosts}
@@ -456,23 +352,8 @@ function AdminPage() {
 				/>
 
 				<div>
-					<div
-						className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
-						style={{
-							marginBottom: '3rem',
-							borderBottom: '1px solid var(--line-strong)',
-							paddingBottom: '1.5rem',
-						}}
-					>
-						<h1
-							style={{
-								fontFamily: 'var(--font-display)',
-								fontSize: 'clamp(1.5rem, 4vw, 2.5rem)',
-								fontWeight: 700,
-								letterSpacing: '-0.02em',
-								margin: 0,
-							}}
-						>
+					<div className="mb-12 flex flex-col gap-4 border-b border-line-strong pb-6 sm:flex-row sm:items-center sm:justify-between">
+						<h1 className="m-0 font-display text-[clamp(1.5rem,4vw,2.5rem)] font-bold tracking-display-tight">
 							{mode === 'new' ? 'New Post' : 'Edit Post'}
 						</h1>
 
@@ -483,8 +364,7 @@ function AdminPage() {
 										type="button"
 										onClick={handlePublish}
 										disabled={submitting}
-										className="acid-btn"
-										style={{ fontSize: '0.65rem', padding: '0.5rem 1rem' }}
+										className="acid-btn px-4 py-2 text-mono-sm"
 									>
 										<Upload aria-hidden="true" className="size-4" />
 										Publish
@@ -493,8 +373,7 @@ function AdminPage() {
 										type="button"
 										onClick={handleUnpublish}
 										disabled={submitting}
-										className="ghost-btn"
-										style={{ fontSize: '0.65rem', padding: '0.5rem 1rem' }}
+										className="ghost-btn px-4 py-2 text-mono-sm"
 									>
 										Move to draft
 									</button>
@@ -504,8 +383,7 @@ function AdminPage() {
 								<button
 									type="button"
 									onClick={resetForm}
-									className="ghost-btn"
-									style={{ fontSize: '0.65rem', padding: '0.5rem 1rem' }}
+									className="ghost-btn px-4 py-2 text-mono-sm"
 								>
 									+ New post
 								</button>
@@ -514,47 +392,21 @@ function AdminPage() {
 					</div>
 
 					{error && (
-						<div
-							style={{
-								border: '1px solid oklch(0.577 0.245 27.325)',
-								padding: '0.875rem 1rem',
-								marginBottom: '1.5rem',
-								fontFamily: 'var(--font-mono)',
-								fontSize: '0.72rem',
-								color: 'oklch(0.577 0.245 27.325)',
-								letterSpacing: '0.04em',
-							}}
-						>
+						<div className="mb-6 border border-[oklch(0.577_0.245_27.325)] px-4 py-3.5 font-mono text-[0.72rem] tracking-[0.04em] text-[oklch(0.577_0.245_27.325)]">
 							{error}
 						</div>
 					)}
 
 					{success && (
-						<div
-							style={{
-								border: '1px solid var(--acid-border)',
-								backgroundColor: 'var(--acid-dim)',
-								padding: '0.875rem 1rem',
-								marginBottom: '1.5rem',
-								fontFamily: 'var(--font-mono)',
-								fontSize: '0.72rem',
-								color: 'var(--foreground)',
-								letterSpacing: '0.04em',
-							}}
-						>
+						<div className="mb-6 border border-acid-border bg-acid-dim px-4 py-3.5 font-mono text-[0.72rem] tracking-[0.04em] text-foreground">
 							{success}
 						</div>
 					)}
 
 					<form onSubmit={handleSubmit}>
-						<div
-							className="grid grid-cols-1 gap-4 md:grid-cols-2"
-							style={{
-								marginBottom: '1.5rem',
-							}}
-						>
+						<div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-2">
 							<div>
-								<label htmlFor="title" style={labelStyle}>
+								<label htmlFor="title" className={LABEL_CLASS}>
 									Title
 								</label>
 								<input
@@ -562,19 +414,13 @@ function AdminPage() {
 									type="text"
 									value={form.title}
 									onChange={(e) => setField('title', e.target.value)}
-									style={inputStyle}
+									className={INPUT_CLASS}
 									required
-									onFocus={(e) => {
-										e.currentTarget.style.borderColor = 'var(--acid-border)'
-									}}
-									onBlur={(e) => {
-										e.currentTarget.style.borderColor = 'var(--line-strong)'
-									}}
 								/>
 							</div>
 
 							<div>
-								<label htmlFor="slug" style={labelStyle}>
+								<label htmlFor="slug" className={LABEL_CLASS}>
 									Slug
 								</label>
 								<input
@@ -582,21 +428,15 @@ function AdminPage() {
 									type="text"
 									value={form.slug}
 									onChange={(e) => setField('slug', e.target.value)}
-									style={inputStyle}
+									className={INPUT_CLASS}
 									required
 									placeholder="my-post-slug"
-									onFocus={(e) => {
-										e.currentTarget.style.borderColor = 'var(--acid-border)'
-									}}
-									onBlur={(e) => {
-										e.currentTarget.style.borderColor = 'var(--line-strong)'
-									}}
 								/>
 							</div>
 						</div>
 
-						<div style={{ marginBottom: '1.5rem' }}>
-							<label htmlFor="excerpt" style={labelStyle}>
+						<div className="mb-6">
+							<label htmlFor="excerpt" className={LABEL_CLASS}>
 								Excerpt
 							</label>
 							<textarea
@@ -604,19 +444,13 @@ function AdminPage() {
 								value={form.excerpt}
 								onChange={(e) => setField('excerpt', e.target.value)}
 								rows={3}
-								style={{ ...inputStyle, resize: 'vertical' }}
+								className={`${INPUT_CLASS} resize-y`}
 								required
-								onFocus={(e) => {
-									e.currentTarget.style.borderColor = 'var(--acid-border)'
-								}}
-								onBlur={(e) => {
-									e.currentTarget.style.borderColor = 'var(--line-strong)'
-								}}
 							/>
 						</div>
 
-						<div style={{ marginBottom: '1.5rem' }}>
-							<label htmlFor="coverImage" style={labelStyle}>
+						<div className="mb-6">
+							<label htmlFor="coverImage" className={LABEL_CLASS}>
 								Cover Image {uploadingImage && '(uploading…)'}
 							</label>
 							<div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
@@ -628,37 +462,27 @@ function AdminPage() {
 										const file = e.target.files?.[0]
 										if (file) handleImageUpload(file)
 									}}
-									style={{ ...inputStyle, width: 'auto', padding: '0.5rem' }}
+									className="w-auto border border-line-strong bg-transparent p-2 font-sans text-[0.9rem] text-foreground outline-none transition-colors duration-150 focus:border-acid-border"
 									disabled={uploadingImage}
 								/>
 								{form.coverImageKey && (
-									<span
-										style={{
-											fontFamily: 'var(--font-mono)',
-											fontSize: '0.65rem',
-											color: 'var(--acid)',
-											letterSpacing: '0.06em',
-											wordBreak: 'break-all',
-										}}
-									>
-										<Check aria-hidden="true" className="size-3.5 inline-block" />{' '}
+									<span className="break-all font-mono text-mono-sm tracking-[0.06em] text-acid">
+										<Check aria-hidden="true" className="inline-block size-3.5" />{' '}
 										{form.coverImageKey}
 									</span>
 								)}
 							</div>
 						</div>
 
-						<div style={{ marginBottom: '2rem' }}>
-							<label htmlFor="content" style={labelStyle}>
+						<div className="mb-8">
+							<label htmlFor="content" className={LABEL_CLASS}>
 								Content (MDX)
 								<span
-									style={{
-										float: 'right',
-										color:
-											form.content.length > 180_000
-												? 'oklch(0.577 0.245 27.325)'
-												: 'var(--muted-foreground)',
-									}}
+									className={`float-right ${
+										form.content.length > 180_000
+											? 'text-[oklch(0.577_0.245_27.325)]'
+											: 'text-muted-foreground'
+									}`}
 								>
 									{form.content.length.toLocaleString()} / 200,000
 								</span>
@@ -668,41 +492,16 @@ function AdminPage() {
 								value={form.content}
 								onChange={(e) => setField('content', e.target.value)}
 								rows={24}
-								style={{
-									...inputStyle,
-									resize: 'vertical',
-									fontFamily: 'var(--font-mono)',
-									fontSize: '0.82rem',
-									lineHeight: 1.65,
-								}}
+								className={`${INPUT_CLASS} resize-y font-mono text-[0.82rem] leading-[1.65]`}
 								required
-								onFocus={(e) => {
-									e.currentTarget.style.borderColor = 'var(--acid-border)'
-								}}
-								onBlur={(e) => {
-									e.currentTarget.style.borderColor = 'var(--line-strong)'
-								}}
 							/>
 						</div>
 
 						<div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
-							<button
-								type="submit"
-								disabled={submitting}
-								className="acid-btn"
-								style={{ opacity: submitting ? 0.5 : 1 }}
-							>
+							<button type="submit" disabled={submitting} className="acid-btn disabled:opacity-50">
 								{submitting ? 'Saving…' : mode === 'new' ? 'Save draft' : 'Update post'}
 							</button>
-							<span
-								style={{
-									fontFamily: 'var(--font-mono)',
-									fontSize: '0.62rem',
-									letterSpacing: '0.1em',
-									textTransform: 'uppercase',
-									color: 'var(--muted-foreground)',
-								}}
-							>
+							<span className="font-mono text-mono-xs uppercase tracking-mono text-muted-foreground">
 								{mode === 'new' ? 'Saved as draft' : `Editing post ${editPostId?.slice(0, 8)}…`}
 							</span>
 						</div>

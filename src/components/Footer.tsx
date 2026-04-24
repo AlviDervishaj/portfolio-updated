@@ -13,39 +13,17 @@ export default function Footer() {
 	const year = new Date().getFullYear()
 
 	return (
-		<footer
-			style={{
-				borderTop: '1px solid var(--line-strong)',
-				marginTop: '8rem',
-			}}
-		>
-			<div
-				className="flex flex-col gap-8 py-12 sm:flex-row sm:items-end sm:justify-between"
-				style={{ maxWidth: '1200px', margin: '0 auto', padding: '3rem 1.5rem' }}
-			>
+		<footer className="mt-32 border-t border-line-strong">
+			<div className="mx-auto flex max-w-[1200px] flex-col gap-8 px-6 py-12 sm:flex-row sm:items-end sm:justify-between">
 				<div className="flex flex-col gap-4">
 					<Link
 						to="/"
-						className="flex items-center gap-2 w-fit"
-						style={{
-							fontFamily: 'var(--font-mono)',
-							fontSize: '0.8rem',
-							letterSpacing: '0.04em',
-						}}
+						className="flex w-fit items-center gap-2 font-mono text-[0.8rem] tracking-[0.04em]"
 					>
-						<Diamond aria-hidden="true" className="size-4" style={{ color: 'var(--acid)' }} />
+						<Diamond aria-hidden="true" className="size-4 text-acid" />
 						{USER.SITE_NAME}
 					</Link>
-					<p
-						style={{
-							fontFamily: 'var(--font-mono)',
-							fontSize: '0.68rem',
-							letterSpacing: '0.1em',
-							textTransform: 'uppercase',
-							color: 'var(--muted-foreground)',
-							margin: 0,
-						}}
-					>
+					<p className="m-0 font-mono text-mono-md uppercase tracking-mono text-muted-foreground">
 						&copy; {year} {USER.FULL_NAME}
 					</p>
 				</div>

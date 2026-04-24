@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { ArrowRight, ArrowUpRight, ChevronDown, Diamond, Github, Twitter } from 'lucide-react'
 import { USER } from '#/constants/user'
+import { useLenisInstance } from '#/hooks/useLenis'
 
 export const Route = createFileRoute('/')({
 	component: HomePage,
@@ -66,148 +67,54 @@ const TICKER_TRACK_ITEMS = [
 ]
 
 function HeroSection() {
+	const lenis = useLenisInstance()
+
+	function scrollToWork() {
+		const target = document.getElementById('work')
+		if (target) lenis?.scrollTo(target)
+	}
+
 	return (
-		<section
-			className="relative flex flex-col justify-between overflow-hidden"
-			style={{
-				minHeight: 'calc(100vh - 56px)',
-				padding: '4rem 1.5rem 3rem',
-				maxWidth: '1200px',
-				margin: '0 auto',
-			}}
-		>
-			<div
-				className="animate-fade-in"
-				style={{
-					display: 'flex',
-					alignItems: 'center',
-					gap: '0.5rem',
-					fontFamily: 'var(--font-mono)',
-					fontSize: '0.68rem',
-					letterSpacing: '0.2em',
-					textTransform: 'uppercase',
-					color: 'var(--muted-foreground)',
-				}}
-			>
+		<section className="relative mx-auto flex min-h-[calc(100vh-56px)] max-w-[1200px] flex-col justify-between overflow-hidden px-6 pb-12 pt-16">
+			<div className="animate-fade-in flex items-center gap-2 font-mono text-mono-md uppercase tracking-mono-lg text-muted-foreground">
 				<span
-					style={{
-						width: '6px',
-						height: '6px',
-						borderRadius: '50%',
-						backgroundColor: 'var(--acid)',
-						display: 'inline-block',
-						boxShadow: '0 0 8px var(--acid)',
-					}}
-					className="animate-blink"
+					aria-hidden="true"
+					className="animate-blink inline-block size-1.5 rounded-full bg-acid shadow-[0_0_8px_var(--acid)]"
 				/>
 				Available for work
 			</div>
 
-			<div className="flex flex-col gap-6" style={{ marginTop: '3rem' }}>
-				<h1
-					className="animate-fade-up"
-					style={{
-						fontFamily: 'var(--font-display)',
-						fontSize: 'clamp(4.5rem, 16vw, 14rem)',
-						fontWeight: 700,
-						lineHeight: 0.9,
-						letterSpacing: '-0.03em',
-						margin: 0,
-					}}
-				>
+			<div className="mt-12 flex flex-col gap-6">
+				<h1 className="animate-fade-up m-0 font-display text-[clamp(4.5rem,16vw,14rem)] font-bold leading-[0.9] tracking-display-tighter">
 					ALVI
 					<br />
 					<span className="text-stroke animate-fade-up delay-100">DERVISHAJ</span>
 				</h1>
 
-				<div
-					className="animate-fade-up delay-200"
-					style={{
-						display: 'flex',
-						alignItems: 'center',
-						gap: '1.5rem',
-						flexWrap: 'wrap',
-					}}
-				>
-					<p
-						style={{
-							fontFamily: 'var(--font-mono)',
-							fontSize: 'clamp(0.75rem, 1.5vw, 0.9rem)',
-							letterSpacing: '0.06em',
-							textTransform: 'uppercase',
-							color: 'var(--muted-foreground)',
-							margin: 0,
-						}}
-					>
+				<div className="animate-fade-up delay-200 flex flex-wrap items-center gap-6">
+					<p className="m-0 font-mono text-[clamp(0.75rem,1.5vw,0.9rem)] uppercase tracking-[0.06em] text-muted-foreground">
 						Full-Stack Developer — Building for the web
 					</p>
-					<span
-						style={{
-							height: '1px',
-							flex: 1,
-							minWidth: '60px',
-							backgroundColor: 'var(--line-strong)',
-							display: 'block',
-						}}
-					/>
-					<span
-						style={{
-							fontFamily: 'var(--font-mono)',
-							fontSize: '0.68rem',
-							letterSpacing: '0.12em',
-							textTransform: 'uppercase',
-							color: 'var(--muted-foreground)',
-						}}
-					>
+					<span aria-hidden="true" className="block h-px flex-1 min-w-[60px] bg-line-strong" />
+					<span className="font-mono text-mono-md uppercase tracking-mono text-muted-foreground">
 						Est. 2021
 					</span>
 				</div>
 			</div>
 
-			<div
-				className="animate-fade-up delay-300"
-				style={{
-					display: 'flex',
-					gap: '1rem',
-					flexWrap: 'wrap',
-					marginTop: '4rem',
-				}}
-			>
-				<a href="#work" className="acid-btn">
+			<div className="animate-fade-up delay-300 mt-16 flex flex-wrap gap-4">
+				<button type="button" onClick={scrollToWork} className="acid-btn">
 					View work
 					<ChevronDown aria-hidden="true" className="size-4" />
-				</a>
+				</button>
 				<Link to="/about" className="ghost-btn">
 					About me
 					<ArrowRight aria-hidden="true" className="size-4" />
 				</Link>
 			</div>
 
-			<div
-				className="animate-fade-up delay-500 hidden sm:flex"
-				style={{
-					position: 'absolute',
-					bottom: '3rem',
-					right: '1.5rem',
-					writingMode: 'vertical-rl',
-					fontFamily: 'var(--font-mono)',
-					fontSize: '0.62rem',
-					letterSpacing: '0.2em',
-					textTransform: 'uppercase',
-					color: 'var(--muted-foreground)',
-					display: 'flex',
-					alignItems: 'center',
-					gap: '0.75rem',
-				}}
-			>
-				<span
-					style={{
-						width: '1px',
-						height: '60px',
-						backgroundColor: 'var(--line-strong)',
-						display: 'block',
-					}}
-				/>
+			<div className="animate-fade-up delay-500 absolute bottom-12 right-6 hidden items-center gap-3 font-mono text-mono-xs uppercase tracking-mono-lg text-muted-foreground [writing-mode:vertical-rl] sm:flex">
+				<span aria-hidden="true" className="block h-[60px] w-px bg-line-strong" />
 				Scroll
 			</div>
 		</section>
@@ -216,36 +123,16 @@ function HeroSection() {
 
 function TickerSection() {
 	return (
-		<div
-			style={{
-				borderTop: '1px solid var(--line-strong)',
-				borderBottom: '1px solid var(--line-strong)',
-				padding: '1rem 0',
-				backgroundColor: 'var(--acid)',
-				overflow: 'hidden',
-			}}
-		>
+		<div className="overflow-hidden border-y border-line-strong bg-acid py-4">
 			<div className="ticker-wrap">
-				<div className="ticker-track animate-marquee" style={{ gap: 0 }}>
+				<div className="ticker-track animate-marquee gap-0">
 					{TICKER_TRACK_ITEMS.map(({ id, item }) => (
 						<span
 							key={id}
-							style={{
-								fontFamily: 'var(--font-mono)',
-								fontSize: '0.7rem',
-								fontWeight: 500,
-								letterSpacing: '0.14em',
-								textTransform: 'uppercase',
-								color: 'var(--on-acid)',
-								padding: '0 2rem',
-								whiteSpace: 'nowrap',
-								display: 'inline-flex',
-								alignItems: 'center',
-								gap: '2rem',
-							}}
+							className="inline-flex items-center gap-8 whitespace-nowrap px-8 font-mono text-mono-lg font-medium uppercase tracking-mono-md text-on-acid"
 						>
 							{item}
-							<Diamond aria-hidden="true" className="size-2.5" style={{ opacity: 0.4 }} />
+							<Diamond aria-hidden="true" className="size-2.5 opacity-40" />
 						</span>
 					))}
 				</div>
@@ -256,35 +143,12 @@ function TickerSection() {
 
 function WorkSection() {
 	return (
-		<section id="work" style={{ maxWidth: '1200px', margin: '0 auto', padding: '8rem 1.5rem' }}>
-			<div
-				className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between"
-				style={{
-					borderBottom: '1px solid var(--line-strong)',
-					paddingBottom: '2rem',
-					marginBottom: '0',
-				}}
-			>
-				<h2
-					style={{
-						fontFamily: 'var(--font-display)',
-						fontSize: 'clamp(2rem, 5vw, 3.5rem)',
-						fontWeight: 700,
-						letterSpacing: '-0.02em',
-						margin: 0,
-					}}
-				>
+		<section id="work" className="mx-auto max-w-[1200px] px-6 py-32">
+			<div className="flex flex-col gap-3 border-b border-line-strong pb-8 sm:flex-row sm:items-end sm:justify-between">
+				<h2 className="m-0 font-display text-[clamp(2rem,5vw,3.5rem)] font-bold tracking-display-tight">
 					Selected Work
 				</h2>
-				<span
-					style={{
-						fontFamily: 'var(--font-mono)',
-						fontSize: '0.68rem',
-						letterSpacing: '0.14em',
-						textTransform: 'uppercase',
-						color: 'var(--muted-foreground)',
-					}}
-				>
+				<span className="font-mono text-mono-md uppercase tracking-mono-md text-muted-foreground">
 					{FEATURED_PROJECTS.length} projects
 				</span>
 			</div>
@@ -294,54 +158,19 @@ function WorkSection() {
 					<a
 						key={project.number}
 						href={project.url}
-						className="project-row"
-						style={{
-							display: 'block',
-							padding: '2.5rem 0',
-							textDecoration: 'none',
-						}}
+						className="project-row block py-10 no-underline"
 					>
-						<div
-							className="grid grid-cols-1 gap-4 sm:grid-cols-[3rem_1fr_4rem]"
-							style={{
-								alignItems: 'start',
-							}}
-						>
-							<span
-								style={{
-									fontFamily: 'var(--font-mono)',
-									fontSize: '0.72rem',
-									color: 'var(--muted-foreground)',
-									letterSpacing: '0.1em',
-									paddingTop: '0.5rem',
-									paddingLeft: '0.75rem',
-								}}
-							>
+						<div className="grid grid-cols-1 items-start gap-4 sm:grid-cols-[3rem_1fr_4rem]">
+							<span className="pl-3 pt-2 font-mono text-[0.72rem] tracking-mono text-muted-foreground">
 								{project.number}
 							</span>
 
-							<div className="flex flex-col gap-3 min-w-0">
-								<h3
-									style={{
-										fontFamily: 'var(--font-display)',
-										fontSize: 'clamp(1.5rem, 3.5vw, 2.5rem)',
-										fontWeight: 700,
-										letterSpacing: '-0.02em',
-										margin: 0,
-										lineHeight: 1,
-									}}
-								>
+							<div className="flex min-w-0 flex-col gap-3">
+								<h3 className="m-0 font-display text-[clamp(1.5rem,3.5vw,2.5rem)] font-bold leading-none tracking-display-tight">
 									{project.title}
 								</h3>
 
-								<p
-									style={{
-										fontSize: '0.875rem',
-										color: 'var(--muted-foreground)',
-										margin: 0,
-										maxWidth: '60ch',
-									}}
-								>
+								<p className="m-0 max-w-[60ch] text-sm text-muted-foreground">
 									{project.description}
 								</p>
 
@@ -349,15 +178,7 @@ function WorkSection() {
 									{project.tags.map((tag) => (
 										<span
 											key={tag}
-											style={{
-												fontFamily: 'var(--font-mono)',
-												fontSize: '0.62rem',
-												letterSpacing: '0.12em',
-												textTransform: 'uppercase',
-												color: 'var(--muted-foreground)',
-												border: '1px solid var(--line-strong)',
-												padding: '0.25rem 0.6rem',
-											}}
+											className="border border-line-strong px-2.5 py-1 font-mono text-mono-xs uppercase tracking-mono-md text-muted-foreground"
 										>
 											{tag}
 										</span>
@@ -367,12 +188,7 @@ function WorkSection() {
 
 							<ArrowUpRight
 								aria-hidden="true"
-								className="project-arrow hidden size-6 sm:block"
-								style={{
-									color: 'var(--acid)',
-									paddingTop: '0.25rem',
-									paddingRight: '1.5rem',
-								}}
+								className="project-arrow hidden size-6 pr-6 pt-1 text-acid sm:block"
 							/>
 						</div>
 					</a>
@@ -384,26 +200,9 @@ function WorkSection() {
 
 function AboutTeaser() {
 	return (
-		<section
-			style={{
-				borderTop: '1px solid var(--line-strong)',
-				maxWidth: '1200px',
-				margin: '0 auto',
-				padding: '8rem 1.5rem',
-			}}
-		>
+		<section className="mx-auto max-w-[1200px] border-t border-line-strong px-6 py-32">
 			<div className="flex flex-col gap-10 sm:flex-row sm:items-end sm:justify-between">
-				<blockquote
-					style={{
-						fontFamily: 'var(--font-display)',
-						fontSize: 'clamp(1.75rem, 4vw, 3rem)',
-						fontWeight: 700,
-						letterSpacing: '-0.02em',
-						lineHeight: 1.15,
-						margin: 0,
-						maxWidth: '22ch',
-					}}
-				>
+				<blockquote className="m-0 max-w-[22ch] font-display text-[clamp(1.75rem,4vw,3rem)] font-bold leading-[1.15] tracking-display-tight">
 					"I write code that ships, scales, and doesn't embarrass me six months later."
 				</blockquote>
 
@@ -418,113 +217,34 @@ function AboutTeaser() {
 
 function ContactSection() {
 	return (
-		<section
-			style={{
-				borderTop: '1px solid var(--line-strong)',
-				position: 'relative',
-				overflow: 'hidden',
-			}}
-		>
+		<section className="relative overflow-hidden border-t border-line-strong">
 			<span
 				aria-hidden="true"
-				style={{
-					position: 'absolute',
-					top: 0,
-					right: '1.5rem',
-					width: '1px',
-					height: '6rem',
-					backgroundColor: 'var(--acid)',
-					opacity: 0.55,
-				}}
+				className="absolute right-6 top-0 block h-24 w-px bg-acid opacity-55"
 			/>
 
-			<div
-				style={{
-					maxWidth: '1200px',
-					margin: '0 auto',
-					padding: '9rem 1.5rem',
-				}}
-			>
-				<div
-					style={{
-						display: 'inline-flex',
-						alignItems: 'center',
-						gap: '0.75rem',
-						fontFamily: 'var(--font-mono)',
-						fontSize: '0.7rem',
-						letterSpacing: '0.22em',
-						textTransform: 'uppercase',
-						color: 'var(--muted-foreground)',
-						marginBottom: '2.5rem',
-					}}
-				>
-					<span
-						aria-hidden="true"
-						style={{
-							display: 'inline-block',
-							width: '0.55rem',
-							height: '0.55rem',
-							backgroundColor: 'var(--acid)',
-							transform: 'rotate(45deg)',
-						}}
-					/>
+			<div className="mx-auto max-w-[1200px] px-6 py-36">
+				<div className="mb-10 inline-flex items-center gap-3 font-mono text-mono-lg uppercase tracking-[0.22em] text-muted-foreground">
+					<span aria-hidden="true" className="inline-block size-[0.55rem] rotate-45 bg-acid" />
 					Let's talk
-					<span
-						aria-hidden="true"
-						style={{
-							display: 'inline-block',
-							width: '2.5rem',
-							height: '1px',
-							backgroundColor: 'var(--line-strong)',
-						}}
-					/>
+					<span aria-hidden="true" className="inline-block h-px w-10 bg-line-strong" />
 				</div>
 
-				<h2
-					style={{
-						fontFamily: 'var(--font-display)',
-						fontSize: 'clamp(3rem, 10vw, 9rem)',
-						fontWeight: 700,
-						letterSpacing: '-0.03em',
-						lineHeight: 0.88,
-						margin: '0 0 2rem',
-						color: 'var(--foreground)',
-					}}
-				>
+				<h2 className="mb-8 mt-0 font-display text-[clamp(3rem,10vw,9rem)] font-bold leading-[0.88] tracking-display-tighter text-foreground">
 					HAVE AN
 					<br />
-					<span
-						style={{
-							WebkitTextStroke: '2px var(--foreground)',
-							color: 'transparent',
-						}}
-					>
-						IDEA?
-					</span>
+					<span className="text-stroke-heavy">IDEA?</span>
 				</h2>
 
-				<p
-					style={{
-						fontFamily: 'var(--font-sans)',
-						fontSize: 'clamp(1rem, 1.6vw, 1.15rem)',
-						lineHeight: 1.55,
-						color: 'var(--muted-foreground)',
-						maxWidth: '38ch',
-						margin: '0 0 3.5rem',
-					}}
-				>
+				<p className="mb-14 mt-0 max-w-[38ch] font-sans text-[clamp(1rem,1.6vw,1.15rem)] leading-[1.55] text-muted-foreground">
 					Open to freelance projects, full-stack collaborations, and full-time roles. Drop a line —
 					I read everything.
 				</p>
 
-				<div
-					className="flex flex-wrap items-center"
-					style={{ gap: '0.75rem', marginBottom: '4rem' }}
-				>
+				<div className="mb-16 flex flex-wrap items-center gap-3">
 					<a
 						href={`mailto:${USER.EMAIL}`}
-						className="acid-btn w-full justify-center sm:w-auto"
-						style={{ fontSize: '0.75rem' }}
+						className="acid-btn w-full justify-center text-[0.75rem] sm:w-auto"
 					>
 						{USER.EMAIL}
 						<ArrowUpRight aria-hidden="true" className="size-4" />
@@ -535,8 +255,7 @@ function ContactSection() {
 						target="_blank"
 						rel="noreferrer"
 						aria-label="GitHub"
-						className="ghost-btn justify-center"
-						style={{ padding: '0.875rem 1.1rem' }}
+						className="ghost-btn justify-center px-[1.1rem] py-3.5"
 					>
 						<Github aria-hidden="true" className="size-4" />
 					</a>
@@ -546,50 +265,18 @@ function ContactSection() {
 						target="_blank"
 						rel="noreferrer"
 						aria-label="X (Twitter)"
-						className="ghost-btn justify-center"
-						style={{ padding: '0.875rem 1.1rem' }}
+						className="ghost-btn justify-center px-[1.1rem] py-3.5"
 					>
 						<Twitter aria-hidden="true" className="size-4" />
 					</a>
 				</div>
 
-				<div
-					style={{
-						display: 'flex',
-						flexWrap: 'wrap',
-						alignItems: 'center',
-						gap: '1.5rem',
-						paddingTop: '2rem',
-						borderTop: '1px solid var(--line-strong)',
-						fontFamily: 'var(--font-mono)',
-						fontSize: '0.68rem',
-						letterSpacing: '0.14em',
-						textTransform: 'uppercase',
-						color: 'var(--muted-foreground)',
-					}}
-				>
-					<span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.55rem' }}>
-						<span
-							aria-hidden="true"
-							style={{
-								position: 'relative',
-								display: 'inline-block',
-								width: '0.5rem',
-								height: '0.5rem',
-								borderRadius: '50%',
-								backgroundColor: 'var(--acid)',
-							}}
-						>
+				<div className="flex flex-wrap items-center gap-6 border-t border-line-strong pt-8 font-mono text-mono-md uppercase tracking-mono-md text-muted-foreground">
+					<span className="inline-flex items-center gap-2">
+						<span aria-hidden="true" className="relative inline-block size-2 rounded-full bg-acid">
 							<span
 								aria-hidden="true"
-								style={{
-									position: 'absolute',
-									inset: 0,
-									borderRadius: '50%',
-									backgroundColor: 'var(--acid)',
-									opacity: 0.55,
-									animation: 'blink 1.6s ease-in-out infinite',
-								}}
+								className="animate-blink-slow absolute inset-0 rounded-full bg-acid opacity-55"
 							/>
 						</span>
 						Available for new work

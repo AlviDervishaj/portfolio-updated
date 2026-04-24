@@ -103,15 +103,7 @@ export default function CommentsSection({ postId, currentUserId, currentUserName
 
 	return (
 		<div>
-			<h3
-				style={{
-					fontFamily: 'var(--font-display)',
-					fontSize: '1.25rem',
-					fontWeight: 700,
-					letterSpacing: '-0.01em',
-					margin: '0 0 2rem',
-				}}
-			>
+			<h3 className="mb-8 mt-0 font-display text-xl font-bold tracking-[-0.01em]">
 				{totalVisible === 0 ? 'Discussion' : `Discussion ( ${totalVisible} )`}
 			</h3>
 
@@ -126,28 +118,12 @@ export default function CommentsSection({ postId, currentUserId, currentUserName
 			)}
 
 			{initialLoaded && allComments.length === 0 && (
-				<p
-					style={{
-						fontFamily: 'var(--font-mono)',
-						fontSize: '0.72rem',
-						letterSpacing: '0.1em',
-						textTransform: 'uppercase',
-						color: 'var(--muted-foreground)',
-						marginTop: '2.5rem',
-					}}
-				>
+				<p className="mt-10 font-mono text-[0.72rem] uppercase tracking-mono text-muted-foreground">
 					No comments yet. Be the first.
 				</p>
 			)}
 
-			<div
-				style={{
-					marginTop: '2.5rem',
-					display: 'flex',
-					flexDirection: 'column',
-					gap: '0',
-				}}
-			>
+			<div className="mt-10 flex flex-col">
 				{allComments.map((comment) => (
 					<CommentThread
 						key={comment.id}
@@ -165,19 +141,12 @@ export default function CommentsSection({ postId, currentUserId, currentUserName
 			</div>
 
 			{nextCursor && (
-				<div
-					style={{
-						marginTop: '2rem',
-						display: 'flex',
-						justifyContent: 'center',
-					}}
-				>
+				<div className="mt-8 flex justify-center">
 					<button
 						type="button"
 						onClick={loadMoreComments}
 						disabled={loadingMore}
-						className="ghost-btn"
-						style={{ opacity: loadingMore ? 0.5 : 1 }}
+						className="ghost-btn disabled:opacity-50"
 					>
 						{loadingMore ? 'Loading...' : 'Load more comments'}
 						{!loadingMore && <ChevronDown aria-hidden="true" className="size-4" />}
@@ -214,13 +183,7 @@ function CommentThread({
 	const isOwn = currentUserId === comment.authorId
 
 	return (
-		<div
-			style={{
-				borderTop: '1px solid var(--line-strong)',
-				paddingTop: '1.5rem',
-				paddingBottom: '1.5rem',
-			}}
-		>
+		<div className="border-t border-line-strong py-6">
 			<CommentBubble
 				id={comment.id}
 				authorName={comment.authorName}
@@ -233,16 +196,7 @@ function CommentThread({
 			/>
 
 			{comment.replies.length > 0 && (
-				<div
-					style={{
-						marginTop: '1rem',
-						paddingLeft: '2rem',
-						borderLeft: '1px solid var(--line-strong)',
-						display: 'flex',
-						flexDirection: 'column',
-						gap: '1rem',
-					}}
-				>
+				<div className="mt-4 flex flex-col gap-4 border-l border-line-strong pl-8">
 					{comment.replies.map((reply) => (
 						<CommentBubble
 							key={reply.id}
@@ -260,7 +214,7 @@ function CommentThread({
 			)}
 
 			{currentUserId && currentUserName && !comment.deletedAt && (
-				<div style={{ marginTop: '0.75rem', paddingLeft: '0' }}>
+				<div className="mt-3">
 					{replyingTo === comment.id ? (
 						<CommentForm
 							onSubmit={(content) => onReply(content, comment.id)}
@@ -273,25 +227,7 @@ function CommentThread({
 						<button
 							type="button"
 							onClick={() => setReplyingTo(comment.id)}
-							className="inline-flex items-center gap-1"
-							style={{
-								fontFamily: 'var(--font-mono)',
-								fontSize: '0.62rem',
-								letterSpacing: '0.12em',
-								textTransform: 'uppercase',
-								color: 'var(--muted-foreground)',
-								background: 'none',
-								border: 'none',
-								cursor: 'pointer',
-								padding: '0',
-								transition: 'color 150ms ease',
-							}}
-							onMouseEnter={(e) => {
-								;(e.currentTarget as HTMLElement).style.color = 'var(--acid)'
-							}}
-							onMouseLeave={(e) => {
-								;(e.currentTarget as HTMLElement).style.color = 'var(--muted-foreground)'
-							}}
+							className="inline-flex cursor-pointer items-center gap-1 border-none bg-transparent p-0 font-mono text-mono-xs uppercase tracking-[0.12em] text-muted-foreground transition-colors duration-150 hover:text-acid"
 						>
 							<CornerDownLeft aria-hidden="true" className="size-3" />
 							Reply
@@ -331,25 +267,12 @@ function CommentBubble({
 
 	return (
 		<div>
-			<div className="flex items-center justify-between gap-2" style={{ marginBottom: '0.5rem' }}>
-				<div
-					className="flex items-center gap-3"
-					style={{
-						fontFamily: 'var(--font-mono)',
-						fontSize: '0.65rem',
-						letterSpacing: '0.1em',
-						textTransform: 'uppercase',
-					}}
-				>
-					<span
-						style={{
-							color: isOwn ? 'var(--acid)' : 'var(--foreground)',
-							fontWeight: 500,
-						}}
-					>
+			<div className="mb-2 flex items-center justify-between gap-2">
+				<div className="flex items-center gap-3 font-mono text-mono-sm uppercase tracking-mono">
+					<span className={isOwn ? 'font-medium text-acid' : 'font-medium text-foreground'}>
 						{authorName}
 					</span>
-					<span style={{ color: 'var(--muted-foreground)' }}>{formattedDate}</span>
+					<span className="text-muted-foreground">{formattedDate}</span>
 				</div>
 
 				{isOwn && onDelete && !deletedAt && (
@@ -358,25 +281,7 @@ function CommentBubble({
 						onClick={onDelete}
 						disabled={isDeleting}
 						aria-label="Delete comment"
-						style={{
-							fontFamily: 'var(--font-mono)',
-							fontSize: '0.6rem',
-							letterSpacing: '0.1em',
-							textTransform: 'uppercase',
-							color: 'var(--muted-foreground)',
-							background: 'none',
-							border: 'none',
-							cursor: 'pointer',
-							padding: '0',
-							opacity: isDeleting ? 0.5 : 1,
-							transition: 'color 150ms ease',
-						}}
-						onMouseEnter={(e) => {
-							;(e.currentTarget as HTMLElement).style.color = 'oklch(0.577 0.245 27.325)'
-						}}
-						onMouseLeave={(e) => {
-							;(e.currentTarget as HTMLElement).style.color = 'var(--muted-foreground)'
-						}}
+						className="cursor-pointer border-none bg-transparent p-0 font-mono text-[0.6rem] uppercase tracking-mono text-muted-foreground transition-colors duration-150 hover:text-[oklch(0.577_0.245_27.325)] disabled:opacity-50"
 					>
 						Delete
 					</button>
@@ -384,27 +289,9 @@ function CommentBubble({
 			</div>
 
 			{deletedAt ? (
-				<p
-					style={{
-						fontSize: '0.875rem',
-						color: 'var(--muted-foreground)',
-						fontStyle: 'italic',
-						margin: 0,
-					}}
-				>
-					[deleted]
-				</p>
+				<p className="m-0 text-sm italic text-muted-foreground">[deleted]</p>
 			) : (
-				<p
-					style={{
-						fontSize: '0.9375rem',
-						lineHeight: 1.65,
-						color: 'var(--foreground)',
-						margin: 0,
-						whiteSpace: 'pre-wrap',
-						wordBreak: 'break-word',
-					}}
-				>
+				<p className="m-0 whitespace-pre-wrap break-words text-[0.9375rem] leading-[1.65] text-foreground">
 					{content}
 				</p>
 			)}
@@ -434,46 +321,23 @@ function CommentForm({ onSubmit, onCancel, isSubmitting, placeholder, compact }:
 	}
 
 	return (
-		<form
-			onSubmit={handleSubmit}
-			style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}
-		>
+		<form onSubmit={handleSubmit} className="flex flex-col gap-3">
 			<textarea
 				value={value}
 				onChange={(e) => setValue(e.target.value)}
 				placeholder={placeholder ?? 'Write a comment...'}
 				rows={compact ? 3 : 4}
-				style={{
-					width: '100%',
-					padding: '0.875rem 1rem',
-					background: 'transparent',
-					border: '1px solid var(--line-strong)',
-					color: 'var(--foreground)',
-					fontFamily: 'var(--font-sans)',
-					fontSize: '0.9rem',
-					lineHeight: 1.6,
-					resize: 'vertical',
-					outline: 'none',
-					transition: 'border-color 150ms ease',
-					boxSizing: 'border-box',
-				}}
-				onFocus={(e) => {
-					e.currentTarget.style.borderColor = 'var(--acid-border)'
-				}}
-				onBlur={(e) => {
-					e.currentTarget.style.borderColor = 'var(--line-strong)'
-				}}
+				className="w-full resize-y border border-line-strong bg-transparent px-4 py-3.5 font-sans text-[0.9rem] leading-[1.6] text-foreground outline-none transition-colors duration-150 focus:border-acid-border"
 				disabled={isSubmitting}
 			/>
 
 			<div className="flex flex-wrap items-center justify-between gap-3">
 				<span
-					style={{
-						fontFamily: 'var(--font-mono)',
-						fontSize: '0.62rem',
-						letterSpacing: '0.1em',
-						color: isOverLimit ? 'oklch(0.577 0.245 27.325)' : 'var(--muted-foreground)',
-					}}
+					className={
+						isOverLimit
+							? 'font-mono text-mono-xs tracking-mono text-[oklch(0.577_0.245_27.325)]'
+							: 'font-mono text-mono-xs tracking-mono text-muted-foreground'
+					}
 				>
 					{remaining}
 				</span>
@@ -483,17 +347,7 @@ function CommentForm({ onSubmit, onCancel, isSubmitting, placeholder, compact }:
 						<button
 							type="button"
 							onClick={onCancel}
-							style={{
-								fontFamily: 'var(--font-mono)',
-								fontSize: '0.65rem',
-								letterSpacing: '0.1em',
-								textTransform: 'uppercase',
-								color: 'var(--muted-foreground)',
-								background: 'none',
-								border: 'none',
-								cursor: 'pointer',
-								padding: '0.5rem 0.75rem',
-							}}
+							className="cursor-pointer border-none bg-transparent px-3 py-2 font-mono text-mono-sm uppercase tracking-mono text-muted-foreground"
 						>
 							Cancel
 						</button>
@@ -501,12 +355,7 @@ function CommentForm({ onSubmit, onCancel, isSubmitting, placeholder, compact }:
 					<button
 						type="submit"
 						disabled={!value.trim() || isOverLimit || isSubmitting}
-						className="acid-btn"
-						style={{
-							fontSize: '0.65rem',
-							padding: '0.5rem 1rem',
-							opacity: !value.trim() || isOverLimit || isSubmitting ? 0.5 : 1,
-						}}
+						className="acid-btn px-4 py-2 text-mono-sm disabled:opacity-50"
 					>
 						{isSubmitting ? 'Posting...' : 'Post'}
 					</button>
@@ -518,31 +367,13 @@ function CommentForm({ onSubmit, onCancel, isSubmitting, placeholder, compact }:
 
 function SignInPrompt() {
 	return (
-		<div
-			style={{
-				border: '1px solid var(--line-strong)',
-				padding: '1.5rem',
-				display: 'flex',
-				alignItems: 'center',
-				justifyContent: 'space-between',
-				gap: '1rem',
-				flexWrap: 'wrap',
-			}}
-		>
-			<span
-				style={{
-					fontFamily: 'var(--font-mono)',
-					fontSize: '0.72rem',
-					letterSpacing: '0.08em',
-					color: 'var(--muted-foreground)',
-				}}
-			>
+		<div className="flex flex-wrap items-center justify-between gap-4 border border-line-strong p-6">
+			<span className="font-mono text-[0.72rem] tracking-mono-sm text-muted-foreground">
 				Sign in to join the discussion
 			</span>
 			<a
 				href="/api/auth/sign-in"
-				className="acid-btn w-full justify-center sm:w-auto"
-				style={{ fontSize: '0.65rem', padding: '0.5rem 1rem' }}
+				className="acid-btn w-full justify-center px-4 py-2 text-mono-sm sm:w-auto"
 			>
 				Sign in
 				<ArrowRight aria-hidden="true" className="size-3.5" />

@@ -17,44 +17,17 @@ export const Route = createFileRoute('/now')({
 
 function NowPage() {
 	return (
-		<main style={{ maxWidth: '1200px', margin: '0 auto', padding: '6rem 1.5rem' }}>
-			<header style={{ marginBottom: '5rem' }}>
-				<p
-					style={{
-						fontFamily: 'var(--font-mono)',
-						fontSize: '0.68rem',
-						letterSpacing: '0.2em',
-						textTransform: 'uppercase',
-						color: 'var(--acid)',
-						marginBottom: '1.5rem',
-					}}
-				>
-					— Now
-				</p>
-				<h1
-					style={{
-						fontFamily: 'var(--font-display)',
-						fontSize: 'clamp(2.5rem, 7vw, 5rem)',
-						fontWeight: 700,
-						letterSpacing: '-0.03em',
-						lineHeight: 0.95,
-						margin: 0,
-					}}
-				>
+		<main className="mx-auto max-w-[1200px] px-6 py-24">
+			<header className="mb-20">
+				<p className="mb-6 font-mono text-mono-md uppercase tracking-mono-lg text-acid">— Now</p>
+				<h1 className="m-0 font-display text-[clamp(2.5rem,7vw,5rem)] font-bold leading-[0.95] tracking-display-tighter">
 					What I'm
 					<br />
 					<span className="text-stroke">up to</span>
 				</h1>
 			</header>
 
-			<div
-				style={{
-					display: 'grid',
-					gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-					gap: '3rem',
-					maxWidth: '900px',
-				}}
-			>
+			<div className="grid max-w-[900px] grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-12">
 				<NowSection
 					label="Building"
 					items={[
@@ -77,25 +50,14 @@ function NowPage() {
 				<NowSection label="Location" items={['Remote — available worldwide']} />
 			</div>
 
-			<div
-				style={{
-					marginTop: '6rem',
-					borderTop: '1px solid var(--line-strong)',
-					paddingTop: '2rem',
-					fontFamily: 'var(--font-mono)',
-					fontSize: '0.65rem',
-					letterSpacing: '0.1em',
-					textTransform: 'uppercase',
-					color: 'var(--muted-foreground)',
-				}}
-			>
+			<div className="mt-24 border-t border-line-strong pt-8 font-mono text-mono-sm uppercase tracking-mono text-muted-foreground">
 				Last updated: {new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long' })} —
 				inspired by{' '}
 				<a
 					href="https://nownownow.com"
 					target="_blank"
 					rel="noreferrer"
-					style={{ color: 'var(--acid)', textDecoration: 'none' }}
+					className="text-acid no-underline"
 				>
 					nownownow.com
 				</a>
@@ -107,45 +69,14 @@ function NowPage() {
 function NowSection({ label, items }: { label: string; items: string[] }) {
 	return (
 		<div>
-			<p
-				style={{
-					fontFamily: 'var(--font-mono)',
-					fontSize: '0.62rem',
-					letterSpacing: '0.18em',
-					textTransform: 'uppercase',
-					color: 'var(--acid)',
-					marginBottom: '1rem',
-				}}
-			>
-				{label}
-			</p>
-			<ul
-				style={{
-					listStyle: 'none',
-					padding: 0,
-					margin: 0,
-					display: 'flex',
-					flexDirection: 'column',
-					gap: '0.6rem',
-				}}
-			>
+			<p className="mb-4 font-mono text-mono-xs uppercase tracking-[0.18em] text-acid">{label}</p>
+			<ul className="m-0 flex list-none flex-col gap-2.5 p-0">
 				{items.map((item) => (
 					<li
 						key={item}
-						style={{
-							fontSize: '0.9375rem',
-							lineHeight: 1.55,
-							color: 'var(--foreground)',
-							display: 'flex',
-							alignItems: 'flex-start',
-							gap: '0.75rem',
-						}}
+						className="flex items-start gap-3 text-[0.9375rem] leading-[1.55] text-foreground"
 					>
-						<Diamond
-							aria-hidden="true"
-							className="size-3"
-							style={{ color: 'var(--acid)', flexShrink: 0, marginTop: '0.1rem' }}
-						/>
+						<Diamond aria-hidden="true" className="mt-0.5 size-3 shrink-0 text-acid" />
 						{item}
 					</li>
 				))}

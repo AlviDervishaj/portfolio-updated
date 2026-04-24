@@ -41,63 +41,26 @@ function PostRow({ post }: { post: PostSummary }) {
 		<Link
 			to="/blog/$slug"
 			params={{ slug: post.slug }}
-			className="post-row"
-			style={{ display: 'block', padding: '2.5rem 0', textDecoration: 'none' }}
+			className="post-row block py-10 no-underline"
 		>
-			<div
-				className="grid grid-cols-1 gap-4 sm:grid-cols-[1fr_4rem]"
-				style={{
-					alignItems: 'start',
-				}}
-			>
-				<div className="flex flex-col gap-3 min-w-0" style={{ paddingLeft: '0.75rem' }}>
-					<h2
-						style={{
-							fontFamily: 'var(--font-display)',
-							fontSize: 'clamp(1.25rem, 3vw, 2rem)',
-							fontWeight: 700,
-							letterSpacing: '-0.02em',
-							margin: 0,
-							lineHeight: 1.1,
-						}}
-					>
+			<div className="grid grid-cols-1 items-start gap-4 sm:grid-cols-[1fr_4rem]">
+				<div className="flex min-w-0 flex-col gap-3 pl-3">
+					<h2 className="m-0 font-display text-[clamp(1.25rem,3vw,2rem)] font-bold leading-[1.1] tracking-display-tight">
 						{post.title}
 					</h2>
 
-					<p
-						style={{
-							fontSize: '0.875rem',
-							color: 'var(--muted-foreground)',
-							margin: 0,
-							maxWidth: '65ch',
-							lineHeight: 1.6,
-						}}
-					>
+					<p className="m-0 max-w-[65ch] text-sm leading-[1.6] text-muted-foreground">
 						{post.excerpt}
 					</p>
 
-					<div
-						className="flex flex-wrap items-center gap-4 sm:gap-6"
-						style={{
-							fontFamily: 'var(--font-mono)',
-							fontSize: '0.65rem',
-							letterSpacing: '0.12em',
-							textTransform: 'uppercase',
-							color: 'var(--muted-foreground)',
-							marginTop: '0.25rem',
-						}}
-					>
+					<div className="mt-1 flex flex-wrap items-center gap-4 font-mono text-mono-sm uppercase tracking-mono-md text-muted-foreground sm:gap-6">
 						{publishedDate && <span>{publishedDate}</span>}
-						<span style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-							<Heart aria-hidden="true" className="size-3.5" style={{ color: 'var(--acid)' }} />
+						<span className="flex items-center gap-1.5">
+							<Heart aria-hidden="true" className="size-3.5 text-acid" />
 							{post.likeCount}
 						</span>
-						<span style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-							<MessageSquare
-								aria-hidden="true"
-								className="size-3.5"
-								style={{ color: 'var(--acid)' }}
-							/>
+						<span className="flex items-center gap-1.5">
+							<MessageSquare aria-hidden="true" className="size-3.5 text-acid" />
 							{post.commentCount}
 						</span>
 					</div>
@@ -105,12 +68,7 @@ function PostRow({ post }: { post: PostSummary }) {
 
 				<ArrowUpRight
 					aria-hidden="true"
-					className="project-arrow hidden size-5 sm:block"
-					style={{
-						color: 'var(--acid)',
-						paddingTop: '0.25rem',
-						paddingRight: '1.5rem',
-					}}
+					className="project-arrow hidden size-5 pr-6 pt-1 text-acid sm:block"
 				/>
 			</div>
 		</Link>
@@ -119,11 +77,11 @@ function PostRow({ post }: { post: PostSummary }) {
 
 function PostRowSkeleton() {
 	return (
-		<div style={{ padding: '2.5rem 0', borderBottom: '1px solid var(--line-strong)' }}>
+		<div className="border-b border-line-strong py-10">
 			<div className="flex flex-col gap-3">
-				<div className="skeleton" style={{ height: '2rem', width: '60%', borderRadius: '2px' }} />
-				<div className="skeleton" style={{ height: '1rem', width: '85%', borderRadius: '2px' }} />
-				<div className="skeleton" style={{ height: '1rem', width: '40%', borderRadius: '2px' }} />
+				<div className="skeleton h-8 w-3/5 rounded-sm" />
+				<div className="skeleton h-4 w-[85%] rounded-sm" />
+				<div className="skeleton h-4 w-2/5 rounded-sm" />
 			</div>
 		</div>
 	)
@@ -131,13 +89,10 @@ function PostRowSkeleton() {
 
 function BlogPageSkeleton() {
 	return (
-		<main style={{ maxWidth: '1200px', margin: '0 auto', padding: '6rem 1.5rem' }}>
-			<div style={{ marginBottom: '4rem' }}>
-				<div
-					className="skeleton"
-					style={{ height: '3.5rem', width: '30%', borderRadius: '2px', marginBottom: '1rem' }}
-				/>
-				<div className="skeleton" style={{ height: '1rem', width: '50%', borderRadius: '2px' }} />
+		<main className="mx-auto max-w-[1200px] px-6 py-24">
+			<div className="mb-16">
+				<div className="skeleton mb-4 h-14 w-[30%] rounded-sm" />
+				<div className="skeleton h-4 w-1/2 rounded-sm" />
 			</div>
 			{[1, 2, 3, 4].map((i) => (
 				<PostRowSkeleton key={i} />
@@ -185,89 +140,48 @@ function BlogPage() {
 	}, [cursor, strategy, loadingMore])
 
 	return (
-		<main style={{ maxWidth: '1200px', margin: '0 auto', padding: '6rem 1.5rem' }}>
-			<div style={{ marginBottom: '4rem' }}>
-				<h1
-					className="animate-fade-up"
-					style={{
-						fontFamily: 'var(--font-display)',
-						fontSize: 'clamp(2.5rem, 7vw, 5rem)',
-						fontWeight: 700,
-						letterSpacing: '-0.03em',
-						lineHeight: 0.95,
-						margin: '0 0 1rem',
-					}}
-				>
+		<main className="mx-auto max-w-[1200px] px-6 py-24">
+			<div className="mb-16">
+				<h1 className="animate-fade-up mb-4 mt-0 font-display text-[clamp(2.5rem,7vw,5rem)] font-bold leading-[0.95] tracking-display-tighter">
 					Writing
 				</h1>
-				<p
-					style={{
-						fontFamily: 'var(--font-mono)',
-						fontSize: '0.75rem',
-						letterSpacing: '0.1em',
-						textTransform: 'uppercase',
-						color: 'var(--muted-foreground)',
-						margin: 0,
-					}}
-				>
+				<p className="m-0 font-mono text-[0.75rem] uppercase tracking-mono text-muted-foreground">
 					{posts.length < totalCount
 						? `Showing ${posts.length} of ${totalCount} posts`
 						: `${totalCount} ${totalCount === 1 ? 'post' : 'posts'}`}
 				</p>
 			</div>
 
-			<div
-				className="flex items-center justify-between gap-4"
-				style={{
-					borderBottom: '1px solid var(--line-strong)',
-					paddingBottom: '1.5rem',
-					marginBottom: '0',
-				}}
-			>
+			<div className="flex items-center justify-between gap-4 border-b border-line-strong pb-6">
 				<div className="flex flex-wrap items-center gap-1">
-					{SORT_OPTIONS.map((opt) => (
-						<button
-							key={opt.value}
-							type="button"
-							onClick={() => switchStrategy(opt.value)}
-							style={{
-								fontFamily: 'var(--font-mono)',
-								fontSize: '0.65rem',
-								letterSpacing: '0.14em',
-								textTransform: 'uppercase',
-								padding: '0.4rem 0.75rem',
-								border: '1px solid',
-								borderColor: strategy === opt.value ? 'var(--acid)' : 'transparent',
-								backgroundColor: strategy === opt.value ? 'var(--acid)' : 'transparent',
-								color: strategy === opt.value ? 'var(--on-acid)' : 'var(--muted-foreground)',
-								cursor: 'pointer',
-								transition: 'all 0.15s ease',
-							}}
-						>
-							{opt.label}
-						</button>
-					))}
+					{SORT_OPTIONS.map((opt) => {
+						const active = strategy === opt.value
+						return (
+							<button
+								key={opt.value}
+								type="button"
+								onClick={() => switchStrategy(opt.value)}
+								className={`cursor-pointer border px-3 py-1.5 font-mono text-mono-sm uppercase tracking-mono-md transition-all duration-150 ${
+									active
+										? 'border-acid bg-acid text-on-acid'
+										: 'border-transparent bg-transparent text-muted-foreground'
+								}`}
+							>
+								{opt.label}
+							</button>
+						)
+					})}
 				</div>
 			</div>
 
-			<div style={{ opacity: loading ? 0.4 : 1, transition: 'opacity 0.2s ease' }}>
+			<div className={`transition-opacity duration-200 ${loading ? 'opacity-40' : 'opacity-100'}`}>
 				{posts.length === 0 ? (
-					<div
-						style={{
-							padding: '5rem 0',
-							textAlign: 'center',
-							fontFamily: 'var(--font-mono)',
-							fontSize: '0.75rem',
-							letterSpacing: '0.1em',
-							textTransform: 'uppercase',
-							color: 'var(--muted-foreground)',
-						}}
-					>
+					<div className="py-20 text-center font-mono text-[0.75rem] uppercase tracking-mono text-muted-foreground">
 						No posts yet. Check back soon.
 					</div>
 				) : (
 					posts.map((post) => (
-						<div key={post.id} style={{ borderBottom: '1px solid var(--line-strong)' }}>
+						<div key={post.id} className="border-b border-line-strong">
 							<PostRow post={post} />
 						</div>
 					))
@@ -275,13 +189,12 @@ function BlogPage() {
 			</div>
 
 			{cursor && (
-				<div style={{ paddingTop: '3rem', display: 'flex', justifyContent: 'center' }}>
+				<div className="flex justify-center pt-12">
 					<button
 						type="button"
 						onClick={loadMore}
 						disabled={loadingMore}
-						className="ghost-btn"
-						style={{ opacity: loadingMore ? 0.5 : 1 }}
+						className="ghost-btn disabled:opacity-50"
 					>
 						{loadingMore ? 'Loading...' : 'Load more'}
 						{!loadingMore && <ChevronDown aria-hidden="true" className="size-4" />}
