@@ -5,25 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="82c7941f-2c55-471c-a7d0-dfae67596997" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/CommentsSection.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/CommentsSection.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/Footer.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Footer.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/Header.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Header.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/ReactionBar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/ReactionBar.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/ScrollProgress.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/ScrollProgress.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/constants/auth.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/constants/auth.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/routeTree.gen.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/routeTree.gen.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/routes/__root.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/__root.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/routes/about.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/about.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/routes/admin.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/admin.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/routes/blog/$slug.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/blog/$slug.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/routes/blog/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/blog/index.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/routes/forgot-password.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/forgot-password.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/routes/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/index.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/routes/now.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/now.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/routes/reset-password.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/reset-password.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/routes/sign-in.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/sign-in.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/styles.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/styles.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/env.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/env.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -97,7 +79,7 @@
       <updated>1776868875167</updated>
       <workItem from="1776868876533" duration="3480000" />
       <workItem from="1776953418960" duration="1430000" />
-      <workItem from="1777022583802" duration="347000" />
+      <workItem from="1777022583802" duration="2693000" />
     </task>
     <servers />
   </component>
