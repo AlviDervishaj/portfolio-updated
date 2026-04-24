@@ -20,7 +20,11 @@ function commentsQueryKey(postId: string) {
 	return ['comments', postId]
 }
 
-export default function CommentsSection({ postId, currentUserId, currentUserName }: Props) {
+export default function CommentsSection({
+	postId,
+	currentUserId,
+	currentUserName,
+}: Readonly<Props>) {
 	const [replyingTo, setReplyingTo] = useState<string | null>(null)
 	const [allComments, setAllComments] = useState<CommentWithReplies[]>([])
 	const [nextCursor, setNextCursor] = useState<string | null>(null)
@@ -65,14 +69,14 @@ export default function CommentsSection({ postId, currentUserId, currentUserName
 			return result.data
 		},
 		onSuccess: (newComment, vars) => {
-			if (!vars.parentId) {
-				setAllComments((prev) => [...prev, newComment])
-			} else {
+			if (vars.parentId) {
 				setAllComments((prev) =>
 					prev.map((c) =>
 						c.id === vars.parentId ? { ...c, replies: [...c.replies, newComment] } : c,
 					),
 				)
+			} else {
+				setAllComments((prev) => [...prev, newComment])
 			}
 			setReplyingTo(null)
 		},
@@ -179,7 +183,7 @@ function CommentThread({
 	onDelete,
 	isReplySubmitting,
 	isDeleting,
-}: CommentThreadProps) {
+}: Readonly<CommentThreadProps>) {
 	const isOwn = currentUserId === comment.authorId
 
 	return (
@@ -258,7 +262,7 @@ function CommentBubble({
 	isOwn,
 	onDelete,
 	isDeleting,
-}: CommentBubbleProps) {
+}: Readonly<CommentBubbleProps>) {
 	const formattedDate = new Date(createdAt).toLocaleDateString('en-US', {
 		year: 'numeric',
 		month: 'short',
@@ -291,7 +295,7 @@ function CommentBubble({
 			{deletedAt ? (
 				<p className="m-0 text-sm italic text-muted-foreground">[deleted]</p>
 			) : (
-				<p className="m-0 whitespace-pre-wrap break-words text-[0.9375rem] leading-[1.65] text-foreground">
+				<p className="m-0 whitespace-pre-wrap wrap-break-word text-[0.9375rem] leading-[1.65] text-foreground">
 					{content}
 				</p>
 			)}
@@ -307,13 +311,19 @@ type CommentFormProps = {
 	compact?: boolean
 }
 
-function CommentForm({ onSubmit, onCancel, isSubmitting, placeholder, compact }: CommentFormProps) {
+function CommentForm({
+	onSubmit,
+	onCancel,
+	isSubmitting,
+	placeholder,
+	compact,
+}: Readonly<CommentFormProps>) {
 	const [value, setValue] = useState('')
 	const remaining = MAX_COMMENT_LENGTH - value.length
 	const isOverLimit = remaining < 0
 
-	function handleSubmit(e: React.FormEvent) {
-		e.preventDefault()
+	function handleSubmit(e: unknown) {
+		;(e as SubmitEvent).preventDefault()
 		const trimmed = value.trim()
 		if (!trimmed || isOverLimit || isSubmitting) return
 		onSubmit(trimmed)
@@ -372,7 +382,7 @@ function SignInPrompt() {
 				Sign in to join the discussion
 			</span>
 			<a
-				href="/api/auth/sign-in"
+				href="/sign-in"
 				className="acid-btn w-full justify-center px-4 py-2 text-mono-sm sm:w-auto"
 			>
 				Sign in

@@ -60,9 +60,9 @@ export const Route = createFileRoute('/blog/$slug')({
 	pendingComponent: PostPageSkeleton,
 })
 
-function PostPageError({ error }: { error: Error }) {
+function PostPageError({ error }: Readonly<{ error: Error }>) {
 	return (
-		<main className="mx-auto max-w-[1200px] px-6 py-32 text-center">
+		<main className="mx-auto max-w-300 px-6 py-32 text-center">
 			<span className="mb-8 block font-mono text-[clamp(4rem,15vw,10rem)] font-bold leading-none text-acid opacity-20">
 				err
 			</span>
@@ -84,7 +84,7 @@ function PostPageError({ error }: { error: Error }) {
 
 function PostNotFound() {
 	return (
-		<main className="mx-auto max-w-[1200px] px-6 py-32 text-center">
+		<main className="mx-auto max-w-300 px-6 py-32 text-center">
 			<span className="mb-8 block font-mono text-[clamp(4rem,15vw,10rem)] font-bold leading-none text-acid opacity-20">
 				404
 			</span>
@@ -101,7 +101,7 @@ function PostNotFound() {
 
 function PostPageSkeleton() {
 	return (
-		<main className="mx-auto max-w-[1200px] px-6 py-24">
+		<main className="mx-auto max-w-300 px-6 py-24">
 			<div className="mx-auto max-w-[72ch]">
 				<div className="skeleton mb-8 h-4 w-1/5 rounded-sm" />
 				<div className="skeleton mb-6 h-16 w-[90%] rounded-sm" />
@@ -118,7 +118,7 @@ function PostPageSkeleton() {
 	)
 }
 
-function TableOfContents({ entries }: { entries: TocEntry[] }) {
+function TableOfContents({ entries }: Readonly<{ entries: TocEntry[] }>) {
 	const [activeId, setActiveId] = useState<string>('')
 	const headingElementsRef = useRef<HTMLElement[]>([])
 	const lenis = useLenisInstance()
@@ -216,7 +216,7 @@ function PostPage() {
 	return (
 		<>
 			<ScrollProgress />
-			<main className="mx-auto max-w-[1200px] px-6 py-24">
+			<main className="mx-auto max-w-300 px-6 py-24">
 				<div
 					className={`grid items-start ${
 						toc.length > 0 ? 'grid-cols-1 gap-10 lg:grid-cols-[1fr_220px]' : 'grid-cols-1'
