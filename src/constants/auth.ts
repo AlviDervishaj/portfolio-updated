@@ -37,4 +37,28 @@ export const AUTH_RESET_PASSWORD_REDIRECT = '/sign-in'
 export const AUTH_RESET_PASSWORD_SUCCESS_SEARCH = 'success'
 
 export const AUTH_MIN_PASSWORD_LENGTH = 8
+export const AUTH_MAX_PASSWORD_LENGTH = 128
 export const AUTH_MIN_NAME_LENGTH = 2
+
+export const SETTINGS_TITLE = 'Settings'
+export const SETTINGS_PROFILE_TITLE = 'Profile'
+export const SETTINGS_PROFILE_DESCRIPTION = 'Account details tied to your sign in.'
+export const SETTINGS_PROFILE_NAME_LABEL = 'Display name'
+export const SETTINGS_PROFILE_NAME_HINT = 'Set during sign up and cannot be changed for now.'
+export const SETTINGS_PROFILE_EMAIL_LABEL = 'Email'
+export const SETTINGS_PROFILE_MEMBER_SINCE_LABEL = 'Member since'
+
+export const SETTINGS_SECURITY_TITLE = 'Security'
+export const SETTINGS_SECURITY_DESCRIPTION = 'Change your password and manage active sessions.'
+export const SETTINGS_SECURITY_CURRENT_PASSWORD_LABEL = 'Current password'
+export const SETTINGS_SECURITY_NEW_PASSWORD_LABEL = 'New password'
+export const SETTINGS_SECURITY_CONFIRM_PASSWORD_LABEL = 'Confirm new password'
+export const SETTINGS_SECURITY_SUBMIT = 'Update password'
+export const SETTINGS_SECURITY_SUCCESS = 'Password updated. Other sessions have been signed out.'
+export const SETTINGS_SECURITY_MISMATCH = 'New passwords do not match.'
+export const SETTINGS_SECURITY_SAME_AS_CURRENT =
+	'New password must be different from the current one.'
+export const SETTINGS_SECURITY_GENERIC_ERROR = 'Could not update your password. Please try again.'
+
+export const SETTINGS_UNAUTHENTICATED_REDIRECT = '/sign-in'
+export const SETTINGS_DEFAULT_SECTION_PATH = '/settings/profile'

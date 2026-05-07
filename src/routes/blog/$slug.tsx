@@ -1,14 +1,24 @@
 import { createFileRoute, Link, notFound } from '@tanstack/react-router'
-import { ArrowLeft, Heart } from 'lucide-react'
+import { ArrowLeft, Eye, Heart } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
-
+import { BookmarkButton } from '#/components/BookmarkButton.tsx'
 import CommentsSection from '#/components/CommentsSection.tsx'
+import { ComponentErrorBoundary } from '#/components/ComponentErrorBoundary.tsx'
+import { PostViewTracker } from '#/components/PostViewTracker.tsx'
 import ReactionBar from '#/components/ReactionBar.tsx'
 import ScrollProgress from '#/components/ScrollProgress.tsx'
+import { ShareBar } from '#/components/ShareBar.tsx'
+import { TagBadge } from '#/components/TagBadge.tsx'
+import { SITE_NAME } from '#/constants/seo'
 import { USER } from '#/constants/user'
+import type { Tag } from '#/db/schema.ts'
+import { env } from '#/env.ts'
+import { useLenisInstance } from '#/hooks/useLenis'
 import { authClient } from '#/lib/auth-client.ts'
 import type { TocEntry } from '#/lib/mdx.ts'
 import { getPostBySlugServerFn } from '#/server/posts.ts'
+import { getIsPostSavedServerFn } from '#/server/savedPosts.ts'
+import { getTagsForPostServerFn } from '#/server/tags.ts'
 
 type PostPageData = {
 	post: {
@@ -22,6 +32,7 @@ type PostPageData = {
 		likeCount: number
 		dislikeCount: number
 		commentCount: number
+		viewCount: number
 		publishedAt: Date | string | null
 		createdAt: Date | string
 		updatedAt: Date | string
@@ -39,68 +50,76 @@ export const Route = createFileRoute('/blog/$slug')({
 		if (!loaderData) return { meta: [{ title: 'Post Not Found' }] }
 		const data = loaderData as Record<string, unknown>
 		const post = data.post as Record<string, unknown>
+		const slug = String(post.slug ?? '')
+		const title = String(post.title ?? '')
+		const excerpt = String(post.excerpt ?? '')
+		const ogImageUrl = `${env.VITE_APP_URL}/api/og?title=${encodeURIComponent(title)}&type=article`
+		const postUrl = `${env.VITE_APP_URL}/blog/${slug}`
 		return {
 			meta: [
-				{ title: `${post.title} — ${USER.FULL_NAME}` },
-				{ name: 'description', content: String(post.excerpt ?? '') },
-				{ property: 'og:title', content: String(post.title ?? '') },
-				{ property: 'og:description', content: String(post.excerpt ?? '') },
+				{ title: `${title} — ${USER.FULL_NAME}` },
+				{ name: 'description', content: excerpt },
+				{ property: 'og:title', content: title },
+				{ property: 'og:description', content: excerpt },
 				{ property: 'og:type', content: 'article' },
+				{ property: 'og:url', content: postUrl },
+				{ property: 'og:site_name', content: SITE_NAME },
+				{ property: 'og:image', content: ogImageUrl },
+				{ property: 'article:published_time', content: String(post.publishedAt ?? '') },
+				{ property: 'article:modified_time', content: String(post.updatedAt ?? '') },
+				{ property: 'article:author', content: USER.FULL_NAME },
 				{ name: 'twitter:card', content: 'summary_large_image' },
+				{ name: 'twitter:image', content: ogImageUrl },
+			],
+			links: [{ rel: 'canonical', href: postUrl }],
+			scripts: [
+				{
+					type: 'application/ld+json',
+					children: JSON.stringify({
+						'@context': 'https://schema.org',
+						'@type': 'BlogPosting',
+						headline: title,
+						description: excerpt,
+						author: {
+							'@type': 'Person',
+							name: USER.FULL_NAME,
+							url: env.VITE_APP_URL,
+						},
+						datePublished: String(post.publishedAt ?? ''),
+						dateModified: String(post.updatedAt ?? ''),
+						url: postUrl,
+						image: ogImageUrl,
+					}),
+				},
 			],
 		}
 	},
 	loader: async ({ params }) => {
 		const result = await getPostBySlugServerFn({ data: { slug: params.slug } })
 		if (!result) throw notFound()
-		return result
+		const [tagsResult, savedResult] = await Promise.all([
+			getTagsForPostServerFn({ data: { postId: result.post.id } }),
+			getIsPostSavedServerFn({ data: { postId: result.post.id } }),
+		])
+		const tags = tagsResult.success ? tagsResult.data : []
+		const isSaved = savedResult.success ? savedResult.data : false
+		return { ...result, tags, isSaved }
 	},
 	notFoundComponent: PostNotFound,
 	pendingComponent: PostPageSkeleton,
 })
 
-function PostPageError({ error }: { error: Error }) {
+function PostPageError({ error }: Readonly<{ error: Error }>) {
 	return (
-		<main
-			style={{ maxWidth: '1200px', margin: '0 auto', padding: '8rem 1.5rem', textAlign: 'center' }}
-		>
-			<span
-				style={{
-					fontFamily: 'var(--font-mono)',
-					fontSize: 'clamp(4rem, 15vw, 10rem)',
-					fontWeight: 700,
-					lineHeight: 1,
-					color: 'var(--acid)',
-					opacity: 0.2,
-					display: 'block',
-					marginBottom: '2rem',
-				}}
-			>
+		<main className="mx-auto max-w-300 px-6 py-32 text-center">
+			<span className="mb-8 block font-mono text-[clamp(4rem,15vw,10rem)] font-bold leading-none text-acid opacity-20">
 				err
 			</span>
-			<p
-				style={{
-					fontFamily: 'var(--font-mono)',
-					fontSize: '0.75rem',
-					letterSpacing: '0.15em',
-					textTransform: 'uppercase',
-					color: 'var(--muted-foreground)',
-					marginBottom: '0.75rem',
-				}}
-			>
+			<p className="mb-3 font-mono text-[0.75rem] uppercase tracking-[0.15em] text-muted-foreground">
 				Something went wrong loading this post
 			</p>
 			{error.message && (
-				<p
-					style={{
-						fontFamily: 'var(--font-mono)',
-						fontSize: '0.65rem',
-						letterSpacing: '0.08em',
-						color: 'var(--muted-foreground)',
-						opacity: 0.6,
-						marginBottom: '2.5rem',
-					}}
-				>
+				<p className="mb-10 font-mono text-mono-sm tracking-mono-sm text-muted-foreground opacity-60">
 					{error.message}
 				</p>
 			)}
@@ -114,33 +133,11 @@ function PostPageError({ error }: { error: Error }) {
 
 function PostNotFound() {
 	return (
-		<main
-			style={{ maxWidth: '1200px', margin: '0 auto', padding: '8rem 1.5rem', textAlign: 'center' }}
-		>
-			<span
-				style={{
-					fontFamily: 'var(--font-mono)',
-					fontSize: 'clamp(4rem, 15vw, 10rem)',
-					fontWeight: 700,
-					lineHeight: 1,
-					color: 'var(--acid)',
-					opacity: 0.2,
-					display: 'block',
-					marginBottom: '2rem',
-				}}
-			>
+		<main className="mx-auto max-w-300 px-6 py-32 text-center">
+			<span className="mb-8 block font-mono text-[clamp(4rem,15vw,10rem)] font-bold leading-none text-acid opacity-20">
 				404
 			</span>
-			<p
-				style={{
-					fontFamily: 'var(--font-mono)',
-					fontSize: '0.75rem',
-					letterSpacing: '0.15em',
-					textTransform: 'uppercase',
-					color: 'var(--muted-foreground)',
-					marginBottom: '2rem',
-				}}
-			>
+			<p className="mb-8 font-mono text-[0.75rem] uppercase tracking-[0.15em] text-muted-foreground">
 				Post not found
 			</p>
 			<Link to="/blog" className="ghost-btn">
@@ -153,30 +150,16 @@ function PostNotFound() {
 
 function PostPageSkeleton() {
 	return (
-		<main style={{ maxWidth: '1200px', margin: '0 auto', padding: '6rem 1.5rem' }}>
-			<div style={{ maxWidth: '72ch', margin: '0 auto' }}>
-				<div
-					className="skeleton"
-					style={{ height: '1rem', width: '20%', borderRadius: '2px', marginBottom: '2rem' }}
-				/>
-				<div
-					className="skeleton"
-					style={{ height: '4rem', width: '90%', borderRadius: '2px', marginBottom: '1.5rem' }}
-				/>
-				<div
-					className="skeleton"
-					style={{ height: '1rem', width: '40%', borderRadius: '2px', marginBottom: '4rem' }}
-				/>
+		<main className="mx-auto max-w-300 px-6 py-24">
+			<div className="mx-auto max-w-[72ch]">
+				<div className="skeleton mb-8 h-4 w-1/5 rounded-sm" />
+				<div className="skeleton mb-6 h-16 w-[90%] rounded-sm" />
+				<div className="skeleton mb-16 h-4 w-2/5 rounded-sm" />
 				{[1, 2, 3, 4, 5].map((i) => (
 					<div
 						key={i}
-						className="skeleton"
-						style={{
-							height: '1rem',
-							width: `${60 + (i % 3) * 15}%`,
-							borderRadius: '2px',
-							marginBottom: '0.75rem',
-						}}
+						className="skeleton mb-3 h-4 rounded-sm"
+						style={{ width: `${60 + (i % 3) * 15}%` }}
 					/>
 				))}
 			</div>
@@ -184,9 +167,10 @@ function PostPageSkeleton() {
 	)
 }
 
-function TableOfContents({ entries }: { entries: TocEntry[] }) {
+function TableOfContents({ entries }: Readonly<{ entries: TocEntry[] }>) {
 	const [activeId, setActiveId] = useState<string>('')
 	const headingElementsRef = useRef<HTMLElement[]>([])
+	const lenis = useLenisInstance()
 
 	useEffect(() => {
 		headingElementsRef.current = entries
@@ -223,62 +207,35 @@ function TableOfContents({ entries }: { entries: TocEntry[] }) {
 	return (
 		<nav
 			aria-label="Table of contents"
-			style={{
-				position: 'sticky',
-				top: '80px',
-				maxHeight: 'calc(100vh - 120px)',
-				overflowY: 'auto',
-				paddingRight: '1rem',
-			}}
+			className="sticky top-20 max-h-[calc(100vh-120px)] overflow-y-auto pr-4"
 		>
-			<p
-				style={{
-					fontFamily: 'var(--font-mono)',
-					fontSize: '0.62rem',
-					letterSpacing: '0.2em',
-					textTransform: 'uppercase',
-					color: 'var(--muted-foreground)',
-					marginBottom: '1rem',
-				}}
-			>
+			<p className="mb-4 font-mono text-mono-xs uppercase tracking-mono-lg text-muted-foreground">
 				Contents
 			</p>
-			<ul
-				style={{
-					listStyle: 'none',
-					padding: 0,
-					margin: 0,
-					display: 'flex',
-					flexDirection: 'column',
-					gap: '0.5rem',
-				}}
-			>
+			<ul className="m-0 flex list-none flex-col gap-2 p-0">
 				{entries.map((entry) => {
 					const isActive = activeId === entry.id
 					return (
 						<li
 							key={entry.id}
-							style={{ paddingLeft: entry.depth > 2 ? `${(entry.depth - 2) * 0.75}rem` : '0' }}
+							style={
+								entry.depth > 2 ? { paddingLeft: `${(entry.depth - 2) * 0.75}rem` } : undefined
+							}
 						>
 							<a
 								href={`#${entry.id}`}
 								aria-current={isActive ? 'location' : undefined}
-								style={{
-									fontFamily: 'var(--font-mono)',
-									fontSize: '0.7rem',
-									letterSpacing: '0.04em',
-									color: isActive ? 'var(--acid)' : 'var(--muted-foreground)',
-									textDecoration: 'none',
-									display: 'block',
-									lineHeight: 1.4,
-									transition: 'color 150ms ease',
-									fontWeight: isActive ? 500 : 400,
-								}}
-								onMouseEnter={(e) => {
-									if (!isActive) e.currentTarget.style.color = 'var(--foreground)'
-								}}
-								onMouseLeave={(e) => {
-									if (!isActive) e.currentTarget.style.color = 'var(--muted-foreground)'
+								className={`block font-mono text-mono-lg leading-[1.4] tracking-[0.04em] no-underline transition-colors duration-150 ${
+									isActive
+										? 'font-medium text-acid'
+										: 'font-normal text-muted-foreground hover:text-foreground'
+								}`}
+								onClick={(e) => {
+									const target = document.getElementById(entry.id)
+									if (target && lenis) {
+										e.preventDefault()
+										lenis.scrollTo(target, { offset: -80 })
+									}
 								}}
 							>
 								{entry.text}
@@ -292,10 +249,12 @@ function TableOfContents({ entries }: { entries: TocEntry[] }) {
 }
 
 function PostPage() {
-	const loaderData = Route.useLoaderData() as PostPageData | undefined
+	const loaderData = Route.useLoaderData() as
+		| (PostPageData & { tags: Tag[]; isSaved: boolean })
+		| undefined
 	const { data: session } = authClient.useSession()
 	if (!loaderData) return null
-	const { post, html, readingTimeMinutes, toc, coverImageUrl } = loaderData
+	const { post, html, readingTimeMinutes, toc, coverImageUrl, tags, isSaved } = loaderData
 
 	const publishedDate = post.publishedAt
 		? new Date(post.publishedAt).toLocaleDateString('en-US', {
@@ -307,100 +266,64 @@ function PostPage() {
 
 	return (
 		<>
+			<PostViewTracker postId={post.id} />
 			<ScrollProgress />
-			<main style={{ maxWidth: '1200px', margin: '0 auto', padding: '6rem 1.5rem' }}>
+			<main className="mx-auto max-w-300 px-6 py-24">
 				<div
-					className={
-						toc.length > 0 ? 'grid grid-cols-1 gap-10 lg:grid-cols-[1fr_220px]' : 'grid grid-cols-1'
-					}
-					style={{
-						alignItems: 'start',
-					}}
+					className={`grid items-start ${
+						toc.length > 0 ? 'grid-cols-1 gap-10 lg:grid-cols-[1fr_220px]' : 'grid-cols-1'
+					}`}
 				>
 					<article>
-						<header style={{ marginBottom: '4rem' }}>
-							<Link
-								to="/blog"
-								style={{
-									fontFamily: 'var(--font-mono)',
-									fontSize: '0.65rem',
-									letterSpacing: '0.15em',
-									textTransform: 'uppercase',
-									color: 'var(--muted-foreground)',
-									textDecoration: 'none',
-									display: 'inline-flex',
-									alignItems: 'center',
-									gap: '0.5rem',
-									marginBottom: '2.5rem',
-								}}
-								onMouseEnter={(e) => {
-									;(e.currentTarget as HTMLElement).style.color = 'var(--acid)'
-								}}
-								onMouseLeave={(e) => {
-									;(e.currentTarget as HTMLElement).style.color = 'var(--muted-foreground)'
-								}}
-							>
-								<ArrowLeft aria-hidden="true" className="size-4" />
-								Writing
-							</Link>
+						<header className="mb-16">
+							<div className="mb-10 flex items-center justify-between">
+								<Link
+									to="/blog"
+									className="inline-flex items-center gap-2 font-mono text-mono-sm uppercase tracking-[0.15em] text-muted-foreground no-underline transition-colors duration-150 hover:text-acid"
+								>
+									<ArrowLeft aria-hidden="true" className="size-4" />
+									Writing
+								</Link>
+								<BookmarkButton
+									postId={post.id}
+									initialIsSaved={isSaved}
+									isAuthenticated={!!session?.user}
+								/>
+							</div>
 
-							<h1
-								style={{
-									fontFamily: 'var(--font-display)',
-									fontSize: 'clamp(2rem, 5vw, 3.5rem)',
-									fontWeight: 700,
-									letterSpacing: '-0.02em',
-									lineHeight: 1.05,
-									margin: '0 0 1.5rem',
-								}}
-							>
+							<h1 className="mb-6 mt-0 font-display text-[clamp(2rem,5vw,3.5rem)] font-bold leading-[1.05] tracking-display-tight">
 								{post.title}
 							</h1>
 
-							<p
-								style={{
-									fontSize: '1.05rem',
-									color: 'var(--muted-foreground)',
-									lineHeight: 1.65,
-									margin: '0 0 2rem',
-									maxWidth: '60ch',
-								}}
-							>
+							<p className="mb-8 mt-0 max-w-[60ch] text-[1.05rem] leading-[1.65] text-muted-foreground">
 								{post.excerpt}
 							</p>
 
-							<div
-								className="flex flex-wrap items-center gap-4 sm:gap-6"
-								style={{
-									fontFamily: 'var(--font-mono)',
-									fontSize: '0.65rem',
-									letterSpacing: '0.12em',
-									textTransform: 'uppercase',
-									color: 'var(--muted-foreground)',
-									borderTop: '1px solid var(--line-strong)',
-									borderBottom: '1px solid var(--line-strong)',
-									padding: '1rem 0',
-								}}
-							>
+							<div className="flex flex-wrap items-center gap-4 border-y border-line-strong py-4 font-mono text-mono-sm uppercase tracking-mono-md text-muted-foreground sm:gap-6">
 								{publishedDate && <span>{publishedDate}</span>}
 								<span>{readingTimeMinutes} min read</span>
-								<span style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-									<Heart aria-hidden="true" className="size-3.5" style={{ color: 'var(--acid)' }} />
+								<span className="flex items-center gap-1.5">
+									<Heart aria-hidden="true" className="size-3.5 text-acid" />
 									{post.likeCount}
 								</span>
+								<span className="flex items-center gap-1.5">
+									<Eye aria-hidden="true" className="size-3.5 text-acid" />
+									{post.viewCount}
+								</span>
 							</div>
+							{tags.length > 0 && (
+								<div className="mt-4 flex flex-wrap gap-2">
+									{tags.map((tag) => (
+										<TagBadge key={tag.id} tag={tag} asLink />
+									))}
+								</div>
+							)}
 							{coverImageUrl && (
-								<figure style={{ margin: '3rem 0 0' }}>
+								<figure className="m-0 mt-12">
 									<img
 										src={coverImageUrl}
 										alt={post.title}
-										style={{
-											width: '100%',
-											aspectRatio: '16 / 9',
-											objectFit: 'cover',
-											display: 'block',
-											border: '1px solid var(--line-strong)',
-										}}
+										className="block aspect-video w-full border border-line-strong object-cover"
 									/>
 								</figure>
 							)}
@@ -412,34 +335,34 @@ function PostPage() {
 							dangerouslySetInnerHTML={{ __html: html }}
 						/>
 
-						<div
-							id="reactions"
-							style={{
-								borderTop: '1px solid var(--line-strong)',
-								marginTop: '5rem',
-								paddingTop: '3rem',
-							}}
-						>
-							<ReactionBar
-								postId={post.id}
-								initialLikeCount={post.likeCount}
-								initialDislikeCount={post.dislikeCount}
-							/>
+						<div id="reactions" className="mt-20 border-t border-line-strong pt-12">
+							<ComponentErrorBoundary fallback={null}>
+								<ReactionBar
+									postId={post.id}
+									initialLikeCount={post.likeCount}
+									initialDislikeCount={post.dislikeCount}
+								/>
+							</ComponentErrorBoundary>
 						</div>
 
-						<div
-							id="comments"
-							style={{
-								borderTop: '1px solid var(--line-strong)',
-								marginTop: '4rem',
-								paddingTop: '3rem',
-							}}
-						>
-							<CommentsSection
-								postId={post.id}
-								currentUserId={session?.user?.id}
-								currentUserName={session?.user?.name}
-							/>
+						<div className="mt-12 border-t border-line-strong pt-8">
+							<ShareBar url={`${env.VITE_APP_URL}/blog/${post.slug}`} title={post.title} />
+						</div>
+
+						<div id="comments" className="mt-16 border-t border-line-strong pt-12">
+							<ComponentErrorBoundary
+								fallback={
+									<p className="font-mono text-mono-sm text-muted-foreground">
+										Comments are temporarily unavailable.
+									</p>
+								}
+							>
+								<CommentsSection
+									postId={post.id}
+									currentUserId={session?.user?.id}
+									currentUserName={session?.user?.name}
+								/>
+							</ComponentErrorBoundary>
 						</div>
 					</article>
 

@@ -49,84 +49,35 @@ function ForgotPasswordPage() {
 	}
 
 	return (
-		<main
-			style={{
-				minHeight: 'calc(100vh - 57px)',
-				display: 'flex',
-				alignItems: 'center',
-				justifyContent: 'center',
-				padding: '4rem 1.5rem',
-			}}
-		>
-			<div style={{ width: '100%', maxWidth: '420px' }}>
-				<div style={{ marginBottom: '3rem', textAlign: 'center' }}>
-					<Diamond
-						aria-hidden="true"
-						className="size-6 inline-block"
-						style={{ color: 'var(--acid)', marginBottom: '1.25rem' }}
-					/>
-					<h1
-						style={{
-							fontFamily: 'var(--font-display)',
-							fontSize: 'clamp(1.75rem, 5vw, 2.5rem)',
-							fontWeight: 700,
-							letterSpacing: '-0.02em',
-							lineHeight: 1.05,
-							margin: '0 0 0.5rem',
-						}}
-					>
+		<main className="flex min-h-[calc(100vh-57px)] items-center justify-center px-6 py-16">
+			<div className="w-full max-w-[420px]">
+				<div className="mb-12 text-center">
+					<Diamond aria-hidden="true" className="mb-5 inline-block size-6 text-acid" />
+					<h1 className="mb-2 font-display text-[clamp(1.75rem,5vw,2.5rem)] font-bold leading-[1.05] tracking-display-tight">
 						{AUTH_FORGOT_PASSWORD_TITLE}
 					</h1>
-					<p
-						style={{
-							fontFamily: 'var(--font-mono)',
-							fontSize: '0.68rem',
-							letterSpacing: '0.1em',
-							textTransform: 'uppercase',
-							color: 'var(--muted-foreground)',
-							margin: 0,
-						}}
-					>
+					<p className="m-0 font-mono text-mono-md uppercase tracking-mono text-muted-foreground">
 						{AUTH_FORGOT_PASSWORD_INSTRUCTION}
 					</p>
 				</div>
 
 				{submitted ? (
-					<div
-						style={{
-							border: '1px solid var(--acid-border)',
-							backgroundColor: 'var(--acid-dim)',
-							padding: '1rem 1.125rem',
-							fontFamily: 'var(--font-mono)',
-							fontSize: '0.7rem',
-							letterSpacing: '0.04em',
-							lineHeight: 1.5,
-						}}
-					>
+					<div className="border border-acid-border bg-acid-dim px-[1.125rem] py-4 font-mono text-mono-lg leading-[1.5] tracking-[0.04em]">
 						{AUTH_FORGOT_PASSWORD_SUCCESS}
-						<div style={{ marginTop: '1rem' }}>
+						<div className="mt-4">
 							<Link to="/sign-in" className="nav-item">
 								{AUTH_SIGN_IN_LABEL}
 							</Link>
 						</div>
 					</div>
 				) : (
-					<form
-						onSubmit={handleSubmit}
-						style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}
-					>
+					<form onSubmit={handleSubmit} className="flex flex-col gap-5">
 						{error && <ErrorBanner message={error} />}
 
-						<div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+						<div className="flex flex-col gap-2">
 							<label
 								htmlFor="forgot-email"
-								style={{
-									fontFamily: 'var(--font-mono)',
-									fontSize: '0.62rem',
-									letterSpacing: '0.14em',
-									textTransform: 'uppercase',
-									color: 'var(--muted-foreground)',
-								}}
+								className="font-mono text-mono-xs uppercase tracking-mono-md text-muted-foreground"
 							>
 								{AUTH_EMAIL_LABEL}
 							</label>
@@ -139,32 +90,14 @@ function ForgotPasswordPage() {
 								autoComplete="email"
 								required
 								disabled={loading}
-								style={{
-									width: '100%',
-									padding: '0.875rem 1rem',
-									background: 'transparent',
-									border: '1px solid var(--line-strong)',
-									color: 'var(--foreground)',
-									fontFamily: 'var(--font-sans)',
-									fontSize: '0.9375rem',
-									outline: 'none',
-									boxSizing: 'border-box',
-									opacity: loading ? 0.5 : 1,
-								}}
+								className="w-full border border-line-strong bg-transparent px-4 py-3.5 font-sans text-[0.9375rem] text-foreground outline-none disabled:opacity-50"
 							/>
 						</div>
 
 						<button
 							type="submit"
 							disabled={loading}
-							className="acid-btn"
-							style={{
-								width: '100%',
-								justifyContent: 'center',
-								marginTop: '0.25rem',
-								opacity: loading ? 0.6 : 1,
-								cursor: loading ? 'not-allowed' : 'pointer',
-							}}
+							className="acid-btn mt-1 w-full justify-center disabled:cursor-not-allowed disabled:opacity-60"
 						>
 							{AUTH_FORGOT_PASSWORD_SUBMIT}
 						</button>
@@ -179,16 +112,7 @@ function ErrorBanner({ message }: { message: string }) {
 	return (
 		<div
 			role="alert"
-			style={{
-				padding: '0.875rem 1rem',
-				border: '1px solid oklch(0.577 0.245 27.325)',
-				backgroundColor: 'rgba(220, 38, 38, 0.06)',
-				fontFamily: 'var(--font-mono)',
-				fontSize: '0.7rem',
-				letterSpacing: '0.04em',
-				color: 'oklch(0.637 0.237 25.331)',
-				lineHeight: 1.5,
-			}}
+			className="border border-[oklch(0.577_0.245_27.325)] bg-[rgba(220,38,38,0.06)] px-4 py-3.5 font-mono text-mono-lg leading-[1.5] tracking-[0.04em] text-[oklch(0.637_0.237_25.331)]"
 		>
 			{message}
 		</div>

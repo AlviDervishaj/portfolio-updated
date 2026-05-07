@@ -11,4 +11,6 @@ export const USER = {
 	CURRENT_COMPANY: 'TeamSystem',
 	SITE_NAME: 'shunger.dev',
 	FULL_SITE_URL: 'https://shunger.dev',
+	GITHUB_URL: 'https://github.com/AlviDervishaj',
+	X_URL: 'https://x.com/alvi_d1',
 } as const

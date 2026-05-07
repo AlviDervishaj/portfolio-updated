@@ -15,6 +15,7 @@ export type PostSummary = {
 	likeCount: number
 	dislikeCount: number
 	commentCount: number
+	viewCount: number
 	publishedAt: Date | null
 }
 
@@ -37,6 +38,7 @@ const POST_SUMMARY_COLUMNS = {
 	likeCount: posts.likeCount,
 	dislikeCount: posts.dislikeCount,
 	commentCount: posts.commentCount,
+	viewCount: posts.viewCount,
 	publishedAt: posts.publishedAt,
 } as const
 
@@ -128,7 +130,10 @@ export async function getAllPublishedSlugs(): Promise<string[]> {
 }
 
 export async function incrementPostViewCount(postId: string): Promise<void> {
-	await db.update(posts).set({ updatedAt: new Date() }).where(eq(posts.id, postId))
+	await db
+		.update(posts)
+		.set({ viewCount: sql<number>`${posts.viewCount} + 1` })
+		.where(eq(posts.id, postId))
 }
 
 export async function createPost(data: typeof posts.$inferInsert): Promise<PostDetail> {

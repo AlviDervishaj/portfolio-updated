@@ -10,6 +10,8 @@ const STATIC_ROUTES = [
 	{ path: '/about', changefreq: 'monthly', priority: '0.8' },
 	{ path: '/blog', changefreq: 'weekly', priority: '0.9' },
 	{ path: '/now', changefreq: 'weekly', priority: '0.7' },
+	{ path: '/projects', changefreq: 'monthly', priority: '0.8' },
+	{ path: '/contact', changefreq: 'monthly', priority: '0.6' },
 ]
 
 async function buildSitemap(): Promise<Response> {

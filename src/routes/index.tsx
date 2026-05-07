@@ -1,11 +1,24 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { ArrowRight, ArrowUpRight, ChevronDown, Diamond } from 'lucide-react'
+import { ArrowRight, ArrowUpRight, ChevronDown, Diamond, Github, Twitter } from 'lucide-react'
+import { NewsletterSignup } from '#/components/NewsletterSignup.tsx'
+import { SITE_DESCRIPTION } from '#/constants/seo'
 import { USER } from '#/constants/user'
+import { env } from '#/env.ts'
+import { useLenisInstance } from '#/hooks/useLenis'
 
 export const Route = createFileRoute('/')({
 	component: HomePage,
 	head: () => ({
-		meta: [{ title: `${USER.FULL_NAME} - ${USER.POSITION}` }],
+		meta: [
+			{ title: `${USER.FULL_NAME} — ${USER.POSITION}` },
+			{ name: 'description', content: SITE_DESCRIPTION },
+			{ property: 'og:title', content: `${USER.FULL_NAME} — ${USER.POSITION}` },
+			{ property: 'og:description', content: SITE_DESCRIPTION },
+			{ property: 'og:url', content: env.VITE_APP_URL },
+			{ property: 'og:image', content: `${env.VITE_APP_URL}/api/og?title=Portfolio&type=page` },
+			{ name: 'twitter:card', content: 'summary_large_image' },
+		],
+		links: [{ rel: 'canonical', href: env.VITE_APP_URL }],
 	}),
 })
 
@@ -66,148 +79,54 @@ const TICKER_TRACK_ITEMS = [
 ]
 
 function HeroSection() {
+	const lenis = useLenisInstance()
+
+	function scrollToWork() {
+		const target = document.getElementById('work')
+		if (target) lenis?.scrollTo(target)
+	}
+
 	return (
-		<section
-			className="relative flex flex-col justify-between overflow-hidden"
-			style={{
-				minHeight: 'calc(100vh - 56px)',
-				padding: '4rem 1.5rem 3rem',
-				maxWidth: '1200px',
-				margin: '0 auto',
-			}}
-		>
-			<div
-				className="animate-fade-in"
-				style={{
-					display: 'flex',
-					alignItems: 'center',
-					gap: '0.5rem',
-					fontFamily: 'var(--font-mono)',
-					fontSize: '0.68rem',
-					letterSpacing: '0.2em',
-					textTransform: 'uppercase',
-					color: 'var(--muted-foreground)',
-				}}
-			>
+		<section className="relative mx-auto flex min-h-[calc(100vh-56px)] max-w-[1200px] flex-col justify-between overflow-hidden px-6 pb-12 pt-16">
+			<div className="animate-fade-in flex items-center gap-2 font-mono text-mono-md uppercase tracking-mono-lg text-muted-foreground">
 				<span
-					style={{
-						width: '6px',
-						height: '6px',
-						borderRadius: '50%',
-						backgroundColor: 'var(--acid)',
-						display: 'inline-block',
-						boxShadow: '0 0 8px var(--acid)',
-					}}
-					className="animate-blink"
+					aria-hidden="true"
+					className="animate-blink inline-block size-1.5 rounded-full bg-acid shadow-[0_0_8px_var(--acid)]"
 				/>
 				Available for work
 			</div>
 
-			<div className="flex flex-col gap-6" style={{ marginTop: '3rem' }}>
-				<h1
-					className="animate-fade-up"
-					style={{
-						fontFamily: 'var(--font-display)',
-						fontSize: 'clamp(4.5rem, 16vw, 14rem)',
-						fontWeight: 700,
-						lineHeight: 0.9,
-						letterSpacing: '-0.03em',
-						margin: 0,
-					}}
-				>
+			<div className="mt-12 flex flex-col gap-6">
+				<h1 className="animate-fade-up m-0 font-display text-[clamp(4.5rem,16vw,14rem)] font-bold leading-[0.9] tracking-display-tighter">
 					ALVI
 					<br />
 					<span className="text-stroke animate-fade-up delay-100">DERVISHAJ</span>
 				</h1>
 
-				<div
-					className="animate-fade-up delay-200"
-					style={{
-						display: 'flex',
-						alignItems: 'center',
-						gap: '1.5rem',
-						flexWrap: 'wrap',
-					}}
-				>
-					<p
-						style={{
-							fontFamily: 'var(--font-mono)',
-							fontSize: 'clamp(0.75rem, 1.5vw, 0.9rem)',
-							letterSpacing: '0.06em',
-							textTransform: 'uppercase',
-							color: 'var(--muted-foreground)',
-							margin: 0,
-						}}
-					>
+				<div className="animate-fade-up delay-200 flex flex-wrap items-center gap-6">
+					<p className="m-0 font-mono text-[clamp(0.75rem,1.5vw,0.9rem)] uppercase tracking-[0.06em] text-muted-foreground">
 						Full-Stack Developer — Building for the web
 					</p>
-					<span
-						style={{
-							height: '1px',
-							flex: 1,
-							minWidth: '60px',
-							backgroundColor: 'var(--line-strong)',
-							display: 'block',
-						}}
-					/>
-					<span
-						style={{
-							fontFamily: 'var(--font-mono)',
-							fontSize: '0.68rem',
-							letterSpacing: '0.12em',
-							textTransform: 'uppercase',
-							color: 'var(--muted-foreground)',
-						}}
-					>
+					<span aria-hidden="true" className="block h-px flex-1 min-w-[60px] bg-line-strong" />
+					<span className="font-mono text-mono-md uppercase tracking-mono text-muted-foreground">
 						Est. 2021
 					</span>
 				</div>
 			</div>
 
-			<div
-				className="animate-fade-up delay-300"
-				style={{
-					display: 'flex',
-					gap: '1rem',
-					flexWrap: 'wrap',
-					marginTop: '4rem',
-				}}
-			>
-				<a href="#work" className="acid-btn">
+			<div className="animate-fade-up delay-300 mt-16 flex flex-wrap gap-4">
+				<button type="button" onClick={scrollToWork} className="acid-btn">
 					View work
 					<ChevronDown aria-hidden="true" className="size-4" />
-				</a>
+				</button>
 				<Link to="/about" className="ghost-btn">
 					About me
 					<ArrowRight aria-hidden="true" className="size-4" />
 				</Link>
 			</div>
 
-			<div
-				className="animate-fade-up delay-500 hidden sm:flex"
-				style={{
-					position: 'absolute',
-					bottom: '3rem',
-					right: '1.5rem',
-					writingMode: 'vertical-rl',
-					fontFamily: 'var(--font-mono)',
-					fontSize: '0.62rem',
-					letterSpacing: '0.2em',
-					textTransform: 'uppercase',
-					color: 'var(--muted-foreground)',
-					display: 'flex',
-					alignItems: 'center',
-					gap: '0.75rem',
-				}}
-			>
-				<span
-					style={{
-						width: '1px',
-						height: '60px',
-						backgroundColor: 'var(--line-strong)',
-						display: 'block',
-					}}
-				/>
+			<div className="animate-fade-up delay-500 absolute bottom-12 right-6 hidden items-center gap-3 font-mono text-mono-xs uppercase tracking-mono-lg text-muted-foreground [writing-mode:vertical-rl] sm:flex">
+				<span aria-hidden="true" className="block h-[60px] w-px bg-line-strong" />
 				Scroll
 			</div>
 		</section>
@@ -216,36 +135,16 @@ function HeroSection() {
 
 function TickerSection() {
 	return (
-		<div
-			style={{
-				borderTop: '1px solid var(--line-strong)',
-				borderBottom: '1px solid var(--line-strong)',
-				padding: '1rem 0',
-				backgroundColor: 'var(--acid)',
-				overflow: 'hidden',
-			}}
-		>
+		<div className="overflow-hidden border-y border-line-strong bg-acid py-4">
 			<div className="ticker-wrap">
-				<div className="ticker-track animate-marquee" style={{ gap: 0 }}>
+				<div className="ticker-track animate-marquee gap-0">
 					{TICKER_TRACK_ITEMS.map(({ id, item }) => (
 						<span
 							key={id}
-							style={{
-								fontFamily: 'var(--font-mono)',
-								fontSize: '0.7rem',
-								fontWeight: 500,
-								letterSpacing: '0.14em',
-								textTransform: 'uppercase',
-								color: 'var(--void)',
-								padding: '0 2rem',
-								whiteSpace: 'nowrap',
-								display: 'inline-flex',
-								alignItems: 'center',
-								gap: '2rem',
-							}}
+							className="inline-flex items-center gap-8 whitespace-nowrap px-8 font-mono text-mono-lg font-medium uppercase tracking-mono-md text-on-acid"
 						>
 							{item}
-							<Diamond aria-hidden="true" className="size-2.5" style={{ opacity: 0.4 }} />
+							<Diamond aria-hidden="true" className="size-2.5 opacity-40" />
 						</span>
 					))}
 				</div>
@@ -256,35 +155,12 @@ function TickerSection() {
 
 function WorkSection() {
 	return (
-		<section id="work" style={{ maxWidth: '1200px', margin: '0 auto', padding: '8rem 1.5rem' }}>
-			<div
-				className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between"
-				style={{
-					borderBottom: '1px solid var(--line-strong)',
-					paddingBottom: '2rem',
-					marginBottom: '0',
-				}}
-			>
-				<h2
-					style={{
-						fontFamily: 'var(--font-display)',
-						fontSize: 'clamp(2rem, 5vw, 3.5rem)',
-						fontWeight: 700,
-						letterSpacing: '-0.02em',
-						margin: 0,
-					}}
-				>
+		<section id="work" className="mx-auto max-w-[1200px] px-6 py-32">
+			<div className="flex flex-col gap-3 border-b border-line-strong pb-8 sm:flex-row sm:items-end sm:justify-between">
+				<h2 className="m-0 font-display text-[clamp(2rem,5vw,3.5rem)] font-bold tracking-display-tight">
 					Selected Work
 				</h2>
-				<span
-					style={{
-						fontFamily: 'var(--font-mono)',
-						fontSize: '0.68rem',
-						letterSpacing: '0.14em',
-						textTransform: 'uppercase',
-						color: 'var(--muted-foreground)',
-					}}
-				>
+				<span className="font-mono text-mono-md uppercase tracking-mono-md text-muted-foreground">
 					{FEATURED_PROJECTS.length} projects
 				</span>
 			</div>
@@ -294,54 +170,19 @@ function WorkSection() {
 					<a
 						key={project.number}
 						href={project.url}
-						className="project-row"
-						style={{
-							display: 'block',
-							padding: '2.5rem 0',
-							textDecoration: 'none',
-						}}
+						className="project-row block py-10 no-underline"
 					>
-						<div
-							className="grid grid-cols-1 gap-4 sm:grid-cols-[3rem_1fr_4rem]"
-							style={{
-								alignItems: 'start',
-							}}
-						>
-							<span
-								style={{
-									fontFamily: 'var(--font-mono)',
-									fontSize: '0.72rem',
-									color: 'var(--muted-foreground)',
-									letterSpacing: '0.1em',
-									paddingTop: '0.5rem',
-									paddingLeft: '0.75rem',
-								}}
-							>
+						<div className="grid grid-cols-1 items-start gap-4 sm:grid-cols-[3rem_1fr_4rem]">
+							<span className="pl-3 pt-2 font-mono text-[0.72rem] tracking-mono text-muted-foreground">
 								{project.number}
 							</span>
 
-							<div className="flex flex-col gap-3 min-w-0">
-								<h3
-									style={{
-										fontFamily: 'var(--font-display)',
-										fontSize: 'clamp(1.5rem, 3.5vw, 2.5rem)',
-										fontWeight: 700,
-										letterSpacing: '-0.02em',
-										margin: 0,
-										lineHeight: 1,
-									}}
-								>
+							<div className="flex min-w-0 flex-col gap-3">
+								<h3 className="m-0 font-display text-[clamp(1.5rem,3.5vw,2.5rem)] font-bold leading-none tracking-display-tight">
 									{project.title}
 								</h3>
 
-								<p
-									style={{
-										fontSize: '0.875rem',
-										color: 'var(--muted-foreground)',
-										margin: 0,
-										maxWidth: '60ch',
-									}}
-								>
+								<p className="m-0 max-w-[60ch] text-sm text-muted-foreground">
 									{project.description}
 								</p>
 
@@ -349,15 +190,7 @@ function WorkSection() {
 									{project.tags.map((tag) => (
 										<span
 											key={tag}
-											style={{
-												fontFamily: 'var(--font-mono)',
-												fontSize: '0.62rem',
-												letterSpacing: '0.12em',
-												textTransform: 'uppercase',
-												color: 'var(--muted-foreground)',
-												border: '1px solid var(--line-strong)',
-												padding: '0.25rem 0.6rem',
-											}}
+											className="border border-line-strong px-2.5 py-1 font-mono text-mono-xs uppercase tracking-mono-md text-muted-foreground"
 										>
 											{tag}
 										</span>
@@ -367,12 +200,7 @@ function WorkSection() {
 
 							<ArrowUpRight
 								aria-hidden="true"
-								className="project-arrow hidden size-6 sm:block"
-								style={{
-									color: 'var(--acid)',
-									paddingTop: '0.25rem',
-									paddingRight: '1.5rem',
-								}}
+								className="project-arrow hidden size-6 pr-6 pt-1 text-acid sm:block"
 							/>
 						</div>
 					</a>
@@ -384,26 +212,9 @@ function WorkSection() {
 
 function AboutTeaser() {
 	return (
-		<section
-			style={{
-				borderTop: '1px solid var(--line-strong)',
-				maxWidth: '1200px',
-				margin: '0 auto',
-				padding: '8rem 1.5rem',
-			}}
-		>
+		<section className="mx-auto max-w-[1200px] border-t border-line-strong px-6 py-32">
 			<div className="flex flex-col gap-10 sm:flex-row sm:items-end sm:justify-between">
-				<blockquote
-					style={{
-						fontFamily: 'var(--font-display)',
-						fontSize: 'clamp(1.75rem, 4vw, 3rem)',
-						fontWeight: 700,
-						letterSpacing: '-0.02em',
-						lineHeight: 1.15,
-						margin: 0,
-						maxWidth: '22ch',
-					}}
-				>
+				<blockquote className="m-0 max-w-[22ch] font-display text-[clamp(1.75rem,4vw,3rem)] font-bold leading-[1.15] tracking-display-tight">
 					"I write code that ships, scales, and doesn't embarrass me six months later."
 				</blockquote>
 
@@ -418,62 +229,93 @@ function AboutTeaser() {
 
 function ContactSection() {
 	return (
-		<section
-			style={{
-				borderTop: '1px solid var(--line-strong)',
-			}}
-		>
-			<div
-				style={{
-					maxWidth: '1200px',
-					margin: '0 auto',
-					padding: '8rem 1.5rem',
-				}}
-			>
-				<div
-					style={{
-						fontFamily: 'var(--font-mono)',
-						fontSize: '0.68rem',
-						letterSpacing: '0.2em',
-						textTransform: 'uppercase',
-						color: 'var(--acid)',
-						marginBottom: '2rem',
-					}}
-				>
-					— Let's talk
+		<section className="relative overflow-hidden border-t border-line-strong">
+			<span
+				aria-hidden="true"
+				className="absolute right-6 top-0 block h-24 w-px bg-acid opacity-55"
+			/>
+
+			<div className="mx-auto max-w-[1200px] px-6 py-36">
+				<div className="mb-10 inline-flex items-center gap-3 font-mono text-mono-lg uppercase tracking-[0.22em] text-muted-foreground">
+					<span aria-hidden="true" className="inline-block size-[0.55rem] rotate-45 bg-acid" />
+					Let's talk
+					<span aria-hidden="true" className="inline-block h-px w-10 bg-line-strong" />
 				</div>
 
-				<h2
-					style={{
-						fontFamily: 'var(--font-display)',
-						fontSize: 'clamp(3rem, 10vw, 9rem)',
-						fontWeight: 700,
-						letterSpacing: '-0.03em',
-						lineHeight: 0.88,
-						margin: '0 0 3rem',
-						color: 'var(--foreground)',
-					}}
-				>
+				<h2 className="mb-8 mt-0 font-display text-[clamp(3rem,10vw,9rem)] font-bold leading-[0.88] tracking-display-tighter text-foreground">
 					HAVE AN
 					<br />
-					<span
-						style={{
-							WebkitTextStroke: '2px var(--foreground)',
-							color: 'transparent',
-						}}
-					>
-						IDEA?
-					</span>
+					<span className="text-stroke-heavy">IDEA?</span>
 				</h2>
 
-				<a
-					href={`mailto:${USER.EMAIL}`}
-					className="acid-btn w-full justify-center sm:w-auto"
-					style={{ fontSize: '0.75rem' }}
-				>
-					{USER.EMAIL}
-					<ArrowUpRight aria-hidden="true" className="size-4" />
-				</a>
+				<p className="mb-14 mt-0 max-w-[38ch] font-sans text-[clamp(1rem,1.6vw,1.15rem)] leading-[1.55] text-muted-foreground">
+					Open to freelance projects, full-stack collaborations, and full-time roles. Drop a line —
+					I read everything.
+				</p>
+
+				<div className="mb-16 flex flex-wrap items-center gap-3">
+					<a
+						href={`mailto:${USER.EMAIL}`}
+						className="acid-btn w-full justify-center text-[0.75rem] sm:w-auto"
+					>
+						{USER.EMAIL}
+						<ArrowUpRight aria-hidden="true" className="size-4" />
+					</a>
+
+					<a
+						href={USER.GITHUB_URL}
+						target="_blank"
+						rel="noreferrer"
+						aria-label="GitHub"
+						className="ghost-btn justify-center px-[1.1rem] py-3.5"
+					>
+						<Github aria-hidden="true" className="size-4" />
+					</a>
+
+					<a
+						href={USER.X_URL}
+						target="_blank"
+						rel="noreferrer"
+						aria-label="X (Twitter)"
+						className="ghost-btn justify-center px-[1.1rem] py-3.5"
+					>
+						<Twitter aria-hidden="true" className="size-4" />
+					</a>
+				</div>
+
+				<div className="flex flex-wrap items-center gap-6 border-t border-line-strong pt-8 font-mono text-mono-md uppercase tracking-mono-md text-muted-foreground">
+					<span className="inline-flex items-center gap-2">
+						<span aria-hidden="true" className="relative inline-block size-2 rounded-full bg-acid">
+							<span
+								aria-hidden="true"
+								className="animate-blink-slow absolute inset-0 rounded-full bg-acid opacity-55"
+							/>
+						</span>
+						Available for new work
+					</span>
+					<span aria-hidden="true">·</span>
+					<span>{USER.LOCATION}</span>
+					<span aria-hidden="true">·</span>
+					<span>Replies within 24h</span>
+				</div>
+			</div>
+		</section>
+	)
+}
+
+function NewsletterSection() {
+	return (
+		<section className="border-t border-line-strong">
+			<div className="mx-auto max-w-[1200px] px-6 py-24">
+				<div className="max-w-[480px]">
+					<p className="mb-2 font-mono text-mono-xs uppercase tracking-mono-lg text-muted-foreground">
+						Stay updated
+					</p>
+					<p className="mb-6 font-display text-[clamp(1.5rem,4vw,2.5rem)] font-bold tracking-display-tight">
+						Get notified when I publish new posts.
+					</p>
+					<NewsletterSignup compact />
+				</div>
 			</div>
 		</section>
 	)
@@ -486,6 +328,7 @@ function HomePage() {
 			<TickerSection />
 			<WorkSection />
 			<AboutTeaser />
+			<NewsletterSection />
 			<ContactSection />
 		</>
 	)

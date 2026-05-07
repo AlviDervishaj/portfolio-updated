@@ -52,102 +52,49 @@ function AuthPage() {
 	}
 
 	return (
-		<main
-			style={{
-				minHeight: 'calc(100vh - 57px)',
-				display: 'flex',
-				alignItems: 'center',
-				justifyContent: 'center',
-				padding: '4rem 1.5rem',
-			}}
-		>
-			<div style={{ width: '100%', maxWidth: '420px' }}>
-				<div style={{ marginBottom: '3rem', textAlign: 'center' }}>
-					<Diamond
-						aria-hidden="true"
-						className="size-6 inline-block"
-						style={{ color: 'var(--acid)', marginBottom: '1.25rem' }}
-					/>
-					<h1
-						style={{
-							fontFamily: 'var(--font-display)',
-							fontSize: 'clamp(1.75rem, 5vw, 2.5rem)',
-							fontWeight: 700,
-							letterSpacing: '-0.02em',
-							lineHeight: 1.05,
-							margin: '0 0 0.5rem',
-						}}
-					>
+		<main className="flex min-h-[calc(100vh-57px)] items-center justify-center px-6 py-16">
+			<div className="w-full max-w-[420px]">
+				<div className="mb-12 text-center">
+					<Diamond aria-hidden="true" className="mb-5 inline-block size-6 text-acid" />
+					<h1 className="mb-2 font-display text-[clamp(1.75rem,5vw,2.5rem)] font-bold leading-[1.05] tracking-display-tight">
 						{tab === 'sign-in' ? 'Welcome back.' : 'Join the site.'}
 					</h1>
-					<p
-						style={{
-							fontFamily: 'var(--font-mono)',
-							fontSize: '0.68rem',
-							letterSpacing: '0.1em',
-							textTransform: 'uppercase',
-							color: 'var(--muted-foreground)',
-							margin: 0,
-						}}
-					>
+					<p className="m-0 font-mono text-mono-md uppercase tracking-mono text-muted-foreground">
 						{tab === 'sign-in'
 							? 'Sign in to leave comments and reactions'
 							: 'Create an account to join the discussion'}
 					</p>
 				</div>
 				{showPasswordResetSuccess && (
-					<div
-						style={{
-							border: '1px solid var(--acid-border)',
-							backgroundColor: 'var(--acid-dim)',
-							padding: '0.875rem 1rem',
-							marginBottom: '1.5rem',
-							fontFamily: 'var(--font-mono)',
-							fontSize: '0.7rem',
-							letterSpacing: '0.04em',
-							lineHeight: 1.5,
-						}}
-					>
+					<div className="mb-6 border border-acid-border bg-acid-dim px-4 py-3.5 font-mono text-mono-lg leading-[1.5] tracking-[0.04em]">
 						{AUTH_RESET_PASSWORD_SUCCESS}
 					</div>
 				)}
 
 				<div
-					style={{
-						display: 'grid',
-						gridTemplateColumns: '1fr 1fr',
-						borderBottom: '1px solid var(--line-strong)',
-						marginBottom: '2rem',
-					}}
+					className="mb-8 grid grid-cols-2 border-b border-line-strong"
 					role="tablist"
 					aria-label="Authentication mode"
 				>
-					{TABS.map(({ id, label }) => (
-						<button
-							key={id}
-							type="button"
-							role="tab"
-							aria-selected={tab === id}
-							onClick={() => setTab(id)}
-							style={{
-								fontFamily: 'var(--font-mono)',
-								fontSize: '0.65rem',
-								letterSpacing: '0.14em',
-								textTransform: 'uppercase',
-								padding: '0.875rem 0',
-								background: 'none',
-								border: 'none',
-								borderBottom: '2px solid',
-								borderColor: tab === id ? 'var(--acid)' : 'transparent',
-								color: tab === id ? 'var(--foreground)' : 'var(--muted-foreground)',
-								cursor: 'pointer',
-								transition: 'color 150ms ease, border-color 150ms ease',
-								marginBottom: '-1px',
-							}}
-						>
-							{label}
-						</button>
-					))}
+					{TABS.map(({ id, label }) => {
+						const active = tab === id
+						return (
+							<button
+								key={id}
+								type="button"
+								role="tab"
+								aria-selected={active}
+								onClick={() => setTab(id)}
+								className={`-mb-px cursor-pointer border-none border-b-2 bg-transparent py-3.5 font-mono text-mono-sm uppercase tracking-mono-md transition-colors duration-150 ${
+									active
+										? 'border-acid text-foreground'
+										: 'border-transparent text-muted-foreground'
+								}`}
+							>
+								{label}
+							</button>
+						)
+					})}
 				</div>
 
 				{tab === 'sign-in' ? (
@@ -187,10 +134,7 @@ function SignInForm({ onSuccess }: SignInFormProps) {
 	}
 
 	return (
-		<form
-			onSubmit={handleSubmit}
-			style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}
-		>
+		<form onSubmit={handleSubmit} className="flex flex-col gap-5">
 			{error && <ErrorBanner message={error} />}
 
 			<Field
@@ -216,11 +160,7 @@ function SignInForm({ onSuccess }: SignInFormProps) {
 				required
 				disabled={loading}
 			/>
-			<a
-				href="/forgot-password"
-				className="nav-item"
-				style={{ width: 'fit-content', marginTop: '-0.5rem' }}
-			>
+			<a href="/forgot-password" className="nav-item -mt-2 w-fit">
 				{AUTH_FORGOT_PASSWORD_LABEL}
 			</a>
 
@@ -272,10 +212,7 @@ function SignUpForm({ onSuccess }: SignUpFormProps) {
 	}
 
 	return (
-		<form
-			onSubmit={handleSubmit}
-			style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}
-		>
+		<form onSubmit={handleSubmit} className="flex flex-col gap-5">
 			{error && <ErrorBanner message={error} />}
 
 			<Field
@@ -345,20 +282,11 @@ function Field({
 	disabled,
 	hint,
 }: FieldProps) {
-	const [focused, setFocused] = useState(false)
-
 	return (
-		<div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+		<div className="flex flex-col gap-2">
 			<label
 				htmlFor={id}
-				style={{
-					fontFamily: 'var(--font-mono)',
-					fontSize: '0.62rem',
-					letterSpacing: '0.14em',
-					textTransform: 'uppercase',
-					color: focused ? 'var(--foreground)' : 'var(--muted-foreground)',
-					transition: 'color 150ms ease',
-				}}
+				className="font-mono text-mono-xs uppercase tracking-mono-md text-muted-foreground transition-colors duration-150 has-[+input:focus]:text-foreground"
 			>
 				{label}
 			</label>
@@ -371,32 +299,10 @@ function Field({
 				autoComplete={autoComplete}
 				required={required}
 				disabled={disabled}
-				onFocus={() => setFocused(true)}
-				onBlur={() => setFocused(false)}
-				style={{
-					width: '100%',
-					padding: '0.875rem 1rem',
-					background: 'transparent',
-					border: '1px solid',
-					borderColor: focused ? 'var(--acid-border)' : 'var(--line-strong)',
-					color: 'var(--foreground)',
-					fontFamily: 'var(--font-sans)',
-					fontSize: '0.9375rem',
-					outline: 'none',
-					transition: 'border-color 150ms ease',
-					boxSizing: 'border-box',
-					opacity: disabled ? 0.5 : 1,
-				}}
+				className="w-full border border-line-strong bg-transparent px-4 py-3.5 font-sans text-[0.9375rem] text-foreground outline-none transition-colors duration-150 focus:border-acid-border disabled:opacity-50"
 			/>
 			{hint && (
-				<span
-					style={{
-						fontFamily: 'var(--font-mono)',
-						fontSize: '0.6rem',
-						letterSpacing: '0.08em',
-						color: 'var(--muted-foreground)',
-					}}
-				>
+				<span className="font-mono text-[0.6rem] tracking-mono-sm text-muted-foreground">
 					{hint}
 				</span>
 			)}
@@ -409,14 +315,7 @@ function SubmitButton({ label, loading }: { label: string; loading: boolean }) {
 		<button
 			type="submit"
 			disabled={loading}
-			className="acid-btn"
-			style={{
-				width: '100%',
-				justifyContent: 'center',
-				marginTop: '0.25rem',
-				opacity: loading ? 0.6 : 1,
-				cursor: loading ? 'not-allowed' : 'pointer',
-			}}
+			className="acid-btn mt-1 w-full justify-center disabled:cursor-not-allowed disabled:opacity-60"
 		>
 			{loading ? (
 				<>
@@ -435,15 +334,8 @@ function LoadingDot({ delay = 0 }: { delay?: number }) {
 	return (
 		<span
 			aria-hidden="true"
-			style={{
-				display: 'inline-block',
-				width: '4px',
-				height: '4px',
-				borderRadius: '50%',
-				backgroundColor: 'currentColor',
-				animation: 'blink 1s ease-in-out infinite',
-				animationDelay: `${delay}s`,
-			}}
+			className="inline-block size-1 rounded-full bg-current animate-blink-dot"
+			style={{ animationDelay: `${delay}s` }}
 		/>
 	)
 }
@@ -452,16 +344,7 @@ function ErrorBanner({ message }: { message: string }) {
 	return (
 		<div
 			role="alert"
-			style={{
-				padding: '0.875rem 1rem',
-				border: '1px solid oklch(0.577 0.245 27.325)',
-				backgroundColor: 'rgba(220, 38, 38, 0.06)',
-				fontFamily: 'var(--font-mono)',
-				fontSize: '0.7rem',
-				letterSpacing: '0.04em',
-				color: 'oklch(0.637 0.237 25.331)',
-				lineHeight: 1.5,
-			}}
+			className="border border-[oklch(0.577_0.245_27.325)] bg-[rgba(220,38,38,0.06)] px-4 py-3.5 font-mono text-mono-lg leading-[1.5] tracking-[0.04em] text-[oklch(0.637_0.237_25.331)]"
 		>
 			{message}
 		</div>
