@@ -2,9 +2,14 @@
 
 import { createServerFn } from '@tanstack/react-start'
 import { z } from 'zod'
+import {
+	COVER_IMAGE_FORMAT,
+	COVER_IMAGE_QUALITY,
+	COVER_IMAGE_WIDTH,
+} from '#/constants/imageTransform.ts'
 import { DEFAULT_PAGE_SIZE } from '#/constants/pagination.ts'
 import { renderMdx } from '#/lib/mdx.ts'
-import { getPublicUrl } from '#/lib/storage.ts'
+import { getOptimizedImageUrl } from '#/lib/storage.ts'
 import type { PostSortStrategy } from '#/services/posts.ts'
 import {
 	getAllPublishedSlugs,
@@ -34,7 +39,14 @@ export const getPostBySlugServerFn = createServerFn({ method: 'GET' })
 		const post = await getPublishedPostBySlug(data.slug)
 		if (!post) return null
 		const { html, readingTimeMinutes, toc } = await renderMdx(post.content)
-		const coverImageUrl = post.coverImageKey ? getPublicUrl(post.coverImageKey) : null
+		const coverImageUrl = post.coverImageKey
+			? getOptimizedImageUrl(post.coverImageKey, {
+					width: COVER_IMAGE_WIDTH,
+					quality: COVER_IMAGE_QUALITY,
+					format: COVER_IMAGE_FORMAT,
+					fit: 'cover',
+				})
+			: null
 		return { post, html, readingTimeMinutes, toc, coverImageUrl }
 	})
 

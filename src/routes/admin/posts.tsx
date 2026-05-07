@@ -1,25 +1,22 @@
-import { createFileRoute, Link } from '@tanstack/react-router'
-import { ArrowRight, Check, RefreshCw, Upload } from 'lucide-react'
+import { createFileRoute } from '@tanstack/react-router'
+import { Check, ExternalLink, Link2Off, RefreshCw, Upload } from 'lucide-react'
 import { useCallback, useEffect, useState } from 'react'
-import { USER } from '#/constants/user'
-import { authClient } from '#/lib/auth-client.ts'
 import {
 	adminCreatePostServerFn,
 	adminGetAllPostsServerFn,
 	adminGetPresignedUploadUrlServerFn,
-	adminHasAccessServerFn,
 	adminPublishPostServerFn,
 	adminUnpublishPostServerFn,
 	adminUpdatePostServerFn,
 } from '#/server/admin.ts'
+import {
+	adminGenerateDraftTokenServerFn,
+	adminGetDraftTokenServerFn,
+	adminRevokeDraftTokenServerFn,
+} from '#/server/draftTokens.ts'
 
-export const Route = createFileRoute('/admin')({
-	component: AdminPage,
-	head: () => ({ meta: [{ title: `Admin — ${USER.FULL_NAME}` }] }),
-	loader: async () => {
-		const isAuthorized = await adminHasAccessServerFn()
-		return { isAuthorized }
-	},
+export const Route = createFileRoute('/admin/posts')({
+	component: AdminPostsPage,
 })
 
 type EditorMode = 'new' | 'edit'
@@ -54,6 +51,9 @@ const INPUT_CLASS =
 
 const LABEL_CLASS =
 	'mb-2 block font-mono text-mono-xs uppercase tracking-mono-md text-muted-foreground'
+
+const MAX_CONTENT_WARN_THRESHOLD = 180_000
+const MAX_CONTENT_LENGTH = 200_000
 
 function PostListSidebar({
 	posts,
@@ -134,19 +134,17 @@ function PostListSidebar({
 	)
 }
 
-function AdminPage() {
-	const { isAuthorized } = Route.useLoaderData()
-	const { isPending } = authClient.useSession()
+function AdminPostsPage() {
 	const [mode, setMode] = useState<EditorMode>('new')
 	const [editPostId, setEditPostId] = useState<string | null>(null)
 	const [form, setForm] = useState<PostForm>(EMPTY_FORM)
 	const [submitting, setSubmitting] = useState(false)
 	const [error, setError] = useState<string | null>(null)
 	const [success, setSuccess] = useState<string | null>(null)
-	const [_previewHtml, setPreviewHtml] = useState<string | null>(null)
 	const [uploadingImage, setUploadingImage] = useState(false)
 	const [allPostsRaw, setAllPostsRaw] = useState<Record<string, unknown>[]>([])
 	const [loadingPosts, setLoadingPosts] = useState(true)
+	const [previewUrl, setPreviewUrl] = useState<string | null>(null)
 
 	const sidebarPosts: AdminPostItem[] = allPostsRaw.map((p) => ({
 		id: String(p.id),
@@ -170,17 +168,15 @@ function AdminPage() {
 	}, [])
 
 	useEffect(() => {
-		if (isAuthorized) {
-			fetchAllPosts()
-		}
-	}, [isAuthorized, fetchAllPosts])
+		fetchAllPosts()
+	}, [fetchAllPosts])
 
-	function handleSelectPost(post: AdminPostItem) {
+	async function handleSelectPost(post: AdminPostItem) {
 		setMode('edit')
 		setEditPostId(post.id)
 		setError(null)
 		setSuccess(null)
-		setPreviewHtml(null)
+		setPreviewUrl(null)
 
 		const matched = allPostsRaw.find((p) => p.id === post.id)
 		if (!matched) return
@@ -192,28 +188,34 @@ function AdminPage() {
 			content: String(matched.content ?? ''),
 			coverImageKey: String(matched.coverImageKey ?? ''),
 		})
+
+		const tokenResult = await adminGetDraftTokenServerFn({ data: { postId: post.id } })
+		if (tokenResult.success && tokenResult.data) {
+			setPreviewUrl(`${window.location.origin}/preview/${tokenResult.data.token}`)
+		}
 	}
 
-	if (isPending) {
-		return (
-			<main className="mx-auto max-w-[1200px] px-6 py-24">
-				<div className="skeleton h-8 w-[30%] rounded-sm" />
-			</main>
-		)
+	async function handleGetPreviewLink() {
+		if (!editPostId) return
+		const result = await adminGenerateDraftTokenServerFn({ data: { postId: editPostId } })
+		if (result.success) {
+			setPreviewUrl(result.data.previewUrl)
+			await navigator.clipboard.writeText(result.data.previewUrl)
+			setSuccess('Preview link copied to clipboard.')
+		} else {
+			setError(result.error)
+		}
 	}
 
-	if (!isAuthorized) {
-		return (
-			<main className="mx-auto max-w-[1200px] px-6 py-24 text-center">
-				<p className="mb-8 font-mono text-[0.75rem] uppercase tracking-mono text-muted-foreground">
-					Access denied
-				</p>
-				<Link to="/sign-in" className="acid-btn">
-					Sign in
-					<ArrowRight aria-hidden="true" className="size-4" />
-				</Link>
-			</main>
-		)
+	async function handleRevokePreviewLink() {
+		if (!editPostId) return
+		const result = await adminRevokeDraftTokenServerFn({ data: { postId: editPostId } })
+		if (result.success) {
+			setPreviewUrl(null)
+			setSuccess('Preview link revoked.')
+		} else {
+			setError(result.error)
+		}
 	}
 
 	function setField<K extends keyof PostForm>(key: K, value: PostForm[K]) {
@@ -226,9 +228,9 @@ function AdminPage() {
 		setForm(EMPTY_FORM)
 		setMode('new')
 		setEditPostId(null)
-		setPreviewHtml(null)
 		setError(null)
 		setSuccess(null)
+		setPreviewUrl(null)
 	}
 
 	async function handleSubmit(e: React.FormEvent) {
@@ -341,173 +343,200 @@ function AdminPage() {
 	}
 
 	return (
-		<main className="mx-auto max-w-[1400px] px-6 py-24">
-			<div className="grid grid-cols-1 items-start gap-8 md:grid-cols-[280px_1fr] md:gap-10">
-				<PostListSidebar
-					posts={sidebarPosts}
-					loading={loadingPosts}
-					activePostId={editPostId}
-					onSelectPost={handleSelectPost}
-					onRefresh={fetchAllPosts}
-				/>
+		<div className="grid grid-cols-1 items-start gap-8 md:grid-cols-[280px_1fr] md:gap-10">
+			<PostListSidebar
+				posts={sidebarPosts}
+				loading={loadingPosts}
+				activePostId={editPostId}
+				onSelectPost={handleSelectPost}
+				onRefresh={fetchAllPosts}
+			/>
 
-				<div>
-					<div className="mb-12 flex flex-col gap-4 border-b border-line-strong pb-6 sm:flex-row sm:items-center sm:justify-between">
-						<h1 className="m-0 font-display text-[clamp(1.5rem,4vw,2.5rem)] font-bold tracking-display-tight">
-							{mode === 'new' ? 'New Post' : 'Edit Post'}
-						</h1>
+			<div>
+				<div className="mb-12 flex flex-col gap-4 border-b border-line-strong pb-6 sm:flex-row sm:items-center sm:justify-between">
+					<h2 className="m-0 font-display text-[clamp(1.5rem,4vw,2.5rem)] font-bold tracking-display-tight">
+						{mode === 'new' ? 'New Post' : 'Edit Post'}
+					</h2>
 
-						<div className="flex flex-wrap items-center gap-2 sm:gap-3">
-							{mode === 'edit' && (
-								<>
-									<button
-										type="button"
-										onClick={handlePublish}
-										disabled={submitting}
-										className="acid-btn px-4 py-2 text-mono-sm"
-									>
-										<Upload aria-hidden="true" className="size-4" />
-										Publish
-									</button>
-									<button
-										type="button"
-										onClick={handleUnpublish}
-										disabled={submitting}
-										className="ghost-btn px-4 py-2 text-mono-sm"
-									>
-										Move to draft
-									</button>
-								</>
-							)}
-							{mode === 'edit' && (
+					<div className="flex flex-wrap items-center gap-2 sm:gap-3">
+						{mode === 'edit' && (
+							<>
 								<button
 									type="button"
-									onClick={resetForm}
+									onClick={handlePublish}
+									disabled={submitting}
+									className="acid-btn px-4 py-2 text-mono-sm"
+								>
+									<Upload aria-hidden="true" className="size-4" />
+									Publish
+								</button>
+								<button
+									type="button"
+									onClick={handleUnpublish}
+									disabled={submitting}
 									className="ghost-btn px-4 py-2 text-mono-sm"
 								>
-									+ New post
+									Move to draft
 								</button>
+								{previewUrl ? (
+									<>
+										<a
+											href={previewUrl}
+											target="_blank"
+											rel="noopener noreferrer"
+											className="ghost-btn px-4 py-2 text-mono-sm no-underline"
+										>
+											<ExternalLink aria-hidden="true" className="size-4" />
+											Preview
+										</a>
+										<button
+											type="button"
+											onClick={handleRevokePreviewLink}
+											className="ghost-btn px-4 py-2 text-mono-sm"
+										>
+											<Link2Off aria-hidden="true" className="size-4" />
+											Revoke link
+										</button>
+									</>
+								) : (
+									<button
+										type="button"
+										onClick={handleGetPreviewLink}
+										className="ghost-btn px-4 py-2 text-mono-sm"
+									>
+										Get preview link
+									</button>
+								)}
+							</>
+						)}
+						{mode === 'edit' && (
+							<button
+								type="button"
+								onClick={resetForm}
+								className="ghost-btn px-4 py-2 text-mono-sm"
+							>
+								+ New post
+							</button>
+						)}
+					</div>
+				</div>
+
+				{error && (
+					<div className="mb-6 border border-[oklch(0.577_0.245_27.325)] px-4 py-3.5 font-mono text-[0.72rem] tracking-[0.04em] text-[oklch(0.577_0.245_27.325)]">
+						{error}
+					</div>
+				)}
+
+				{success && (
+					<div className="mb-6 border border-acid-border bg-acid-dim px-4 py-3.5 font-mono text-[0.72rem] tracking-[0.04em] text-foreground">
+						{success}
+					</div>
+				)}
+
+				<form onSubmit={handleSubmit}>
+					<div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-2">
+						<div>
+							<label htmlFor="title" className={LABEL_CLASS}>
+								Title
+							</label>
+							<input
+								id="title"
+								type="text"
+								value={form.title}
+								onChange={(e) => setField('title', e.target.value)}
+								className={INPUT_CLASS}
+								required
+							/>
+						</div>
+
+						<div>
+							<label htmlFor="slug" className={LABEL_CLASS}>
+								Slug
+							</label>
+							<input
+								id="slug"
+								type="text"
+								value={form.slug}
+								onChange={(e) => setField('slug', e.target.value)}
+								className={INPUT_CLASS}
+								required
+								placeholder="my-post-slug"
+							/>
+						</div>
+					</div>
+
+					<div className="mb-6">
+						<label htmlFor="excerpt" className={LABEL_CLASS}>
+							Excerpt
+						</label>
+						<textarea
+							id="excerpt"
+							value={form.excerpt}
+							onChange={(e) => setField('excerpt', e.target.value)}
+							rows={3}
+							className={`${INPUT_CLASS} resize-y`}
+							required
+						/>
+					</div>
+
+					<div className="mb-6">
+						<label htmlFor="coverImage" className={LABEL_CLASS}>
+							Cover Image {uploadingImage && '(uploading…)'}
+						</label>
+						<div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
+							<input
+								id="coverImage"
+								type="file"
+								accept="image/*"
+								onChange={(e) => {
+									const file = e.target.files?.[0]
+									if (file) handleImageUpload(file)
+								}}
+								className="w-auto border border-line-strong bg-transparent p-2 font-sans text-[0.9rem] text-foreground outline-none transition-colors duration-150 focus:border-acid-border"
+								disabled={uploadingImage}
+							/>
+							{form.coverImageKey && (
+								<span className="break-all font-mono text-mono-sm tracking-[0.06em] text-acid">
+									<Check aria-hidden="true" className="inline-block size-3.5" />{' '}
+									{form.coverImageKey}
+								</span>
 							)}
 						</div>
 					</div>
 
-					{error && (
-						<div className="mb-6 border border-[oklch(0.577_0.245_27.325)] px-4 py-3.5 font-mono text-[0.72rem] tracking-[0.04em] text-[oklch(0.577_0.245_27.325)]">
-							{error}
-						</div>
-					)}
-
-					{success && (
-						<div className="mb-6 border border-acid-border bg-acid-dim px-4 py-3.5 font-mono text-[0.72rem] tracking-[0.04em] text-foreground">
-							{success}
-						</div>
-					)}
-
-					<form onSubmit={handleSubmit}>
-						<div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-2">
-							<div>
-								<label htmlFor="title" className={LABEL_CLASS}>
-									Title
-								</label>
-								<input
-									id="title"
-									type="text"
-									value={form.title}
-									onChange={(e) => setField('title', e.target.value)}
-									className={INPUT_CLASS}
-									required
-								/>
-							</div>
-
-							<div>
-								<label htmlFor="slug" className={LABEL_CLASS}>
-									Slug
-								</label>
-								<input
-									id="slug"
-									type="text"
-									value={form.slug}
-									onChange={(e) => setField('slug', e.target.value)}
-									className={INPUT_CLASS}
-									required
-									placeholder="my-post-slug"
-								/>
-							</div>
-						</div>
-
-						<div className="mb-6">
-							<label htmlFor="excerpt" className={LABEL_CLASS}>
-								Excerpt
-							</label>
-							<textarea
-								id="excerpt"
-								value={form.excerpt}
-								onChange={(e) => setField('excerpt', e.target.value)}
-								rows={3}
-								className={`${INPUT_CLASS} resize-y`}
-								required
-							/>
-						</div>
-
-						<div className="mb-6">
-							<label htmlFor="coverImage" className={LABEL_CLASS}>
-								Cover Image {uploadingImage && '(uploading…)'}
-							</label>
-							<div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
-								<input
-									id="coverImage"
-									type="file"
-									accept="image/*"
-									onChange={(e) => {
-										const file = e.target.files?.[0]
-										if (file) handleImageUpload(file)
-									}}
-									className="w-auto border border-line-strong bg-transparent p-2 font-sans text-[0.9rem] text-foreground outline-none transition-colors duration-150 focus:border-acid-border"
-									disabled={uploadingImage}
-								/>
-								{form.coverImageKey && (
-									<span className="break-all font-mono text-mono-sm tracking-[0.06em] text-acid">
-										<Check aria-hidden="true" className="inline-block size-3.5" />{' '}
-										{form.coverImageKey}
-									</span>
-								)}
-							</div>
-						</div>
-
-						<div className="mb-8">
-							<label htmlFor="content" className={LABEL_CLASS}>
-								Content (MDX)
-								<span
-									className={`float-right ${
-										form.content.length > 180_000
-											? 'text-[oklch(0.577_0.245_27.325)]'
-											: 'text-muted-foreground'
-									}`}
-								>
-									{form.content.length.toLocaleString()} / 200,000
-								</span>
-							</label>
-							<textarea
-								id="content"
-								value={form.content}
-								onChange={(e) => setField('content', e.target.value)}
-								rows={24}
-								className={`${INPUT_CLASS} resize-y font-mono text-[0.82rem] leading-[1.65]`}
-								required
-							/>
-						</div>
-
-						<div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
-							<button type="submit" disabled={submitting} className="acid-btn disabled:opacity-50">
-								{submitting ? 'Saving…' : mode === 'new' ? 'Save draft' : 'Update post'}
-							</button>
-							<span className="font-mono text-mono-xs uppercase tracking-mono text-muted-foreground">
-								{mode === 'new' ? 'Saved as draft' : `Editing post ${editPostId?.slice(0, 8)}…`}
+					<div className="mb-8">
+						<label htmlFor="content" className={LABEL_CLASS}>
+							Content (MDX)
+							<span
+								className={`float-right ${
+									form.content.length > MAX_CONTENT_WARN_THRESHOLD
+										? 'text-[oklch(0.577_0.245_27.325)]'
+										: 'text-muted-foreground'
+								}`}
+							>
+								{form.content.length.toLocaleString()} / {MAX_CONTENT_LENGTH.toLocaleString()}
 							</span>
-						</div>
-					</form>
-				</div>
+						</label>
+						<textarea
+							id="content"
+							value={form.content}
+							onChange={(e) => setField('content', e.target.value)}
+							rows={24}
+							className={`${INPUT_CLASS} resize-y font-mono text-[0.82rem] leading-[1.65]`}
+							required
+						/>
+					</div>
+
+					<div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
+						<button type="submit" disabled={submitting} className="acid-btn disabled:opacity-50">
+							{submitting ? 'Saving…' : mode === 'new' ? 'Save draft' : 'Update post'}
+						</button>
+						<span className="font-mono text-mono-xs uppercase tracking-mono text-muted-foreground">
+							{mode === 'new' ? 'Saved as draft' : `Editing post ${editPostId?.slice(0, 8)}…`}
+						</span>
+					</div>
+				</form>
 			</div>
-		</main>
+		</div>
 	)
 }

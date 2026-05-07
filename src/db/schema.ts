@@ -4,6 +4,7 @@ import {
 	integer,
 	pgEnum,
 	pgTable,
+	primaryKey,
 	text,
 	timestamp,
 	unique,
@@ -74,6 +75,7 @@ export const posts = pgTable('posts', {
 	likeCount: integer('like_count').notNull().default(0),
 	dislikeCount: integer('dislike_count').notNull().default(0),
 	commentCount: integer('comment_count').notNull().default(0),
+	viewCount: integer('view_count').notNull().default(0),
 	publishedAt: timestamp('published_at', { withTimezone: true }),
 	createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
 	updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
@@ -115,6 +117,7 @@ export const userRelations = relations(user, ({ many }) => ({
 	sessions: many(session),
 	accounts: many(account),
 	comments: many(comments),
+	savedPosts: many(savedPosts),
 }))
 
 export const sessionRelations = relations(session, ({ one }) => ({
@@ -125,9 +128,12 @@ export const accountRelations = relations(account, ({ one }) => ({
 	user: one(user, { fields: [account.userId], references: [user.id] }),
 }))
 
-export const postsRelations = relations(posts, ({ many }) => ({
+export const postsRelations = relations(posts, ({ many, one }) => ({
 	comments: many(comments),
 	reactions: many(reactions),
+	tags: many(postTags),
+	savedBy: many(savedPosts),
+	draftToken: one(draftTokens),
 }))
 
 export const commentsRelations = relations(comments, ({ one, many }) => ({
@@ -145,6 +151,80 @@ export const reactionsRelations = relations(reactions, ({ one }) => ({
 	post: one(posts, { fields: [reactions.postId], references: [posts.id] }),
 }))
 
+export const tags = pgTable('tags', {
+	id: uuid().defaultRandom().primaryKey(),
+	name: text().notNull().unique(),
+	slug: text().notNull().unique(),
+	createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+	updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
+})
+
+export const postTags = pgTable(
+	'post_tags',
+	{
+		postId: uuid('post_id')
+			.notNull()
+			.references(() => posts.id, { onDelete: 'cascade' }),
+		tagId: uuid('tag_id')
+			.notNull()
+			.references(() => tags.id, { onDelete: 'cascade' }),
+		createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+	},
+	(table) => [primaryKey({ columns: [table.postId, table.tagId] })],
+)
+
+export const newsletterSubscribers = pgTable('newsletter_subscribers', {
+	id: uuid().defaultRandom().primaryKey(),
+	email: text().notNull().unique(),
+	token: text().notNull().unique(),
+	confirmedAt: timestamp('confirmed_at', { withTimezone: true }),
+	unsubscribedAt: timestamp('unsubscribed_at', { withTimezone: true }),
+	createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+	updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
+})
+
+export const savedPosts = pgTable(
+	'saved_posts',
+	{
+		userId: text('user_id')
+			.notNull()
+			.references(() => user.id, { onDelete: 'cascade' }),
+		postId: uuid('post_id')
+			.notNull()
+			.references(() => posts.id, { onDelete: 'cascade' }),
+		createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+	},
+	(table) => [primaryKey({ columns: [table.userId, table.postId] })],
+)
+
+export const draftTokens = pgTable('draft_tokens', {
+	id: uuid().defaultRandom().primaryKey(),
+	postId: uuid('post_id')
+		.notNull()
+		.unique()
+		.references(() => posts.id, { onDelete: 'cascade' }),
+	token: text().notNull().unique(),
+	createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+})
+
+export const tagsRelations = relations(tags, ({ many }) => ({
+	posts: many(postTags),
+}))
+
+export const postTagsRelations = relations(postTags, ({ one }) => ({
+	post: one(posts, { fields: [postTags.postId], references: [posts.id] }),
+	tag: one(tags, { fields: [postTags.tagId], references: [tags.id] }),
+}))
+
+export const savedPostsRelations = relations(savedPosts, ({ one }) => ({
+	user: one(user, { fields: [savedPosts.userId], references: [user.id] }),
+	post: one(posts, { fields: [savedPosts.postId], references: [posts.id] }),
+}))
+
+export const draftTokensRelations = relations(draftTokens, ({ one }) => ({
+	post: one(posts, { fields: [draftTokens.postId], references: [posts.id] }),
+}))
+
 export type User = typeof user.$inferSelect
 export type Post = typeof posts.$inferSelect
 export type NewPost = typeof posts.$inferInsert
@@ -152,3 +232,10 @@ export type Comment = typeof comments.$inferSelect
 export type NewComment = typeof comments.$inferInsert
 export type Reaction = typeof reactions.$inferSelect
 export type NewReaction = typeof reactions.$inferInsert
+export type Tag = typeof tags.$inferSelect
+export type NewTag = typeof tags.$inferInsert
+export type PostTag = typeof postTags.$inferSelect
+export type NewsletterSubscriber = typeof newsletterSubscribers.$inferSelect
+export type NewNewsletterSubscriber = typeof newsletterSubscribers.$inferInsert
+export type SavedPost = typeof savedPosts.$inferSelect
+export type DraftToken = typeof draftTokens.$inferSelect

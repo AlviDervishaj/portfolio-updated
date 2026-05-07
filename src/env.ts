@@ -24,6 +24,7 @@ export const env = createEnv({
 		VITE_APP_URL: z.url(),
 		VITE_UMAMI_URL: z.url().optional(),
 		VITE_UMAMI_WEBSITE_ID: z.string().min(1).optional(),
+		VITE_CLOUDFLARE_IMAGES_URL: z.url().optional(),
 	},
 
 	runtimeEnv: {
@@ -44,6 +45,7 @@ export const env = createEnv({
 		VITE_APP_URL: import.meta.env.VITE_APP_URL,
 		VITE_UMAMI_URL: import.meta.env.VITE_UMAMI_URL,
 		VITE_UMAMI_WEBSITE_ID: import.meta.env.VITE_UMAMI_WEBSITE_ID,
+		VITE_CLOUDFLARE_IMAGES_URL: import.meta.env.VITE_CLOUDFLARE_IMAGES_URL,
 	},
 
 	emptyStringAsUndefined: true,

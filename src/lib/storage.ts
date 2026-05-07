@@ -4,6 +4,7 @@ import { DeleteObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 
 import { env } from '#/env.ts'
+import type { ImageTransformOptions } from '#/types/imageTransform.ts'
 
 const R2_ENDPOINT = `https://${env.CLOUDFLARE_R2_ACCOUNT_ID}.r2.cloudflarestorage.com`
 
@@ -56,4 +57,17 @@ export async function getPresignedUploadUrl(key: string, contentType: string): P
 
 export function getPublicUrl(key: string): string {
 	return `${env.CLOUDFLARE_R2_PUBLIC_URL}/${key}`
+}
+
+export function getOptimizedImageUrl(key: string, options: ImageTransformOptions = {}): string {
+	const rawUrl = getPublicUrl(key)
+	const baseUrl = env.VITE_CLOUDFLARE_IMAGES_URL
+	if (!baseUrl) return rawUrl
+
+	const params = (Object.entries(options) as [string, string | number | undefined][])
+		.filter(([, v]) => v !== undefined)
+		.map(([k, v]) => `${k}=${v}`)
+		.join(',')
+
+	return params ? `${baseUrl}/cdn-cgi/image/${params}/${rawUrl}` : rawUrl
 }

@@ -1,23 +1,37 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { ArrowUpRight, ChevronDown, Heart, MessageSquare } from 'lucide-react'
+import { ArrowUpRight, ChevronDown, Eye, Heart, MessageSquare } from 'lucide-react'
 import { useCallback, useState } from 'react'
+import { NewsletterSignup } from '#/components/NewsletterSignup.tsx'
+import { TagFilter } from '#/components/TagFilter.tsx'
 import { USER } from '#/constants/user'
+import { env } from '#/env.ts'
 import { getPostsServerFn } from '#/server/posts.ts'
+import { getPostsByTagServerFn, getTagsServerFn } from '#/server/tags.ts'
 import type { PostSortStrategy, PostSummary } from '#/services/posts.ts'
+
+const BLOG_DESCRIPTION =
+	'Writing about TypeScript, full-stack development, and building for the web.'
 
 export const Route = createFileRoute('/blog/')({
 	component: BlogPage,
 	head: () => ({
 		meta: [
 			{ title: `Blog — ${USER.FULL_NAME}` },
-			{
-				name: 'description',
-				content: 'Writing about TypeScript, full-stack development, and building for the web.',
-			},
+			{ name: 'description', content: BLOG_DESCRIPTION },
+			{ property: 'og:title', content: `Blog — ${USER.FULL_NAME}` },
+			{ property: 'og:description', content: BLOG_DESCRIPTION },
+			{ property: 'og:url', content: `${env.VITE_APP_URL}/blog` },
+			{ property: 'og:image', content: `${env.VITE_APP_URL}/api/og?title=Blog&type=page` },
+			{ name: 'twitter:card', content: 'summary_large_image' },
 		],
+		links: [{ rel: 'canonical', href: `${env.VITE_APP_URL}/blog` }],
 	}),
 	loader: async () => {
-		return getPostsServerFn({ data: { strategy: 'date' } })
+		const [posts, tagsResult] = await Promise.all([
+			getPostsServerFn({ data: { strategy: 'date' } }),
+			getTagsServerFn(),
+		])
+		return { posts, tags: tagsResult.success ? tagsResult.data : [] }
 	},
 	pendingComponent: BlogPageSkeleton,
 })
@@ -63,6 +77,10 @@ function PostRow({ post }: { post: PostSummary }) {
 							<MessageSquare aria-hidden="true" className="size-3.5 text-acid" />
 							{post.commentCount}
 						</span>
+						<span className="flex items-center gap-1.5">
+							<Eye aria-hidden="true" className="size-3.5 text-acid" />
+							{post.viewCount}
+						</span>
 					</div>
 				</div>
 
@@ -102,11 +120,12 @@ function BlogPageSkeleton() {
 }
 
 function BlogPage() {
-	const initialData = Route.useLoaderData()
+	const loaderData = Route.useLoaderData()
 	const [strategy, setStrategy] = useState<PostSortStrategy>('date')
-	const [posts, setPosts] = useState<PostSummary[]>(initialData.items)
-	const [cursor, setCursor] = useState<string | null>(initialData.nextCursor)
-	const [totalCount, setTotalCount] = useState<number>(initialData.totalCount)
+	const [activeTag, setActiveTag] = useState<string | null>(null)
+	const [posts, setPosts] = useState<PostSummary[]>(loaderData.posts.items)
+	const [cursor, setCursor] = useState<string | null>(loaderData.posts.nextCursor)
+	const [totalCount, setTotalCount] = useState<number>(loaderData.posts.totalCount)
 	const [loading, setLoading] = useState(false)
 	const [loadingMore, setLoadingMore] = useState(false)
 
@@ -116,7 +135,9 @@ function BlogPage() {
 			setStrategy(next)
 			setLoading(true)
 			try {
-				const result = await getPostsServerFn({ data: { strategy: next } })
+				const result = activeTag
+					? await getPostsByTagServerFn({ data: { tagSlug: activeTag, strategy: next } })
+					: await getPostsServerFn({ data: { strategy: next } })
 				setPosts(result.items)
 				setCursor(result.nextCursor)
 				setTotalCount(result.totalCount)
@@ -124,7 +145,26 @@ function BlogPage() {
 				setLoading(false)
 			}
 		},
-		[strategy, loading],
+		[strategy, loading, activeTag],
+	)
+
+	const switchTag = useCallback(
+		async (slug: string | null) => {
+			if (loading) return
+			setActiveTag(slug)
+			setLoading(true)
+			try {
+				const result = slug
+					? await getPostsByTagServerFn({ data: { tagSlug: slug, strategy } })
+					: await getPostsServerFn({ data: { strategy } })
+				setPosts(result.items)
+				setCursor(result.nextCursor)
+				setTotalCount(result.totalCount)
+			} finally {
+				setLoading(false)
+			}
+		},
+		[loading, strategy],
 	)
 
 	const loadMore = useCallback(async () => {
@@ -151,6 +191,12 @@ function BlogPage() {
 						: `${totalCount} ${totalCount === 1 ? 'post' : 'posts'}`}
 				</p>
 			</div>
+
+			{loaderData.tags.length > 0 && (
+				<div className="mb-4 pt-6">
+					<TagFilter tags={loaderData.tags} activeTag={activeTag} onChange={switchTag} />
+				</div>
+			)}
 
 			<div className="flex items-center justify-between gap-4 border-b border-line-strong pb-6">
 				<div className="flex flex-wrap items-center gap-1">
@@ -201,6 +247,10 @@ function BlogPage() {
 					</button>
 				</div>
 			)}
+
+			<div className="mt-24 border-t border-line-strong pt-16">
+				<NewsletterSignup />
+			</div>
 		</main>
 	)
 }

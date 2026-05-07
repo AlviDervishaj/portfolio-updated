@@ -1,12 +1,24 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { ArrowRight, ArrowUpRight, ChevronDown, Diamond, Github, Twitter } from 'lucide-react'
+import { NewsletterSignup } from '#/components/NewsletterSignup.tsx'
+import { SITE_DESCRIPTION } from '#/constants/seo'
 import { USER } from '#/constants/user'
+import { env } from '#/env.ts'
 import { useLenisInstance } from '#/hooks/useLenis'
 
 export const Route = createFileRoute('/')({
 	component: HomePage,
 	head: () => ({
-		meta: [{ title: `${USER.FULL_NAME} - ${USER.POSITION}` }],
+		meta: [
+			{ title: `${USER.FULL_NAME} — ${USER.POSITION}` },
+			{ name: 'description', content: SITE_DESCRIPTION },
+			{ property: 'og:title', content: `${USER.FULL_NAME} — ${USER.POSITION}` },
+			{ property: 'og:description', content: SITE_DESCRIPTION },
+			{ property: 'og:url', content: env.VITE_APP_URL },
+			{ property: 'og:image', content: `${env.VITE_APP_URL}/api/og?title=Portfolio&type=page` },
+			{ name: 'twitter:card', content: 'summary_large_image' },
+		],
+		links: [{ rel: 'canonical', href: env.VITE_APP_URL }],
 	}),
 })
 
@@ -291,6 +303,24 @@ function ContactSection() {
 	)
 }
 
+function NewsletterSection() {
+	return (
+		<section className="border-t border-line-strong">
+			<div className="mx-auto max-w-[1200px] px-6 py-24">
+				<div className="max-w-[480px]">
+					<p className="mb-2 font-mono text-mono-xs uppercase tracking-mono-lg text-muted-foreground">
+						Stay updated
+					</p>
+					<p className="mb-6 font-display text-[clamp(1.5rem,4vw,2.5rem)] font-bold tracking-display-tight">
+						Get notified when I publish new posts.
+					</p>
+					<NewsletterSignup compact />
+				</div>
+			</div>
+		</section>
+	)
+}
+
 function HomePage() {
 	return (
 		<>
@@ -298,6 +328,7 @@ function HomePage() {
 			<TickerSection />
 			<WorkSection />
 			<AboutTeaser />
+			<NewsletterSection />
 			<ContactSection />
 		</>
 	)
