@@ -43,30 +43,34 @@ type PostPageData = {
 	coverImageUrl: string | null
 }
 
+function toIsoString(value: Date | string | null | undefined): string {
+	if (!value) return ''
+	if (value instanceof Date) return value.toISOString()
+	return value
+}
+
 export const Route = createFileRoute('/blog/$slug')({
 	component: PostPage,
 	errorComponent: PostPageError,
 	head: ({ loaderData }) => {
 		if (!loaderData) return { meta: [{ title: 'Post Not Found' }] }
-		const data = loaderData as Record<string, unknown>
-		const post = data.post as Record<string, unknown>
-		const slug = String(post.slug ?? '')
-		const title = String(post.title ?? '')
-		const excerpt = String(post.excerpt ?? '')
-		const ogImageUrl = `${env.VITE_APP_URL}/api/og?title=${encodeURIComponent(title)}&type=article`
-		const postUrl = `${env.VITE_APP_URL}/blog/${slug}`
+		const { post } = loaderData as PostPageData & { tags: Tag[]; isSaved: boolean }
+		const ogImageUrl = `${env.VITE_APP_URL}/api/og?title=${encodeURIComponent(post.title)}&type=article`
+		const postUrl = `${env.VITE_APP_URL}/blog/${post.slug}`
+		const publishedAt = toIsoString(post.publishedAt)
+		const updatedAt = toIsoString(post.updatedAt)
 		return {
 			meta: [
-				{ title: `${title} — ${USER.FULL_NAME}` },
-				{ name: 'description', content: excerpt },
-				{ property: 'og:title', content: title },
-				{ property: 'og:description', content: excerpt },
+				{ title: `${post.title} — ${USER.FULL_NAME}` },
+				{ name: 'description', content: post.excerpt },
+				{ property: 'og:title', content: post.title },
+				{ property: 'og:description', content: post.excerpt },
 				{ property: 'og:type', content: 'article' },
 				{ property: 'og:url', content: postUrl },
 				{ property: 'og:site_name', content: SITE_NAME },
 				{ property: 'og:image', content: ogImageUrl },
-				{ property: 'article:published_time', content: String(post.publishedAt ?? '') },
-				{ property: 'article:modified_time', content: String(post.updatedAt ?? '') },
+				{ property: 'article:published_time', content: publishedAt },
+				{ property: 'article:modified_time', content: updatedAt },
 				{ property: 'article:author', content: USER.FULL_NAME },
 				{ name: 'twitter:card', content: 'summary_large_image' },
 				{ name: 'twitter:image', content: ogImageUrl },
@@ -78,15 +82,15 @@ export const Route = createFileRoute('/blog/$slug')({
 					children: JSON.stringify({
 						'@context': 'https://schema.org',
 						'@type': 'BlogPosting',
-						headline: title,
-						description: excerpt,
+						headline: post.title,
+						description: post.excerpt,
 						author: {
 							'@type': 'Person',
 							name: USER.FULL_NAME,
 							url: env.VITE_APP_URL,
 						},
-						datePublished: String(post.publishedAt ?? ''),
-						dateModified: String(post.updatedAt ?? ''),
+						datePublished: publishedAt,
+						dateModified: updatedAt,
 						url: postUrl,
 						image: ogImageUrl,
 					}),
