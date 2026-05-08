@@ -11,20 +11,32 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SignInRouteImport } from './routes/sign-in'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as ProjectsRouteImport } from './routes/projects'
 import { Route as NowRouteImport } from './routes/now'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
-import { Route as AdminRouteImport } from './routes/admin'
+import { Route as ContactRouteImport } from './routes/contact'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as SettingsRouteRouteImport } from './routes/settings/route'
 import { Route as BlogRouteRouteImport } from './routes/blog/route'
+import { Route as AdminRouteRouteImport } from './routes/admin/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as SettingsIndexRouteImport } from './routes/settings/index'
 import { Route as BlogIndexRouteImport } from './routes/blog/index'
+import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as SettingsSecurityRouteImport } from './routes/settings/security'
+import { Route as SettingsSavedRouteImport } from './routes/settings/saved'
 import { Route as SettingsProfileRouteImport } from './routes/settings/profile'
+import { Route as PreviewTokenRouteImport } from './routes/preview/$token'
 import { Route as BlogSlugRouteImport } from './routes/blog/$slug'
 import { Route as ApiSitemapRouteImport } from './routes/api/sitemap'
 import { Route as ApiRssRouteImport } from './routes/api/rss'
+import { Route as ApiOgRouteImport } from './routes/api/og'
+import { Route as AdminTagsRouteImport } from './routes/admin/tags'
+import { Route as AdminPostsRouteImport } from './routes/admin/posts'
+import { Route as AdminCommentsRouteImport } from './routes/admin/comments'
+import { Route as AdminAnalyticsRouteImport } from './routes/admin/analytics'
+import { Route as ApiNewsletterUnsubscribeRouteImport } from './routes/api/newsletter/unsubscribe'
+import { Route as ApiNewsletterConfirmRouteImport } from './routes/api/newsletter/confirm'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 
 const SignInRoute = SignInRouteImport.update({
@@ -37,6 +49,11 @@ const ResetPasswordRoute = ResetPasswordRouteImport.update({
   path: '/reset-password',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProjectsRoute = ProjectsRouteImport.update({
+  id: '/projects',
+  path: '/projects',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const NowRoute = NowRouteImport.update({
   id: '/now',
   path: '/now',
@@ -47,9 +64,9 @@ const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
   path: '/forgot-password',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AdminRoute = AdminRouteImport.update({
-  id: '/admin',
-  path: '/admin',
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AboutRoute = AboutRouteImport.update({
@@ -67,6 +84,11 @@ const BlogRouteRoute = BlogRouteRouteImport.update({
   path: '/blog',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminRouteRoute = AdminRouteRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -82,15 +104,30 @@ const BlogIndexRoute = BlogIndexRouteImport.update({
   path: '/',
   getParentRoute: () => BlogRouteRoute,
 } as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
 const SettingsSecurityRoute = SettingsSecurityRouteImport.update({
   id: '/security',
   path: '/security',
+  getParentRoute: () => SettingsRouteRoute,
+} as any)
+const SettingsSavedRoute = SettingsSavedRouteImport.update({
+  id: '/saved',
+  path: '/saved',
   getParentRoute: () => SettingsRouteRoute,
 } as any)
 const SettingsProfileRoute = SettingsProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
   getParentRoute: () => SettingsRouteRoute,
+} as any)
+const PreviewTokenRoute = PreviewTokenRouteImport.update({
+  id: '/preview/$token',
+  path: '/preview/$token',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const BlogSlugRoute = BlogSlugRouteImport.update({
   id: '/$slug',
@@ -107,6 +144,42 @@ const ApiRssRoute = ApiRssRouteImport.update({
   path: '/api/rss',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiOgRoute = ApiOgRouteImport.update({
+  id: '/api/og',
+  path: '/api/og',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminTagsRoute = AdminTagsRouteImport.update({
+  id: '/tags',
+  path: '/tags',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminPostsRoute = AdminPostsRouteImport.update({
+  id: '/posts',
+  path: '/posts',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminCommentsRoute = AdminCommentsRouteImport.update({
+  id: '/comments',
+  path: '/comments',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminAnalyticsRoute = AdminAnalyticsRouteImport.update({
+  id: '/analytics',
+  path: '/analytics',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const ApiNewsletterUnsubscribeRoute =
+  ApiNewsletterUnsubscribeRouteImport.update({
+    id: '/api/newsletter/unsubscribe',
+    path: '/api/newsletter/unsubscribe',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiNewsletterConfirmRoute = ApiNewsletterConfirmRouteImport.update({
+  id: '/api/newsletter/confirm',
+  path: '/api/newsletter/confirm',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
@@ -115,131 +188,207 @@ const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteRouteWithChildren
   '/blog': typeof BlogRouteRouteWithChildren
   '/settings': typeof SettingsRouteRouteWithChildren
   '/about': typeof AboutRoute
-  '/admin': typeof AdminRoute
+  '/contact': typeof ContactRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/now': typeof NowRoute
+  '/projects': typeof ProjectsRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sign-in': typeof SignInRoute
+  '/admin/analytics': typeof AdminAnalyticsRoute
+  '/admin/comments': typeof AdminCommentsRoute
+  '/admin/posts': typeof AdminPostsRoute
+  '/admin/tags': typeof AdminTagsRoute
+  '/api/og': typeof ApiOgRoute
   '/api/rss': typeof ApiRssRoute
   '/api/sitemap': typeof ApiSitemapRoute
   '/blog/$slug': typeof BlogSlugRoute
+  '/preview/$token': typeof PreviewTokenRoute
   '/settings/profile': typeof SettingsProfileRoute
+  '/settings/saved': typeof SettingsSavedRoute
   '/settings/security': typeof SettingsSecurityRoute
+  '/admin/': typeof AdminIndexRoute
   '/blog/': typeof BlogIndexRoute
   '/settings/': typeof SettingsIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/newsletter/confirm': typeof ApiNewsletterConfirmRoute
+  '/api/newsletter/unsubscribe': typeof ApiNewsletterUnsubscribeRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/admin': typeof AdminRoute
+  '/contact': typeof ContactRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/now': typeof NowRoute
+  '/projects': typeof ProjectsRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sign-in': typeof SignInRoute
+  '/admin/analytics': typeof AdminAnalyticsRoute
+  '/admin/comments': typeof AdminCommentsRoute
+  '/admin/posts': typeof AdminPostsRoute
+  '/admin/tags': typeof AdminTagsRoute
+  '/api/og': typeof ApiOgRoute
   '/api/rss': typeof ApiRssRoute
   '/api/sitemap': typeof ApiSitemapRoute
   '/blog/$slug': typeof BlogSlugRoute
+  '/preview/$token': typeof PreviewTokenRoute
   '/settings/profile': typeof SettingsProfileRoute
+  '/settings/saved': typeof SettingsSavedRoute
   '/settings/security': typeof SettingsSecurityRoute
+  '/admin': typeof AdminIndexRoute
   '/blog': typeof BlogIndexRoute
   '/settings': typeof SettingsIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/newsletter/confirm': typeof ApiNewsletterConfirmRoute
+  '/api/newsletter/unsubscribe': typeof ApiNewsletterUnsubscribeRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteRouteWithChildren
   '/blog': typeof BlogRouteRouteWithChildren
   '/settings': typeof SettingsRouteRouteWithChildren
   '/about': typeof AboutRoute
-  '/admin': typeof AdminRoute
+  '/contact': typeof ContactRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/now': typeof NowRoute
+  '/projects': typeof ProjectsRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sign-in': typeof SignInRoute
+  '/admin/analytics': typeof AdminAnalyticsRoute
+  '/admin/comments': typeof AdminCommentsRoute
+  '/admin/posts': typeof AdminPostsRoute
+  '/admin/tags': typeof AdminTagsRoute
+  '/api/og': typeof ApiOgRoute
   '/api/rss': typeof ApiRssRoute
   '/api/sitemap': typeof ApiSitemapRoute
   '/blog/$slug': typeof BlogSlugRoute
+  '/preview/$token': typeof PreviewTokenRoute
   '/settings/profile': typeof SettingsProfileRoute
+  '/settings/saved': typeof SettingsSavedRoute
   '/settings/security': typeof SettingsSecurityRoute
+  '/admin/': typeof AdminIndexRoute
   '/blog/': typeof BlogIndexRoute
   '/settings/': typeof SettingsIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/newsletter/confirm': typeof ApiNewsletterConfirmRoute
+  '/api/newsletter/unsubscribe': typeof ApiNewsletterUnsubscribeRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/admin'
     | '/blog'
     | '/settings'
     | '/about'
-    | '/admin'
+    | '/contact'
     | '/forgot-password'
     | '/now'
+    | '/projects'
     | '/reset-password'
     | '/sign-in'
+    | '/admin/analytics'
+    | '/admin/comments'
+    | '/admin/posts'
+    | '/admin/tags'
+    | '/api/og'
     | '/api/rss'
     | '/api/sitemap'
     | '/blog/$slug'
+    | '/preview/$token'
     | '/settings/profile'
+    | '/settings/saved'
     | '/settings/security'
+    | '/admin/'
     | '/blog/'
     | '/settings/'
     | '/api/auth/$'
+    | '/api/newsletter/confirm'
+    | '/api/newsletter/unsubscribe'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/about'
-    | '/admin'
+    | '/contact'
     | '/forgot-password'
     | '/now'
+    | '/projects'
     | '/reset-password'
     | '/sign-in'
+    | '/admin/analytics'
+    | '/admin/comments'
+    | '/admin/posts'
+    | '/admin/tags'
+    | '/api/og'
     | '/api/rss'
     | '/api/sitemap'
     | '/blog/$slug'
+    | '/preview/$token'
     | '/settings/profile'
+    | '/settings/saved'
     | '/settings/security'
+    | '/admin'
     | '/blog'
     | '/settings'
     | '/api/auth/$'
+    | '/api/newsletter/confirm'
+    | '/api/newsletter/unsubscribe'
   id:
     | '__root__'
     | '/'
+    | '/admin'
     | '/blog'
     | '/settings'
     | '/about'
-    | '/admin'
+    | '/contact'
     | '/forgot-password'
     | '/now'
+    | '/projects'
     | '/reset-password'
     | '/sign-in'
+    | '/admin/analytics'
+    | '/admin/comments'
+    | '/admin/posts'
+    | '/admin/tags'
+    | '/api/og'
     | '/api/rss'
     | '/api/sitemap'
     | '/blog/$slug'
+    | '/preview/$token'
     | '/settings/profile'
+    | '/settings/saved'
     | '/settings/security'
+    | '/admin/'
     | '/blog/'
     | '/settings/'
     | '/api/auth/$'
+    | '/api/newsletter/confirm'
+    | '/api/newsletter/unsubscribe'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRouteRoute: typeof AdminRouteRouteWithChildren
   BlogRouteRoute: typeof BlogRouteRouteWithChildren
   SettingsRouteRoute: typeof SettingsRouteRouteWithChildren
   AboutRoute: typeof AboutRoute
-  AdminRoute: typeof AdminRoute
+  ContactRoute: typeof ContactRoute
   ForgotPasswordRoute: typeof ForgotPasswordRoute
   NowRoute: typeof NowRoute
+  ProjectsRoute: typeof ProjectsRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   SignInRoute: typeof SignInRoute
+  ApiOgRoute: typeof ApiOgRoute
   ApiRssRoute: typeof ApiRssRoute
   ApiSitemapRoute: typeof ApiSitemapRoute
+  PreviewTokenRoute: typeof PreviewTokenRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
+  ApiNewsletterConfirmRoute: typeof ApiNewsletterConfirmRoute
+  ApiNewsletterUnsubscribeRoute: typeof ApiNewsletterUnsubscribeRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -258,6 +407,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ResetPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/projects': {
+      id: '/projects'
+      path: '/projects'
+      fullPath: '/projects'
+      preLoaderRoute: typeof ProjectsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/now': {
       id: '/now'
       path: '/now'
@@ -272,11 +428,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ForgotPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/admin': {
-      id: '/admin'
-      path: '/admin'
-      fullPath: '/admin'
-      preLoaderRoute: typeof AdminRouteImport
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/about': {
@@ -300,6 +456,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BlogRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -321,11 +484,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BlogIndexRouteImport
       parentRoute: typeof BlogRouteRoute
     }
+    '/admin/': {
+      id: '/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
     '/settings/security': {
       id: '/settings/security'
       path: '/security'
       fullPath: '/settings/security'
       preLoaderRoute: typeof SettingsSecurityRouteImport
+      parentRoute: typeof SettingsRouteRoute
+    }
+    '/settings/saved': {
+      id: '/settings/saved'
+      path: '/saved'
+      fullPath: '/settings/saved'
+      preLoaderRoute: typeof SettingsSavedRouteImport
       parentRoute: typeof SettingsRouteRoute
     }
     '/settings/profile': {
@@ -334,6 +511,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/settings/profile'
       preLoaderRoute: typeof SettingsProfileRouteImport
       parentRoute: typeof SettingsRouteRoute
+    }
+    '/preview/$token': {
+      id: '/preview/$token'
+      path: '/preview/$token'
+      fullPath: '/preview/$token'
+      preLoaderRoute: typeof PreviewTokenRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/blog/$slug': {
       id: '/blog/$slug'
@@ -356,6 +540,55 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiRssRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/og': {
+      id: '/api/og'
+      path: '/api/og'
+      fullPath: '/api/og'
+      preLoaderRoute: typeof ApiOgRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/tags': {
+      id: '/admin/tags'
+      path: '/tags'
+      fullPath: '/admin/tags'
+      preLoaderRoute: typeof AdminTagsRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/posts': {
+      id: '/admin/posts'
+      path: '/posts'
+      fullPath: '/admin/posts'
+      preLoaderRoute: typeof AdminPostsRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/comments': {
+      id: '/admin/comments'
+      path: '/comments'
+      fullPath: '/admin/comments'
+      preLoaderRoute: typeof AdminCommentsRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/analytics': {
+      id: '/admin/analytics'
+      path: '/analytics'
+      fullPath: '/admin/analytics'
+      preLoaderRoute: typeof AdminAnalyticsRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/api/newsletter/unsubscribe': {
+      id: '/api/newsletter/unsubscribe'
+      path: '/api/newsletter/unsubscribe'
+      fullPath: '/api/newsletter/unsubscribe'
+      preLoaderRoute: typeof ApiNewsletterUnsubscribeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/newsletter/confirm': {
+      id: '/api/newsletter/confirm'
+      path: '/api/newsletter/confirm'
+      fullPath: '/api/newsletter/confirm'
+      preLoaderRoute: typeof ApiNewsletterConfirmRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/auth/$': {
       id: '/api/auth/$'
       path: '/api/auth/$'
@@ -365,6 +598,26 @@ declare module '@tanstack/react-router' {
     }
   }
 }
+
+interface AdminRouteRouteChildren {
+  AdminAnalyticsRoute: typeof AdminAnalyticsRoute
+  AdminCommentsRoute: typeof AdminCommentsRoute
+  AdminPostsRoute: typeof AdminPostsRoute
+  AdminTagsRoute: typeof AdminTagsRoute
+  AdminIndexRoute: typeof AdminIndexRoute
+}
+
+const AdminRouteRouteChildren: AdminRouteRouteChildren = {
+  AdminAnalyticsRoute: AdminAnalyticsRoute,
+  AdminCommentsRoute: AdminCommentsRoute,
+  AdminPostsRoute: AdminPostsRoute,
+  AdminTagsRoute: AdminTagsRoute,
+  AdminIndexRoute: AdminIndexRoute,
+}
+
+const AdminRouteRouteWithChildren = AdminRouteRoute._addFileChildren(
+  AdminRouteRouteChildren,
+)
 
 interface BlogRouteRouteChildren {
   BlogSlugRoute: typeof BlogSlugRoute
@@ -382,12 +635,14 @@ const BlogRouteRouteWithChildren = BlogRouteRoute._addFileChildren(
 
 interface SettingsRouteRouteChildren {
   SettingsProfileRoute: typeof SettingsProfileRoute
+  SettingsSavedRoute: typeof SettingsSavedRoute
   SettingsSecurityRoute: typeof SettingsSecurityRoute
   SettingsIndexRoute: typeof SettingsIndexRoute
 }
 
 const SettingsRouteRouteChildren: SettingsRouteRouteChildren = {
   SettingsProfileRoute: SettingsProfileRoute,
+  SettingsSavedRoute: SettingsSavedRoute,
   SettingsSecurityRoute: SettingsSecurityRoute,
   SettingsIndexRoute: SettingsIndexRoute,
 }
@@ -398,17 +653,23 @@ const SettingsRouteRouteWithChildren = SettingsRouteRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRouteRoute: AdminRouteRouteWithChildren,
   BlogRouteRoute: BlogRouteRouteWithChildren,
   SettingsRouteRoute: SettingsRouteRouteWithChildren,
   AboutRoute: AboutRoute,
-  AdminRoute: AdminRoute,
+  ContactRoute: ContactRoute,
   ForgotPasswordRoute: ForgotPasswordRoute,
   NowRoute: NowRoute,
+  ProjectsRoute: ProjectsRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   SignInRoute: SignInRoute,
+  ApiOgRoute: ApiOgRoute,
   ApiRssRoute: ApiRssRoute,
   ApiSitemapRoute: ApiSitemapRoute,
+  PreviewTokenRoute: PreviewTokenRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
+  ApiNewsletterConfirmRoute: ApiNewsletterConfirmRoute,
+  ApiNewsletterUnsubscribeRoute: ApiNewsletterUnsubscribeRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
