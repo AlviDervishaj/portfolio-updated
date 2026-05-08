@@ -19,6 +19,7 @@ import { getCurrentUserServerFn } from '#/server/users.ts'
 const SETTINGS_NAV: { to: string; label: string }[] = [
 	{ to: '/settings/profile', label: SETTINGS_PROFILE_TITLE },
 	{ to: '/settings/security', label: SETTINGS_SECURITY_TITLE },
+	{ to: '/settings/saved', label: 'Saved' },
 ]
 
 export const Route = createFileRoute('/settings')({

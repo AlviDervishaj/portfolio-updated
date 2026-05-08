@@ -1,15 +1,24 @@
 import { createFileRoute, Link, notFound } from '@tanstack/react-router'
-import { ArrowLeft, Heart } from 'lucide-react'
+import { ArrowLeft, Eye, Heart } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
-
+import { BookmarkButton } from '#/components/BookmarkButton.tsx'
 import CommentsSection from '#/components/CommentsSection.tsx'
+import { ComponentErrorBoundary } from '#/components/ComponentErrorBoundary.tsx'
+import { PostViewTracker } from '#/components/PostViewTracker.tsx'
 import ReactionBar from '#/components/ReactionBar.tsx'
 import ScrollProgress from '#/components/ScrollProgress.tsx'
+import { ShareBar } from '#/components/ShareBar.tsx'
+import { TagBadge } from '#/components/TagBadge.tsx'
+import { SITE_NAME } from '#/constants/seo'
 import { USER } from '#/constants/user'
+import type { Tag } from '#/db/schema.ts'
+import { env } from '#/env.ts'
 import { useLenisInstance } from '#/hooks/useLenis'
 import { authClient } from '#/lib/auth-client.ts'
 import type { TocEntry } from '#/lib/mdx.ts'
 import { getPostBySlugServerFn } from '#/server/posts.ts'
+import { getIsPostSavedServerFn } from '#/server/savedPosts.ts'
+import { getTagsForPostServerFn } from '#/server/tags.ts'
 
 type PostPageData = {
 	post: {
@@ -23,6 +32,7 @@ type PostPageData = {
 		likeCount: number
 		dislikeCount: number
 		commentCount: number
+		viewCount: number
 		publishedAt: Date | string | null
 		createdAt: Date | string
 		updatedAt: Date | string
@@ -40,21 +50,60 @@ export const Route = createFileRoute('/blog/$slug')({
 		if (!loaderData) return { meta: [{ title: 'Post Not Found' }] }
 		const data = loaderData as Record<string, unknown>
 		const post = data.post as Record<string, unknown>
+		const slug = String(post.slug ?? '')
+		const title = String(post.title ?? '')
+		const excerpt = String(post.excerpt ?? '')
+		const ogImageUrl = `${env.VITE_APP_URL}/api/og?title=${encodeURIComponent(title)}&type=article`
+		const postUrl = `${env.VITE_APP_URL}/blog/${slug}`
 		return {
 			meta: [
-				{ title: `${post.title} — ${USER.FULL_NAME}` },
-				{ name: 'description', content: String(post.excerpt ?? '') },
-				{ property: 'og:title', content: String(post.title ?? '') },
-				{ property: 'og:description', content: String(post.excerpt ?? '') },
+				{ title: `${title} — ${USER.FULL_NAME}` },
+				{ name: 'description', content: excerpt },
+				{ property: 'og:title', content: title },
+				{ property: 'og:description', content: excerpt },
 				{ property: 'og:type', content: 'article' },
+				{ property: 'og:url', content: postUrl },
+				{ property: 'og:site_name', content: SITE_NAME },
+				{ property: 'og:image', content: ogImageUrl },
+				{ property: 'article:published_time', content: String(post.publishedAt ?? '') },
+				{ property: 'article:modified_time', content: String(post.updatedAt ?? '') },
+				{ property: 'article:author', content: USER.FULL_NAME },
 				{ name: 'twitter:card', content: 'summary_large_image' },
+				{ name: 'twitter:image', content: ogImageUrl },
+			],
+			links: [{ rel: 'canonical', href: postUrl }],
+			scripts: [
+				{
+					type: 'application/ld+json',
+					children: JSON.stringify({
+						'@context': 'https://schema.org',
+						'@type': 'BlogPosting',
+						headline: title,
+						description: excerpt,
+						author: {
+							'@type': 'Person',
+							name: USER.FULL_NAME,
+							url: env.VITE_APP_URL,
+						},
+						datePublished: String(post.publishedAt ?? ''),
+						dateModified: String(post.updatedAt ?? ''),
+						url: postUrl,
+						image: ogImageUrl,
+					}),
+				},
 			],
 		}
 	},
 	loader: async ({ params }) => {
 		const result = await getPostBySlugServerFn({ data: { slug: params.slug } })
 		if (!result) throw notFound()
-		return result
+		const [tagsResult, savedResult] = await Promise.all([
+			getTagsForPostServerFn({ data: { postId: result.post.id } }),
+			getIsPostSavedServerFn({ data: { postId: result.post.id } }),
+		])
+		const tags = tagsResult.success ? tagsResult.data : []
+		const isSaved = savedResult.success ? savedResult.data : false
+		return { ...result, tags, isSaved }
 	},
 	notFoundComponent: PostNotFound,
 	pendingComponent: PostPageSkeleton,
@@ -200,10 +249,12 @@ function TableOfContents({ entries }: Readonly<{ entries: TocEntry[] }>) {
 }
 
 function PostPage() {
-	const loaderData = Route.useLoaderData() as PostPageData | undefined
+	const loaderData = Route.useLoaderData() as
+		| (PostPageData & { tags: Tag[]; isSaved: boolean })
+		| undefined
 	const { data: session } = authClient.useSession()
 	if (!loaderData) return null
-	const { post, html, readingTimeMinutes, toc, coverImageUrl } = loaderData
+	const { post, html, readingTimeMinutes, toc, coverImageUrl, tags, isSaved } = loaderData
 
 	const publishedDate = post.publishedAt
 		? new Date(post.publishedAt).toLocaleDateString('en-US', {
@@ -215,6 +266,7 @@ function PostPage() {
 
 	return (
 		<>
+			<PostViewTracker postId={post.id} />
 			<ScrollProgress />
 			<main className="mx-auto max-w-300 px-6 py-24">
 				<div
@@ -224,13 +276,20 @@ function PostPage() {
 				>
 					<article>
 						<header className="mb-16">
-							<Link
-								to="/blog"
-								className="mb-10 inline-flex items-center gap-2 font-mono text-mono-sm uppercase tracking-[0.15em] text-muted-foreground no-underline transition-colors duration-150 hover:text-acid"
-							>
-								<ArrowLeft aria-hidden="true" className="size-4" />
-								Writing
-							</Link>
+							<div className="mb-10 flex items-center justify-between">
+								<Link
+									to="/blog"
+									className="inline-flex items-center gap-2 font-mono text-mono-sm uppercase tracking-[0.15em] text-muted-foreground no-underline transition-colors duration-150 hover:text-acid"
+								>
+									<ArrowLeft aria-hidden="true" className="size-4" />
+									Writing
+								</Link>
+								<BookmarkButton
+									postId={post.id}
+									initialIsSaved={isSaved}
+									isAuthenticated={!!session?.user}
+								/>
+							</div>
 
 							<h1 className="mb-6 mt-0 font-display text-[clamp(2rem,5vw,3.5rem)] font-bold leading-[1.05] tracking-display-tight">
 								{post.title}
@@ -247,7 +306,18 @@ function PostPage() {
 									<Heart aria-hidden="true" className="size-3.5 text-acid" />
 									{post.likeCount}
 								</span>
+								<span className="flex items-center gap-1.5">
+									<Eye aria-hidden="true" className="size-3.5 text-acid" />
+									{post.viewCount}
+								</span>
 							</div>
+							{tags.length > 0 && (
+								<div className="mt-4 flex flex-wrap gap-2">
+									{tags.map((tag) => (
+										<TagBadge key={tag.id} tag={tag} asLink />
+									))}
+								</div>
+							)}
 							{coverImageUrl && (
 								<figure className="m-0 mt-12">
 									<img
@@ -266,19 +336,33 @@ function PostPage() {
 						/>
 
 						<div id="reactions" className="mt-20 border-t border-line-strong pt-12">
-							<ReactionBar
-								postId={post.id}
-								initialLikeCount={post.likeCount}
-								initialDislikeCount={post.dislikeCount}
-							/>
+							<ComponentErrorBoundary fallback={null}>
+								<ReactionBar
+									postId={post.id}
+									initialLikeCount={post.likeCount}
+									initialDislikeCount={post.dislikeCount}
+								/>
+							</ComponentErrorBoundary>
+						</div>
+
+						<div className="mt-12 border-t border-line-strong pt-8">
+							<ShareBar url={`${env.VITE_APP_URL}/blog/${post.slug}`} title={post.title} />
 						</div>
 
 						<div id="comments" className="mt-16 border-t border-line-strong pt-12">
-							<CommentsSection
-								postId={post.id}
-								currentUserId={session?.user?.id}
-								currentUserName={session?.user?.name}
-							/>
+							<ComponentErrorBoundary
+								fallback={
+									<p className="font-mono text-mono-sm text-muted-foreground">
+										Comments are temporarily unavailable.
+									</p>
+								}
+							>
+								<CommentsSection
+									postId={post.id}
+									currentUserId={session?.user?.id}
+									currentUserName={session?.user?.name}
+								/>
+							</ComponentErrorBoundary>
 						</div>
 					</article>
 

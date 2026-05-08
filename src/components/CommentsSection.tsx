@@ -121,6 +121,18 @@ export default function CommentsSection({
 				<SignInPrompt />
 			)}
 
+			{!initialLoaded && (
+				<div className="mt-10 flex flex-col gap-6">
+					{[1, 2, 3].map((i) => (
+						<div key={i} className="flex flex-col gap-2">
+							<div className="skeleton h-3 w-1/4 rounded-sm" />
+							<div className="skeleton h-4 w-full rounded-sm" />
+							<div className="skeleton h-4 w-3/4 rounded-sm" />
+						</div>
+					))}
+				</div>
+			)}
+
 			{initialLoaded && allComments.length === 0 && (
 				<p className="mt-10 font-mono text-[0.72rem] uppercase tracking-mono text-muted-foreground">
 					No comments yet. Be the first.

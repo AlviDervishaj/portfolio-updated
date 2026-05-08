@@ -1,6 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { ArrowUpRight, Diamond } from 'lucide-react'
 import { USER } from '#/constants/user'
+import { env } from '#/env.ts'
 
 export const Route = createFileRoute('/about')({
 	component: AboutPage,
@@ -11,7 +12,12 @@ export const Route = createFileRoute('/about')({
 				name: 'description',
 				content: `${USER.FULL_NAME} — ${USER.POSITION} based in ${USER.LOCATION}.`,
 			},
+			{ property: 'og:title', content: `About — ${USER.FULL_NAME}` },
+			{ property: 'og:url', content: `${env.VITE_APP_URL}/about` },
+			{ property: 'og:image', content: `${env.VITE_APP_URL}/api/og?title=About&type=page` },
+			{ name: 'twitter:card', content: 'summary_large_image' },
 		],
+		links: [{ rel: 'canonical', href: `${env.VITE_APP_URL}/about` }],
 	}),
 })
 

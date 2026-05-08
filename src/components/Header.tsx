@@ -12,6 +12,8 @@ const NAV_LINKS = [
 	{ to: '/about' as const, label: 'About' },
 	{ to: '/blog' as const, label: 'Blog' },
 	{ to: '/now' as const, label: 'Now' },
+	{ to: '/projects' as const, label: 'Projects' },
+	{ to: '/contact' as const, label: 'Contact' },
 ]
 
 export default function Header() {

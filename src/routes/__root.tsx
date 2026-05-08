@@ -8,6 +8,7 @@ import {
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/react'
 import { ArrowLeft } from 'lucide-react'
+import { SITE_DESCRIPTION } from '#/constants/seo'
 import { USER } from '#/constants/user'
 import { env } from '#/env.ts'
 import Footer from '../components/Footer'
@@ -79,11 +80,9 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 			{ charSet: 'utf-8' },
 			{ name: 'viewport', content: 'width=device-width, initial-scale=1' },
 			{ title: `${USER.FULL_NAME} — ${USER.POSITION}` },
-			{
-				name: 'description',
-				content:
-					'Full-stack developer building for the web with TypeScript, React, and PostgreSQL.',
-			},
+			{ name: 'description', content: SITE_DESCRIPTION },
+			{ property: 'og:site_name', content: USER.FULL_NAME },
+			{ property: 'og:type', content: 'website' },
 		],
 		links: [
 			{ rel: 'stylesheet', href: appCss },
@@ -92,6 +91,21 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 				type: 'application/rss+xml',
 				title: `Writing - ${USER.FULL_NAME}`,
 				href: '/api/rss',
+			},
+			{ rel: 'canonical', href: env.VITE_APP_URL },
+		],
+		scripts: [
+			{
+				type: 'application/ld+json',
+				children: JSON.stringify({
+					'@context': 'https://schema.org',
+					'@type': 'Person',
+					name: USER.FULL_NAME,
+					url: env.VITE_APP_URL,
+					email: USER.EMAIL,
+					jobTitle: USER.POSITION,
+					sameAs: [USER.GITHUB_URL, USER.X_URL],
+				}),
 			},
 		],
 	}),

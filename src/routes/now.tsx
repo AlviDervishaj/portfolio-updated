@@ -1,17 +1,22 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { Diamond } from 'lucide-react'
 import { USER } from '#/constants/user'
+import { env } from '#/env.ts'
+
+const NOW_DESCRIPTION = "What I'm currently working on, reading, and thinking about."
 
 export const Route = createFileRoute('/now')({
 	component: NowPage,
 	head: () => ({
 		meta: [
 			{ title: `Now — ${USER.FULL_NAME}` },
-			{
-				name: 'description',
-				content: "What I'm currently working on, reading, and thinking about.",
-			},
+			{ name: 'description', content: NOW_DESCRIPTION },
+			{ property: 'og:title', content: `Now — ${USER.FULL_NAME}` },
+			{ property: 'og:url', content: `${env.VITE_APP_URL}/now` },
+			{ property: 'og:image', content: `${env.VITE_APP_URL}/api/og?title=Now&type=page` },
+			{ name: 'twitter:card', content: 'summary_large_image' },
 		],
+		links: [{ rel: 'canonical', href: `${env.VITE_APP_URL}/now` }],
 	}),
 })
 

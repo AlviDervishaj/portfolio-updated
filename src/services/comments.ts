@@ -145,3 +145,23 @@ export async function getCommentById(
 	const [row] = await db.select().from(comments).where(eq(comments.id, commentId)).limit(1)
 	return row ?? null
 }
+
+export async function adminSoftDeleteComment(commentId: string): Promise<boolean> {
+	const [row] = await db
+		.update(comments)
+		.set({ deletedAt: new Date(), updatedAt: new Date() })
+		.where(and(eq(comments.id, commentId), isNull(comments.deletedAt)))
+		.returning({ id: comments.id })
+
+	return row !== undefined
+}
+
+export async function adminRestoreComment(commentId: string): Promise<boolean> {
+	const [row] = await db
+		.update(comments)
+		.set({ deletedAt: null, updatedAt: new Date() })
+		.where(eq(comments.id, commentId))
+		.returning({ id: comments.id })
+
+	return row !== undefined
+}
