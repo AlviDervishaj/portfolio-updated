@@ -38,6 +38,8 @@ const SKILLS = [
 	'Biome',
 	'Docker',
 	'Git',
+	'Vercel',
+	'GoLang',
 ]
 
 const EXPERIENCE = [
@@ -68,7 +70,7 @@ function AboutPage() {
 				<p className="m-0 max-w-[60ch] text-[1.0625rem] leading-[1.7] text-muted-foreground">
 					I'm {USER.FIRST_NAME}, a {USER.POSITION} based in {USER.LOCATION}. I build full-stack web
 					applications with a focus on type safety, clean architecture, and developer experience. I
-					started programming in {new Date().getFullYear() - 4} and have been building for the web
+					started programming in {new Date().getFullYear() - 6} and have been building for the web
 					ever since.
 				</p>
 			</header>

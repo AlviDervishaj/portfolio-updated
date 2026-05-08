@@ -14,10 +14,11 @@ function Slider({
 	max = 100,
 	...props
 }: ComponentProps<typeof SliderPrimitive.Root>) {
-	const _values = useMemo(
-		() => (Array.isArray(value) ? value : Array.isArray(defaultValue) ? defaultValue : [min, max]),
-		[value, defaultValue, min, max],
-	)
+	const _values = useMemo(() => {
+		if (Array.isArray(value)) return value
+		else if (Array.isArray(defaultValue)) return defaultValue
+		else return [min, max]
+	}, [value, defaultValue, min, max])
 	const thumbKeys = useMemo(
 		() => Array.from({ length: _values.length }, () => crypto.randomUUID()),
 		[_values.length],

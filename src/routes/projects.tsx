@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { ExternalLink, Github } from 'lucide-react'
+import { ExternalLink } from 'lucide-react'
 import { useState } from 'react'
 import { PROJECTS } from '#/constants/projects.ts'
 import { USER } from '#/constants/user'
@@ -28,6 +28,16 @@ export const Route = createFileRoute('/projects')({
 	}),
 })
 
+const STATUS_CLASS_NAMES: Record<ProjectStatus, string> = {
+	production: 'text-acid',
+	wip: 'text-[oklch(0.75_0.15_55)]',
+	archived: 'text-muted-foreground',
+}
+
+const getStatusClassNames = (status: ProjectStatus) => {
+	return STATUS_CLASS_NAMES[status] || 'text-muted-foreground'
+}
+
 function ProjectCard({ project }: Readonly<{ project: Project }>) {
 	return (
 		<article className="flex flex-col gap-4 border border-line-strong p-6 transition-colors duration-150 hover:border-acid-border">
@@ -37,13 +47,9 @@ function ProjectCard({ project }: Readonly<{ project: Project }>) {
 						{project.name}
 					</h2>
 					<span
-						className={`font-mono text-[0.6rem] uppercase tracking-mono-md ${
-							project.status === 'production'
-								? 'text-acid'
-								: project.status === 'wip'
-									? 'text-[oklch(0.75_0.15_55)]'
-									: 'text-muted-foreground'
-						}`}
+						className={`font-mono text-[0.6rem] uppercase tracking-mono-md ${getStatusClassNames(
+							project.status,
+						)}`}
 					>
 						{STATUS_LABELS[project.status]}
 					</span>
@@ -57,7 +63,7 @@ function ProjectCard({ project }: Readonly<{ project: Project }>) {
 							aria-label={`View source for ${project.name}`}
 							className="text-muted-foreground transition-colors duration-150 hover:text-acid"
 						>
-							<Github aria-hidden="true" className="size-4" />
+							<img src="/github.svg" alt="GitHub" className="size-4" />
 						</a>
 					)}
 					{project.liveUrl && (
