@@ -28,7 +28,7 @@
     "@aws-sdk/s3-request-presigner": "^3.1026.0",
     "@better-auth/infra": "^0.1.14",
     "@react-email/components": "^0.0.36",
-    "@resvg/resvg-js": "^2.6.2",
+    "@resvg/resvg-wasm": "^2.6.2",
     "@t3-oss/env-core": "^0.13.11",
     "@tailwindcss/vite": "^4.2.2",
     "@tanstack/react-devtools": "latest",

@@ -1,22 +1,30 @@
-import { Resvg } from '@resvg/resvg-js'
+import { initWasm, Resvg } from '@resvg/resvg-wasm'
 import { createFileRoute } from '@tanstack/react-router'
 import satori from 'satori'
 import { OG_IMAGE_HEIGHT, OG_IMAGE_WIDTH, SITE_NAME } from '#/constants/seo'
 import { USER } from '#/constants/user'
 
+const RESVG_WASM_URL = 'https://cdn.jsdelivr.net/npm/@resvg/resvg-wasm@2.6.2/index_bg.wasm'
 const SPACE_GROTESK_BOLD_URL =
 	'https://cdn.jsdelivr.net/npm/@fontsource/space-grotesk@5/files/space-grotesk-latin-700-normal.woff'
 const MANROPE_REGULAR_URL =
 	'https://cdn.jsdelivr.net/npm/@fontsource/manrope@5/files/manrope-latin-400-normal.woff'
 
-const fontCache = new Map<string, ArrayBuffer>()
+const assetCache = new Map<string, ArrayBuffer>()
+let wasmReady = false
+
+async function ensureWasm(): Promise<void> {
+	if (wasmReady) return
+	await initWasm(fetch(RESVG_WASM_URL))
+	wasmReady = true
+}
 
 async function loadFont(url: string): Promise<ArrayBuffer> {
-	const cached = fontCache.get(url)
+	const cached = assetCache.get(url)
 	if (cached) return cached
 	const res = await fetch(url)
 	const buf = await res.arrayBuffer()
-	fontCache.set(url, buf)
+	assetCache.set(url, buf)
 	return buf
 }
 
@@ -163,7 +171,8 @@ async function handleOgRequest(request: Request): Promise<Response> {
 	const typeParam = url.searchParams.get('type') ?? 'page'
 	const type: OgType = typeParam === 'article' ? 'article' : 'page'
 
-	const [displayFontData, bodyFontData] = await Promise.all([
+	const [, displayFontData, bodyFontData] = await Promise.all([
+		ensureWasm(),
 		loadFont(SPACE_GROTESK_BOLD_URL),
 		loadFont(MANROPE_REGULAR_URL),
 	])
