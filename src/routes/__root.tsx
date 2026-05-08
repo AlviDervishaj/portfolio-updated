@@ -83,6 +83,15 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 			{ name: 'description', content: SITE_DESCRIPTION },
 			{ property: 'og:site_name', content: USER.FULL_NAME },
 			{ property: 'og:type', content: 'website' },
+			{
+				property: 'og:image',
+				content: `${env.VITE_APP_URL}/api/og?title=${encodeURIComponent(USER.FULL_NAME)}&type=page`,
+			},
+			{ name: 'twitter:card', content: 'summary_large_image' },
+			{
+				name: 'twitter:image',
+				content: `${env.VITE_APP_URL}/api/og?title=${encodeURIComponent(USER.FULL_NAME)}&type=page`,
+			},
 		],
 		links: [
 			{ rel: 'stylesheet', href: appCss },
@@ -93,6 +102,11 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 				href: '/api/rss',
 			},
 			{ rel: 'canonical', href: env.VITE_APP_URL },
+			// Favicons
+			{ rel: 'icon', type: 'image/png', sizes: '32x32', href: '/person/favicon-32x32.png' },
+			{ rel: 'icon', type: 'image/png', sizes: '16x16', href: '/person/favicon-16x16.png' },
+			{ rel: 'apple-touch-icon', sizes: '180x180', href: '/person/apple-touch-icon.png' },
+			{ rel: 'manifest', href: '/person/site.webmanifest' },
 		],
 		scripts: [
 			{
