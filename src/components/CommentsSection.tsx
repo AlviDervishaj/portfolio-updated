@@ -1,8 +1,7 @@
 import { useMutation, useQuery } from '@tanstack/react-query'
-import { ArrowRight, ChevronDown, CornerDownLeft } from 'lucide-react'
+import { ChevronDown, CornerDownLeft } from 'lucide-react'
 import { useState } from 'react'
 import { MAX_COMMENT_LENGTH } from '#/constants/content.ts'
-import { i18next } from '#/lib/i18n'
 import {
 	createCommentServerFn,
 	deleteCommentServerFn,
@@ -111,18 +110,19 @@ export default function CommentsSection({
 				{totalVisible === 0 ? 'Discussion' : `Discussion ( ${totalVisible} )`}
 			</h3>
 
-			<p className="mb-6 text-sm leading-relaxed text-muted-foreground">
-				{i18next.t('portfolio.discussion')}
-			</p>
-			{currentUserId && currentUserName ? (
-				<CommentForm
-					onSubmit={(content) => createMutation.mutate({ content })}
-					isSubmitting={createMutation.isPending && !replyingTo}
-					placeholder="Share your thoughts..."
-				/>
-			) : (
-				<SignInPrompt />
+			{!currentUserId && (
+				<p className="mb-6 text-sm leading-relaxed text-muted-foreground">
+					<a href="/sign-in" className="underline underline-offset-4">
+						Sign in to comment
+					</a>
+				</p>
 			)}
+			<CommentForm
+				onSubmit={(content) => createMutation.mutate({ content })}
+				isSubmitting={createMutation.isPending && !replyingTo}
+				disabled={!currentUserId}
+				placeholder="Share your thoughts..."
+			/>
 
 			{!initialLoaded && (
 				<div className="mt-10 flex flex-col gap-6">
@@ -322,6 +322,7 @@ type CommentFormProps = {
 	onSubmit: (content: string) => void
 	onCancel?: () => void
 	isSubmitting: boolean
+	disabled?: boolean
 	placeholder?: string
 	compact?: boolean
 }
@@ -330,6 +331,7 @@ function CommentForm({
 	onSubmit,
 	onCancel,
 	isSubmitting,
+	disabled = false,
 	placeholder,
 	compact,
 }: Readonly<CommentFormProps>) {
@@ -340,7 +342,7 @@ function CommentForm({
 	function handleSubmit(e: unknown) {
 		;(e as SubmitEvent).preventDefault()
 		const trimmed = value.trim()
-		if (!trimmed || isOverLimit || isSubmitting) return
+		if (disabled || !trimmed || isOverLimit || isSubmitting) return
 		onSubmit(trimmed)
 		setValue('')
 	}
@@ -351,9 +353,10 @@ function CommentForm({
 				value={value}
 				onChange={(e) => setValue(e.target.value)}
 				placeholder={placeholder ?? 'Write a comment...'}
+				aria-label={compact ? 'Reply' : 'Comment'}
 				rows={compact ? 3 : 4}
 				className="w-full resize-y border border-line-strong bg-transparent px-4 py-3.5 font-sans text-[0.9rem] leading-[1.6] text-foreground outline-none transition-colors duration-150 focus:border-acid-border"
-				disabled={isSubmitting}
+				disabled={disabled || isSubmitting}
 			/>
 
 			<div className="flex flex-wrap items-center justify-between gap-3">
@@ -379,7 +382,7 @@ function CommentForm({
 					)}
 					<button
 						type="submit"
-						disabled={!value.trim() || isOverLimit || isSubmitting}
+						disabled={disabled || !value.trim() || isOverLimit || isSubmitting}
 						className="acid-btn px-4 py-2 text-mono-sm disabled:opacity-50"
 					>
 						{isSubmitting ? 'Posting...' : 'Post'}
@@ -387,22 +390,5 @@ function CommentForm({
 				</div>
 			</div>
 		</form>
-	)
-}
-
-function SignInPrompt() {
-	return (
-		<div className="flex flex-wrap items-center justify-between gap-4 border border-line-strong p-6">
-			<span className="font-mono text-[0.72rem] tracking-mono-sm text-muted-foreground">
-				Sign in to join the discussion
-			</span>
-			<a
-				href="/sign-in"
-				className="acid-btn w-full justify-center px-4 py-2 text-mono-sm sm:w-auto"
-			>
-				Sign in
-				<ArrowRight aria-hidden="true" className="size-3.5" />
-			</a>
-		</div>
 	)
 }

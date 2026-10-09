@@ -12,6 +12,7 @@ export type Project = {
 	stack: string[]
 	githubUrl?: string
 	liveUrl?: string
+	usesAI: boolean
 	featured: boolean
 	status: ProjectStatus
 }
