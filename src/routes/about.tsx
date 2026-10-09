@@ -2,6 +2,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { ArrowUpRight, Diamond } from 'lucide-react'
 import { USER } from '#/constants/user'
 import { env } from '#/env.ts'
+import { i18next } from '#/lib/i18n'
 
 export const Route = createFileRoute('/about')({
 	component: AboutPage,
@@ -46,9 +47,8 @@ const EXPERIENCE = [
 	{
 		company: USER.CURRENT_COMPANY,
 		role: USER.CURRENT_WORK_POSITION,
-		period: '2023 – Present',
-		description:
-			'Building and maintaining frontend systems. Collaborating on UI architecture, design system components, and performance improvements.',
+		period: i18next.t('portfolio.period'),
+		description: i18next.t('portfolio.experience'),
 	},
 ]
 
@@ -68,10 +68,7 @@ function AboutPage() {
 					<span className="text-stroke">Developer</span>
 				</h1>
 				<p className="m-0 max-w-[60ch] text-[1.0625rem] leading-[1.7] text-muted-foreground">
-					I'm {USER.FIRST_NAME}, a {USER.POSITION} based in {USER.LOCATION}. I build full-stack web
-					applications with a focus on type safety, clean architecture, and developer experience. I
-					started programming in {new Date().getFullYear() - 6} and have been building for the web
-					ever since.
+					{i18next.t('portfolio.aboutIntro', { name: USER.FIRST_NAME, location: USER.LOCATION })}
 				</p>
 			</header>
 
@@ -82,17 +79,8 @@ function AboutPage() {
 							Background
 						</p>
 						<div className="flex max-w-[65ch] flex-col gap-5 text-[0.9375rem] leading-[1.75] text-foreground">
-							<p className="m-0">
-								I got into programming out of curiosity — wanted to understand how the things I used
-								every day were built. That curiosity turned into a craft. I've spent the last few
-								years getting very good at the TypeScript ecosystem: React on the frontend,
-								Node.js/Bun on the backend, and the full spectrum of tooling in between.
-							</p>
-							<p className="m-0">
-								I care a lot about the quality of the code I ship. No magic numbers, no implicit
-								state, no mystery logic buried three abstractions deep. I write things I'd be proud
-								to show a colleague six months later.
-							</p>
+							<p className="m-0">{i18next.t('portfolio.background')}</p>
+							<p className="m-0">{i18next.t('portfolio.quality')}</p>
 							<p className="m-0">
 								Currently working as a {USER.CURRENT_WORK_POSITION} at {USER.CURRENT_COMPANY}.
 								Available for freelance and contract work.

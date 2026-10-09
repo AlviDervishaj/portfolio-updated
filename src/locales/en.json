@@ -39,5 +39,62 @@
 		"loading": "Loading...",
 		"error": "Something went wrong.",
 		"retry": "Try again"
+	},
+	"portfolio": {
+		"availability": "Available for freelance projects & short contracts",
+		"tagline": "Full-Stack Developer — Business websites & small web apps",
+		"start": "Coding since around 2021",
+		"cta": "Discuss a project",
+		"offer": "I build, launch, and hand off business websites and small web apps. Ongoing maintenance is agreed separately for each project.",
+		"reply": "Replies within two business days",
+		"aboutIntro": "I'm {{name}}, a Full-Stack Developer based in {{location}}. I started programming around 2021. Today, I build business websites and small web apps for freelance clients, alongside my work at TeamSystem.",
+		"background": "My work ranges from a client business website to a local Go terminal assistant. I like turning a practical problem into something people can use, then explaining the decisions behind it.",
+		"quality": "I care about clear interfaces, predictable behavior, and a handoff that makes the project easy to understand.",
+		"experience": "I contribute to an internal Backoffice tool for support and operators, covering company and document validation, email workflows, user administration, roles, and permissions. I work with three other developers and a Product Owner; my contribution is roughly 90% frontend and 10% backend. On the frontend, I use React, TanStack Router, Query and Store, Playwright E2E, and Bun and Jest unit testing.",
+		"period": "January 2025–present",
+		"contactPrompt": "Tell me about the problem you want to solve, your desired deadline, and your approximate budget.",
+		"contactSuccess": "Message sent. I'll reply within two business days.",
+		"contactError": "Your message could not be sent. Please try again or email me directly.",
+		"newsletter": "Occasional useful updates on what I build, learn, and write.",
+		"discussion": "Respectful disagreement is welcome. Sign in to comment; comments publish immediately and are moderated as needed.",
+		"writing": "Notes on what I build, what I learn, and what helps me improve.",
+		"nowPending": "No current update has been published. Explore my projects and writing in the meantime.",
+		"nowDate": "Editorial update pending",
+		"problem": "Problem",
+		"contribution": "My contribution",
+		"decisions": "Key decisions",
+		"evidence": "Evidence",
+		"walkthrough": "Resuming interrupted debugging",
+		"walkthroughNote": "Use the task ID returned by the first command; 42 below is an example. Notes and next steps are entered manually and stored locally.",
+		"viewLive": "Visit website",
+		"viewSource": "View source",
+		"localStatus": "Locally built V1",
+		"liveStatus": "Live website",
+		"projects": {
+			"rite-electric": {
+				"description": "A multipage business website for Rite Electric, built from design through implementation.",
+				"problem": "Give the business a website that presents its services and client-supplied photos.",
+				"contribution": "I designed and built the whole site. The client supplied the photos and approved my design and implementation decisions.",
+				"decisions": "I used a multipage structure with Next.js, React, TypeScript, Tailwind CSS, and Framer Motion.",
+				"evidence": "The live website shows the delivered work. The client gave very positive feedback on quality and value."
+			},
+			"junior-assistant": {
+				"description": "An offline macOS terminal assistant in Go for finding files and tracking tasks, bugs, and next steps.",
+				"problem": "Resume interrupted debugging without losing the facts learned or the next step to try.",
+				"contribution": "I developed the entire tool, including file search, task and bug tracking, and the today view.",
+				"decisions": "Explicit commands and manually entered progress notes keep behavior predictable. The runtime stays local: no AI, telemetry, cloud integration, or background service.",
+				"evidence": "Public source and the command walkthrough below show the workflow. The repository records macOS arm64 V1 acceptance checks; no binary release is published."
+			},
+			"portfolio": {
+				"description": "The full-stack site you are reading, with a blog, reader interactions, and an admin dashboard.",
+				"problem": "Present my work and publish writing with a place for reader discussion.",
+				"contribution": "I built the portfolio and its publishing and reader workflows.",
+				"decisions": "TanStack Start connects the UI and server functions; Drizzle and PostgreSQL store content, BetterAuth handles sign-in, and Cloudflare R2 stores uploads.",
+				"evidence": "Explore the blog and public source for the implementation."
+			}
+		},
+		"email": "Email",
+		"viewSourceLabel": "View source for {{name}}",
+		"viewLiveLabel": "Visit website for {{name}}"
 	}
 }

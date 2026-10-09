@@ -1,4 +1,6 @@
-'use client'
+import { i18next } from '#/lib/i18n'
+
+;('use client')
 
 import { useState } from 'react'
 import { subscribeNewsletterServerFn } from '#/server/newsletter.ts'
@@ -48,7 +50,7 @@ export function NewsletterSignup({ compact = false }: Readonly<{ compact?: boole
 						Newsletter
 					</p>
 					<p className="mt-1 font-sans text-[0.875rem] text-muted-foreground">
-						Get notified when I publish new posts.
+						{i18next.t('portfolio.newsletter')}
 					</p>
 				</div>
 			)}
@@ -62,6 +64,7 @@ export function NewsletterSignup({ compact = false }: Readonly<{ compact?: boole
 			<form onSubmit={handleSubmit} className="flex gap-2">
 				<input
 					type="email"
+					aria-label={i18next.t('portfolio.email')}
 					value={email}
 					onChange={(e) => {
 						setEmail(e.target.value)

@@ -1,10 +1,12 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { ArrowRight, ArrowUpRight, ChevronDown, Diamond, Github, Twitter } from 'lucide-react'
 import { NewsletterSignup } from '#/components/NewsletterSignup.tsx'
+import { PROJECTS } from '#/constants/projects'
 import { SITE_DESCRIPTION } from '#/constants/seo'
 import { USER } from '#/constants/user'
 import { env } from '#/env.ts'
 import { useLenisInstance } from '#/hooks/useLenis'
+import { i18next } from '#/lib/i18n'
 
 export const Route = createFileRoute('/')({
 	component: HomePage,
@@ -22,39 +24,7 @@ export const Route = createFileRoute('/')({
 	}),
 })
 
-type Project = {
-	number: string
-	title: string
-	description: string
-	tags: string[]
-	url: string
-}
-
-//  - Dummy projects until filled in
-const FEATURED_PROJECTS: Project[] = [
-	{
-		number: '01',
-		title: 'This Portfolio',
-		description:
-			'Designed and built from scratch — TanStack Start, Drizzle ORM, BetterAuth, Neon, and Upstash Redis.',
-		tags: ['TanStack Start', 'TypeScript', 'PostgreSQL', 'BetterAuth'],
-		url: '/',
-	},
-	{
-		number: '02',
-		title: 'Project Two',
-		description: 'Description coming soon.',
-		tags: ['React', 'Node.js', 'Redis'],
-		url: '#',
-	},
-	{
-		number: '03',
-		title: 'Project Three',
-		description: 'Description coming soon.',
-		tags: ['Next.js', 'Prisma', 'Tailwind'],
-		url: '#',
-	},
-]
+const FEATURED_PROJECTS = PROJECTS.filter((project) => project.featured)
 
 const TICKER_ITEMS = [
 	'TypeScript',
@@ -93,7 +63,7 @@ function HeroSection() {
 					aria-hidden="true"
 					className="animate-blink inline-block size-1.5 rounded-full bg-acid shadow-[0_0_8px_var(--acid)]"
 				/>
-				Available for work
+				{i18next.t('portfolio.availability')}
 			</div>
 
 			<div className="mt-12 flex flex-col gap-6">
@@ -105,24 +75,24 @@ function HeroSection() {
 
 				<div className="animate-fade-up delay-200 flex flex-wrap items-center gap-6">
 					<p className="m-0 font-mono text-[clamp(0.75rem,1.5vw,0.9rem)] uppercase tracking-[0.06em] text-muted-foreground">
-						Full-Stack Developer — Building for the web
+						{i18next.t('portfolio.tagline')}
 					</p>
 					<span aria-hidden="true" className="block h-px flex-1 min-w-[60px] bg-line-strong" />
 					<span className="font-mono text-mono-md uppercase tracking-mono text-muted-foreground">
-						Est. 2021
+						{i18next.t('portfolio.start')}
 					</span>
 				</div>
 			</div>
 
 			<div className="animate-fade-up delay-300 mt-16 flex flex-wrap gap-4">
-				<button type="button" onClick={scrollToWork} className="acid-btn">
+				<Link to="/contact" className="acid-btn">
+					{i18next.t('portfolio.cta')}
+					<ArrowRight aria-hidden="true" className="size-4" />
+				</Link>
+				<button type="button" onClick={scrollToWork} className="ghost-btn">
 					View work
 					<ChevronDown aria-hidden="true" className="size-4" />
 				</button>
-				<Link to="/about" className="ghost-btn">
-					About me
-					<ArrowRight aria-hidden="true" className="size-4" />
-				</Link>
 			</div>
 
 			<div className="animate-fade-up delay-500 absolute bottom-12 right-6 hidden items-center gap-3 font-mono text-mono-xs uppercase tracking-mono-lg text-muted-foreground [writing-mode:vertical-rl] sm:flex">
@@ -166,28 +136,28 @@ function WorkSection() {
 			</div>
 
 			<div>
-				{FEATURED_PROJECTS.map((project) => (
+				{FEATURED_PROJECTS.map((project, index) => (
 					<a
-						key={project.number}
-						href={project.url}
+						key={project.id}
+						href={`/projects#${project.id}`}
 						className="project-row block py-10 no-underline"
 					>
 						<div className="grid grid-cols-1 items-start gap-4 sm:grid-cols-[3rem_1fr_4rem]">
 							<span className="pl-3 pt-2 font-mono text-[0.72rem] tracking-mono text-muted-foreground">
-								{project.number}
+								{String(index + 1).padStart(2, '0')}
 							</span>
 
 							<div className="flex min-w-0 flex-col gap-3">
 								<h3 className="m-0 font-display text-[clamp(1.5rem,3.5vw,2.5rem)] font-bold leading-none tracking-display-tight">
-									{project.title}
+									{project.name}
 								</h3>
 
 								<p className="m-0 max-w-[60ch] text-sm text-muted-foreground">
-									{project.description}
+									{i18next.t(project.description)}
 								</p>
 
 								<div className="flex flex-wrap gap-2">
-									{project.tags.map((tag) => (
+									{project.stack.map((tag) => (
 										<span
 											key={tag}
 											className="border border-line-strong px-2.5 py-1 font-mono text-mono-xs uppercase tracking-mono-md text-muted-foreground"
@@ -214,9 +184,9 @@ function AboutTeaser() {
 	return (
 		<section className="mx-auto max-w-[1200px] border-t border-line-strong px-6 py-32">
 			<div className="flex flex-col gap-10 sm:flex-row sm:items-end sm:justify-between">
-				<blockquote className="m-0 max-w-[22ch] font-display text-[clamp(1.75rem,4vw,3rem)] font-bold leading-[1.15] tracking-display-tight">
-					"I write code that ships, scales, and doesn't embarrass me six months later."
-				</blockquote>
+				<p className="m-0 max-w-[22ch] font-display text-[clamp(1.75rem,4vw,3rem)] font-bold leading-[1.15] tracking-display-tight">
+					{i18next.t('portfolio.offer')}
+				</p>
 
 				<Link to="/about" className="ghost-btn w-full shrink-0 justify-center sm:w-auto">
 					More about me
@@ -249,18 +219,14 @@ function ContactSection() {
 				</h2>
 
 				<p className="mb-14 mt-0 max-w-[38ch] font-sans text-[clamp(1rem,1.6vw,1.15rem)] leading-[1.55] text-muted-foreground">
-					Open to freelance projects, full-stack collaborations, and full-time roles. Drop a line —
-					I read everything.
+					{i18next.t('portfolio.offer')}
 				</p>
 
 				<div className="mb-16 flex flex-wrap items-center gap-3">
-					<a
-						href={`mailto:${USER.EMAIL}`}
-						className="acid-btn w-full justify-center text-[0.75rem] sm:w-auto"
-					>
-						{USER.EMAIL}
+					<Link to="/contact" className="acid-btn w-full justify-center text-[0.75rem] sm:w-auto">
+						{i18next.t('portfolio.cta')}
 						<ArrowUpRight aria-hidden="true" className="size-4" />
-					</a>
+					</Link>
 
 					<a
 						href={USER.GITHUB_URL}
@@ -291,12 +257,12 @@ function ContactSection() {
 								className="animate-blink-slow absolute inset-0 rounded-full bg-acid opacity-55"
 							/>
 						</span>
-						Available for new work
+						{i18next.t('portfolio.availability')}
 					</span>
 					<span aria-hidden="true">·</span>
 					<span>{USER.LOCATION}</span>
 					<span aria-hidden="true">·</span>
-					<span>Replies within 24h</span>
+					<span>{i18next.t('portfolio.reply')}</span>
 				</div>
 			</div>
 		</section>
@@ -312,7 +278,7 @@ function NewsletterSection() {
 						Stay updated
 					</p>
 					<p className="mb-6 font-display text-[clamp(1.5rem,4vw,2.5rem)] font-bold tracking-display-tight">
-						Get notified when I publish new posts.
+						{i18next.t('portfolio.newsletter')}
 					</p>
 					<NewsletterSignup compact />
 				</div>

@@ -1,10 +1,10 @@
 'use server'
 
-import { and, asc, eq, gt, isNull } from 'drizzle-orm'
+import { and, asc, eq, gt, isNotNull, isNull, sql } from 'drizzle-orm'
 
 import { DEFAULT_PAGE_SIZE } from '#/constants/pagination.ts'
 import { db } from '#/db/index.ts'
-import { comments } from '#/db/schema.ts'
+import { comments, posts } from '#/db/schema.ts'
 
 export type CommentReply = {
 	id: string
@@ -105,38 +105,75 @@ export async function createComment(data: {
 	content: string
 	parentId?: string
 }): Promise<CommentWithReplies> {
-	const [row] = await db
-		.insert(comments)
-		.values({
-			postId: data.postId,
-			authorId: data.authorId,
-			authorName: data.authorName,
-			content: data.content,
-			parentId: data.parentId ?? null,
-		})
-		.returning()
+	return db.transaction(async (tx) => {
+		// Serialize this post's mutations before counting active comments and replies.
+		await tx.select({ id: posts.id }).from(posts).where(eq(posts.id, data.postId)).for('update')
+		const [row] = await tx
+			.insert(comments)
+			.values({ ...data, parentId: data.parentId ?? null })
+			.returning()
 
-	return {
-		id: row.id,
-		authorId: row.authorId,
-		authorName: row.authorName,
-		content: row.content,
-		deletedAt: row.deletedAt,
-		createdAt: row.createdAt,
-		replies: [],
-	}
+		await syncCommentCount(tx, row.postId)
+		return {
+			id: row.id,
+			authorId: row.authorId,
+			authorName: row.authorName,
+			content: row.content,
+			deletedAt: row.deletedAt,
+			createdAt: row.createdAt,
+			replies: [],
+		}
+	})
+}
+
+type CommentTransaction = Parameters<Parameters<typeof db.transaction>[0]>[0]
+
+async function syncCommentCount(tx: CommentTransaction, postId: string): Promise<void> {
+	await tx
+		.update(posts)
+		.set({
+			commentCount: sql<number>`(select count(*) from comments where post_id = ${postId} and deleted_at is null)`,
+			updatedAt: new Date(),
+		})
+		.where(eq(posts.id, postId))
+}
+
+async function setCommentDeletedAt(
+	commentId: string,
+	deletedAt: Date | null,
+	authorId?: string,
+): Promise<boolean> {
+	return db.transaction(async (tx) => {
+		const identity = and(
+			eq(comments.id, commentId),
+			authorId !== undefined ? eq(comments.authorId, authorId) : undefined,
+		)
+		const [existing] = await tx
+			.select({ postId: comments.postId })
+			.from(comments)
+			.where(identity)
+			.limit(1)
+		if (!existing) return false
+
+		await tx.select({ id: posts.id }).from(posts).where(eq(posts.id, existing.postId)).for('update')
+		const [changed] = await tx
+			.update(comments)
+			.set({ deletedAt, updatedAt: new Date() })
+			.where(
+				and(
+					identity,
+					deletedAt === null ? isNotNull(comments.deletedAt) : isNull(comments.deletedAt),
+				),
+			)
+			.returning({ postId: comments.postId })
+
+		if (changed) await syncCommentCount(tx, changed.postId)
+		return changed !== undefined || deletedAt === null
+	})
 }
 
 export async function softDeleteComment(commentId: string, authorId: string): Promise<boolean> {
-	const [row] = await db
-		.update(comments)
-		.set({ deletedAt: new Date(), updatedAt: new Date() })
-		.where(
-			and(eq(comments.id, commentId), eq(comments.authorId, authorId), isNull(comments.deletedAt)),
-		)
-		.returning({ id: comments.id })
-
-	return row !== undefined
+	return setCommentDeletedAt(commentId, new Date(), authorId)
 }
 
 export async function getCommentById(
@@ -147,21 +184,9 @@ export async function getCommentById(
 }
 
 export async function adminSoftDeleteComment(commentId: string): Promise<boolean> {
-	const [row] = await db
-		.update(comments)
-		.set({ deletedAt: new Date(), updatedAt: new Date() })
-		.where(and(eq(comments.id, commentId), isNull(comments.deletedAt)))
-		.returning({ id: comments.id })
-
-	return row !== undefined
+	return setCommentDeletedAt(commentId, new Date())
 }
 
 export async function adminRestoreComment(commentId: string): Promise<boolean> {
-	const [row] = await db
-		.update(comments)
-		.set({ deletedAt: null, updatedAt: new Date() })
-		.where(eq(comments.id, commentId))
-		.returning({ id: comments.id })
-
-	return row !== undefined
+	return setCommentDeletedAt(commentId, null)
 }

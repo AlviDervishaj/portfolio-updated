@@ -5,12 +5,12 @@ import { NewsletterSignup } from '#/components/NewsletterSignup.tsx'
 import { TagFilter } from '#/components/TagFilter.tsx'
 import { USER } from '#/constants/user'
 import { env } from '#/env.ts'
+import { i18next } from '#/lib/i18n'
 import { getPostsServerFn } from '#/server/posts.ts'
 import { getPostsByTagServerFn, getTagsServerFn } from '#/server/tags.ts'
 import type { PostSortStrategy, PostSummary } from '#/services/posts.ts'
 
-const BLOG_DESCRIPTION =
-	'Writing about TypeScript, full-stack development, and building for the web.'
+const BLOG_DESCRIPTION = i18next.t('portfolio.writing')
 
 export const Route = createFileRoute('/blog/')({
 	component: BlogPage,
@@ -185,6 +185,9 @@ function BlogPage() {
 				<h1 className="animate-fade-up mb-4 mt-0 font-display text-[clamp(2.5rem,7vw,5rem)] font-bold leading-[0.95] tracking-display-tighter">
 					Writing
 				</h1>
+				<p className="mb-6 max-w-[60ch] text-base leading-relaxed text-muted-foreground">
+					{i18next.t('portfolio.writing')}
+				</p>
 				<p className="m-0 font-mono text-[0.75rem] uppercase tracking-mono text-muted-foreground">
 					{posts.length < totalCount
 						? `Showing ${posts.length} of ${totalCount} posts`

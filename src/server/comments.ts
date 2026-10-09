@@ -25,7 +25,6 @@ import {
 	getCommentsForPost,
 	softDeleteComment,
 } from '#/services/comments.ts'
-import { syncPostCommentCount } from '#/services/posts.ts'
 import type { ApiResponse } from '#/types/api.ts'
 
 const GetCommentsInputSchema = z.object({
@@ -42,7 +41,6 @@ const CreateCommentInputSchema = z.object({
 
 const DeleteCommentInputSchema = z.object({
 	commentId: z.uuid(),
-	postId: z.uuid(),
 })
 
 async function requireSession() {
@@ -90,8 +88,6 @@ export const createCommentServerFn = createServerFn({ method: 'POST' })
 			parentId: data.parentId,
 		})
 
-		await syncPostCommentCount(data.postId)
-
 		return createSuccessResponse(comment)
 	})
 
@@ -118,10 +114,6 @@ export const deleteCommentServerFn = createServerFn({ method: 'POST' })
 		}
 
 		const deleted = await softDeleteComment(data.commentId, session.user.id)
-
-		if (deleted) {
-			await syncPostCommentCount(data.postId)
-		}
 
 		return createSuccessResponse({ deleted })
 	})

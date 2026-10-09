@@ -263,3 +263,7 @@ Files prefixed with `demo` can be safely deleted. They are there to provide a st
 You can learn more about all of the offerings from TanStack in the [TanStack documentation](https://tanstack.com).
 
 For TanStack Start specific documentation, visit [TanStack Start](https://tanstack.com/start).
+
+## Node version
+
+Use Node.js 24 LTS, pinned in `.node-version` and `package.json`, for development and builds. Select that version with your Node version manager before running `bun run build`; Node 26 emits an upstream Tailwind loader deprecation.

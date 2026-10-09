@@ -2,17 +2,12 @@
 
 import { createServerFn } from '@tanstack/react-start'
 import { getRequestHeader } from '@tanstack/react-start/server'
-import { createElement } from 'react'
 import { z } from 'zod'
 import { ERROR_CODE_NOT_FOUND, ERROR_CODE_RATE_LIMITED } from '#/constants/errorCodes.ts'
 import {
 	NEWSLETTER_RATE_LIMIT_REQUESTS,
 	NEWSLETTER_RATE_LIMIT_WINDOW_SECONDS,
 } from '#/constants/rateLimit.ts'
-import { NewsletterConfirmEmail } from '#/emails/NewsletterConfirmEmail.tsx'
-import { NewsletterWelcomeEmail } from '#/emails/NewsletterWelcomeEmail.tsx'
-import { env } from '#/env.ts'
-import { sendEmail } from '#/lib/email.ts'
 import { buildRateLimitKey, checkRateLimit } from '#/lib/rateLimit.ts'
 import { createErrorResponse, createSuccessResponse } from '#/lib/responseFactory.ts'
 import {
@@ -37,17 +32,7 @@ export const subscribeNewsletterServerFn = createServerFn({ method: 'POST' })
 			return createErrorResponse('Too many requests.', ERROR_CODE_RATE_LIMITED)
 		}
 
-		const token = crypto.randomUUID()
-		const result = await subscribeToNewsletter(data.email, token)
-
-		if (result.isNew) {
-			const confirmUrl = `${env.VITE_APP_URL}/api/newsletter/confirm?token=${token}`
-			await sendEmail({
-				to: data.email,
-				subject: 'Confirm your subscription',
-				react: createElement(NewsletterConfirmEmail, { confirmUrl }),
-			})
-		}
+		await subscribeToNewsletter(data.email)
 
 		return createSuccessResponse(null)
 	})
@@ -59,13 +44,6 @@ export const confirmNewsletterServerFn = createServerFn({ method: 'POST' })
 		if (!confirmed) {
 			return createErrorResponse('Invalid or expired token.', ERROR_CODE_NOT_FOUND)
 		}
-
-		const unsubscribeUrl = `${env.VITE_APP_URL}/api/newsletter/unsubscribe?token=${data.token}`
-		await sendEmail({
-			to: confirmed.email,
-			subject: "You're subscribed!",
-			react: createElement(NewsletterWelcomeEmail, { unsubscribeUrl }),
-		})
 
 		return createSuccessResponse(null)
 	})

@@ -15,10 +15,11 @@ export type EmailPayload = {
 }
 
 export async function sendEmail({ to, subject, react }: EmailPayload): Promise<void> {
-	await resend.emails.send({
+	const { error } = await resend.emails.send({
 		from: FROM_ADDRESS,
 		to,
 		subject,
 		react,
 	})
+	if (error) throw new Error(error.message)
 }

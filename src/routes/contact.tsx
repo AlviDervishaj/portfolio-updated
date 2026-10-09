@@ -7,6 +7,7 @@ import {
 } from '#/constants/content.ts'
 import { USER } from '#/constants/user'
 import { env } from '#/env.ts'
+import { i18next } from '#/lib/i18n'
 import { submitContactFormServerFn } from '#/server/contact.ts'
 
 export const Route = createFileRoute('/contact')({
@@ -14,9 +15,9 @@ export const Route = createFileRoute('/contact')({
 	head: () => ({
 		meta: [
 			{ title: `Contact — ${USER.FULL_NAME}` },
-			{ name: 'description', content: 'Get in touch.' },
+			{ name: 'description', content: i18next.t('portfolio.cta') },
 			{ property: 'og:title', content: `Contact — ${USER.FULL_NAME}` },
-			{ property: 'og:description', content: 'Get in touch.' },
+			{ property: 'og:description', content: i18next.t('portfolio.cta') },
 			{ property: 'og:url', content: `${env.VITE_APP_URL}/contact` },
 			{ property: 'og:image', content: `${env.VITE_APP_URL}/api/og?title=Contact&type=page` },
 			{ name: 'twitter:card', content: 'summary_large_image' },
@@ -40,7 +41,7 @@ type FormState = {
 
 const EMPTY_FORM: FormState = { name: '', email: '', subject: '', message: '' }
 
-function ContactPage() {
+export function ContactPage() {
 	const [form, setForm] = useState<FormState>(EMPTY_FORM)
 	const [submitting, setSubmitting] = useState(false)
 	const [success, setSuccess] = useState(false)
@@ -63,6 +64,8 @@ function ContactPage() {
 				setSuccess(true)
 				setForm(EMPTY_FORM)
 			}
+		} catch {
+			setError(i18next.t('portfolio.contactError'))
 		} finally {
 			setSubmitting(false)
 		}
@@ -72,23 +75,26 @@ function ContactPage() {
 		<main className="mx-auto max-w-[680px] px-6 py-24">
 			<div className="mb-16">
 				<h1 className="animate-fade-up mb-4 mt-0 font-display text-[clamp(2.5rem,7vw,5rem)] font-bold leading-[0.95] tracking-display-tighter">
-					Get in touch
+					{i18next.t('portfolio.cta')}
 				</h1>
 				<p className="m-0 font-mono text-[0.75rem] uppercase tracking-mono text-muted-foreground">
-					I typically respond within a day or two.
+					{i18next.t('portfolio.reply')}
 				</p>
 			</div>
 
 			{success ? (
 				<div className="border border-acid-border bg-acid-dim px-6 py-8">
 					<p className="m-0 font-mono text-mono-sm uppercase tracking-mono-md text-foreground">
-						Message sent. I'll get back to you soon.
+						{i18next.t('portfolio.contactSuccess')}
 					</p>
 				</div>
 			) : (
 				<>
 					{error && (
-						<div className="mb-6 border border-[oklch(0.577_0.245_27.325)] px-4 py-3.5 font-mono text-[0.72rem] tracking-[0.04em] text-[oklch(0.577_0.245_27.325)]">
+						<div
+							role="alert"
+							className="mb-6 border border-[oklch(0.577_0.245_27.325)] px-4 py-3.5 font-mono text-[0.72rem] tracking-[0.04em] text-[oklch(0.577_0.245_27.325)]"
+						>
 							{error}
 						</div>
 					)}
@@ -143,8 +149,12 @@ function ContactPage() {
 							<label htmlFor="message" className={LABEL_CLASS}>
 								Message
 							</label>
+							<p id="project-prompt" className="text-sm leading-relaxed text-muted-foreground">
+								{i18next.t('portfolio.contactPrompt')}
+							</p>
 							<textarea
 								id="message"
+								aria-describedby="project-prompt"
 								value={form.message}
 								onChange={(e) => setField('message', e.target.value)}
 								rows={8}

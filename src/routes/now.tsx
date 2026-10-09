@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { Diamond } from 'lucide-react'
 import { USER } from '#/constants/user'
 import { env } from '#/env.ts'
+import { i18next } from '#/lib/i18n'
 
 const NOW_DESCRIPTION = "What I'm currently working on, reading, and thinking about."
 
@@ -32,32 +32,12 @@ function NowPage() {
 				</h1>
 			</header>
 
-			<div className="grid max-w-[900px] grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-12">
-				<NowSection
-					label="Building"
-					items={[
-						'This portfolio — TanStack Start, Drizzle, BetterAuth',
-						'Exploring AI tooling integrations',
-					]}
-				/>
-				<NowSection
-					label="Reading"
-					items={['The Pragmatic Programmer', 'Technical writing on distributed systems']}
-				/>
-				<NowSection
-					label="Thinking about"
-					items={[
-						'Full-stack type safety patterns',
-						'Developer experience improvements',
-						'Edge computing trade-offs',
-					]}
-				/>
-				<NowSection label="Location" items={['Remote — available worldwide']} />
-			</div>
+			<p className="max-w-[60ch] text-base leading-relaxed text-muted-foreground">
+				{i18next.t('portfolio.nowPending')}
+			</p>
 
 			<div className="mt-24 border-t border-line-strong pt-8 font-mono text-mono-sm uppercase tracking-mono text-muted-foreground">
-				Last updated: {new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long' })} —
-				inspired by{' '}
+				{i18next.t('portfolio.nowDate')} — inspired by{' '}
 				<a
 					href="https://nownownow.com"
 					target="_blank"
@@ -68,24 +48,5 @@ function NowPage() {
 				</a>
 			</div>
 		</main>
-	)
-}
-
-function NowSection({ label, items }: { label: string; items: string[] }) {
-	return (
-		<div>
-			<p className="mb-4 font-mono text-mono-xs uppercase tracking-[0.18em] text-acid">{label}</p>
-			<ul className="m-0 flex list-none flex-col gap-2.5 p-0">
-				{items.map((item) => (
-					<li
-						key={item}
-						className="flex items-start gap-3 text-[0.9375rem] leading-[1.55] text-foreground"
-					>
-						<Diamond aria-hidden="true" className="mt-0.5 size-3 shrink-0 text-acid" />
-						{item}
-					</li>
-				))}
-			</ul>
-		</div>
 	)
 }

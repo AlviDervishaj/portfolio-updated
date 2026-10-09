@@ -1,8 +1,8 @@
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { ArrowRight, ChevronDown, CornerDownLeft } from 'lucide-react'
 import { useState } from 'react'
-
 import { MAX_COMMENT_LENGTH } from '#/constants/content.ts'
+import { i18next } from '#/lib/i18n'
 import {
 	createCommentServerFn,
 	deleteCommentServerFn,
@@ -85,7 +85,7 @@ export default function CommentsSection({
 	const deleteMutation = useMutation({
 		mutationFn: async (vars: { commentId: string }) => {
 			const result = await deleteCommentServerFn({
-				data: { commentId: vars.commentId, postId },
+				data: { commentId: vars.commentId },
 			})
 			if (!result.success) throw new Error(result.error)
 			return vars.commentId
@@ -111,6 +111,9 @@ export default function CommentsSection({
 				{totalVisible === 0 ? 'Discussion' : `Discussion ( ${totalVisible} )`}
 			</h3>
 
+			<p className="mb-6 text-sm leading-relaxed text-muted-foreground">
+				{i18next.t('portfolio.discussion')}
+			</p>
 			{currentUserId && currentUserName ? (
 				<CommentForm
 					onSubmit={(content) => createMutation.mutate({ content })}

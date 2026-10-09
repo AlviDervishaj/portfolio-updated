@@ -6,7 +6,7 @@ export const USER = {
 	PHONE_NUMBER: '+355 676993780',
 	EMAIL: 'alvidervishaj@icloud.com',
 	LOCATION: 'Tirana, Albania',
-	CURRENT_WORK_POSITION: 'Frontend Developer',
+	CURRENT_WORK_POSITION: 'Full Stack Engineer',
 	POSITION: 'Full-Stack Developer',
 	CURRENT_COMPANY: 'TeamSystem',
 	SITE_NAME: 'shunger.dev',

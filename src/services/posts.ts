@@ -202,13 +202,3 @@ export async function syncPostReactionCounts(postId: string): Promise<void> {
 		})
 		.where(eq(posts.id, postId))
 }
-
-export async function syncPostCommentCount(postId: string): Promise<void> {
-	await db
-		.update(posts)
-		.set({
-			commentCount: sql<number>`(select count(*) from comments where post_id = ${postId} and deleted_at is null)`,
-			updatedAt: new Date(),
-		})
-		.where(eq(posts.id, postId))
-}
