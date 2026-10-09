@@ -34,7 +34,7 @@ async function requireAdmin(): Promise<boolean> {
 }
 
 export const adminGenerateDraftTokenServerFn = createServerFn({ method: 'POST' })
-	.inputValidator((input: unknown) => z.object({ postId: z.uuid() }).parse(input))
+	.validator((input: unknown) => z.object({ postId: z.uuid() }).parse(input))
 	.handler(async ({ data }): Promise<ApiResponse<{ token: string; previewUrl: string }>> => {
 		const isAdmin = await requireAdmin()
 		if (!isAdmin) return createErrorResponse('Forbidden', ERROR_CODE_FORBIDDEN)
@@ -45,7 +45,7 @@ export const adminGenerateDraftTokenServerFn = createServerFn({ method: 'POST' }
 	})
 
 export const adminRevokeDraftTokenServerFn = createServerFn({ method: 'POST' })
-	.inputValidator((input: unknown) => z.object({ postId: z.uuid() }).parse(input))
+	.validator((input: unknown) => z.object({ postId: z.uuid() }).parse(input))
 	.handler(async ({ data }): Promise<ApiResponse<null>> => {
 		const isAdmin = await requireAdmin()
 		if (!isAdmin) return createErrorResponse('Forbidden', ERROR_CODE_FORBIDDEN)
@@ -54,7 +54,7 @@ export const adminRevokeDraftTokenServerFn = createServerFn({ method: 'POST' })
 	})
 
 export const adminGetDraftTokenServerFn = createServerFn({ method: 'GET' })
-	.inputValidator((input: unknown) => z.object({ postId: z.uuid() }).parse(input))
+	.validator((input: unknown) => z.object({ postId: z.uuid() }).parse(input))
 	.handler(async ({ data }): Promise<ApiResponse<DraftToken | null>> => {
 		const isAdmin = await requireAdmin()
 		if (!isAdmin) return createErrorResponse('Forbidden', ERROR_CODE_FORBIDDEN)
@@ -71,7 +71,7 @@ export type DraftPreviewData = {
 }
 
 export const getDraftByTokenServerFn = createServerFn({ method: 'GET' })
-	.inputValidator((input: unknown) => z.object({ token: z.uuid() }).parse(input))
+	.validator((input: unknown) => z.object({ token: z.uuid() }).parse(input))
 	.handler(async ({ data }): Promise<DraftPreviewData | null> => {
 		const post = await getPostByDraftToken(data.token)
 		if (!post) return null

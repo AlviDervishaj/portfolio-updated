@@ -89,7 +89,7 @@ export const adminHasAccessServerFn = createServerFn({
 })
 
 export const adminCreatePostServerFn = createServerFn({ method: 'POST' })
-	.inputValidator((input: unknown) => CreatePostInputSchema.parse(input))
+	.validator((input: unknown) => CreatePostInputSchema.parse(input))
 	.handler(async ({ data }): Promise<ApiResponse<PostDetail>> => {
 		const admin = await requireAdmin()
 		if (!admin) return createErrorResponse('Unauthorized', ERROR_CODE_UNAUTHORIZED)
@@ -107,7 +107,7 @@ export const adminCreatePostServerFn = createServerFn({ method: 'POST' })
 	})
 
 export const adminUpdatePostServerFn = createServerFn({ method: 'POST' })
-	.inputValidator((input: unknown) => UpdatePostInputSchema.parse(input))
+	.validator((input: unknown) => UpdatePostInputSchema.parse(input))
 	.handler(async ({ data }): Promise<ApiResponse<PostDetail>> => {
 		const admin = await requireAdmin()
 		if (!admin) return createErrorResponse('Unauthorized', ERROR_CODE_UNAUTHORIZED)
@@ -121,7 +121,7 @@ export const adminUpdatePostServerFn = createServerFn({ method: 'POST' })
 	})
 
 export const adminPublishPostServerFn = createServerFn({ method: 'POST' })
-	.inputValidator((input: unknown) => PublishInputSchema.parse(input))
+	.validator((input: unknown) => PublishInputSchema.parse(input))
 	.handler(async ({ data }): Promise<ApiResponse<PostDetail>> => {
 		const admin = await requireAdmin()
 		if (!admin) return createErrorResponse('Unauthorized', ERROR_CODE_UNAUTHORIZED)
@@ -134,7 +134,7 @@ export const adminPublishPostServerFn = createServerFn({ method: 'POST' })
 	})
 
 export const adminUnpublishPostServerFn = createServerFn({ method: 'POST' })
-	.inputValidator((input: unknown) => PublishInputSchema.parse(input))
+	.validator((input: unknown) => PublishInputSchema.parse(input))
 	.handler(async ({ data }): Promise<ApiResponse<PostDetail>> => {
 		const admin = await requireAdmin()
 		if (!admin) return createErrorResponse('Unauthorized', ERROR_CODE_UNAUTHORIZED)
@@ -149,7 +149,7 @@ export const adminUnpublishPostServerFn = createServerFn({ method: 'POST' })
 export const adminGetPresignedUploadUrlServerFn = createServerFn({
 	method: 'POST',
 })
-	.inputValidator((input: unknown) => GetPresignedUrlInputSchema.parse(input))
+	.validator((input: unknown) => GetPresignedUrlInputSchema.parse(input))
 	.handler(async ({ data }): Promise<ApiResponse<{ url: string; key: string }>> => {
 		const admin = await requireAdmin()
 		if (!admin) return createErrorResponse('Unauthorized', ERROR_CODE_UNAUTHORIZED)
@@ -273,7 +273,7 @@ const AdminGetCommentsInputSchema = z.object({
 })
 
 export const adminGetCommentsServerFn = createServerFn({ method: 'GET' })
-	.inputValidator((input: unknown) => AdminGetCommentsInputSchema.parse(input))
+	.validator((input: unknown) => AdminGetCommentsInputSchema.parse(input))
 	.handler(
 		async ({
 			data,
@@ -317,7 +317,7 @@ export const adminGetCommentsServerFn = createServerFn({ method: 'GET' })
 const CommentIdInputSchema = z.object({ commentId: z.uuid() })
 
 export const adminDeleteCommentServerFn = createServerFn({ method: 'POST' })
-	.inputValidator((input: unknown) => CommentIdInputSchema.parse(input))
+	.validator((input: unknown) => CommentIdInputSchema.parse(input))
 	.handler(async ({ data }): Promise<ApiResponse<null>> => {
 		const admin = await requireAdmin()
 		if (!admin) return createErrorResponse('Forbidden', ERROR_CODE_FORBIDDEN)
@@ -330,7 +330,7 @@ export const adminDeleteCommentServerFn = createServerFn({ method: 'POST' })
 	})
 
 export const adminRestoreCommentServerFn = createServerFn({ method: 'POST' })
-	.inputValidator((input: unknown) => CommentIdInputSchema.parse(input))
+	.validator((input: unknown) => CommentIdInputSchema.parse(input))
 	.handler(async ({ data }): Promise<ApiResponse<null>> => {
 		const admin = await requireAdmin()
 		if (!admin) return createErrorResponse('Forbidden', ERROR_CODE_FORBIDDEN)

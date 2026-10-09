@@ -29,7 +29,7 @@ const ContactInputSchema = z.object({
 })
 
 export const submitContactFormServerFn = createServerFn({ method: 'POST' })
-	.inputValidator((input: unknown) => ContactInputSchema.parse(input))
+	.validator((input: unknown) => ContactInputSchema.parse(input))
 	.handler(async ({ data }): Promise<ApiResponse<null>> => {
 		const ip = getRequestHeader('x-forwarded-for') ?? getRequestHeader('x-real-ip') ?? 'unknown'
 		const key = buildRateLimitKey('contact', ip)

@@ -52,7 +52,7 @@ async function resolveUserIdentifier(): Promise<string> {
 }
 
 export const getReactionStateServerFn = createServerFn({ method: 'GET' })
-	.inputValidator((input: unknown) => GetReactionInputSchema.parse(input))
+	.validator((input: unknown) => GetReactionInputSchema.parse(input))
 	.handler(async ({ data }): Promise<ApiResponse<ReactionState>> => {
 		const userIdentifier = await resolveUserIdentifier()
 		const state = await getReactionState(data.postId, userIdentifier)
@@ -60,7 +60,7 @@ export const getReactionStateServerFn = createServerFn({ method: 'GET' })
 	})
 
 export const upsertReactionServerFn = createServerFn({ method: 'POST' })
-	.inputValidator((input: unknown) => UpsertReactionInputSchema.parse(input))
+	.validator((input: unknown) => UpsertReactionInputSchema.parse(input))
 	.handler(async ({ data }): Promise<ApiResponse<ReactionState>> => {
 		const userIdentifier = await resolveUserIdentifier()
 
@@ -81,7 +81,7 @@ export const upsertReactionServerFn = createServerFn({ method: 'POST' })
 	})
 
 export const removeReactionServerFn = createServerFn({ method: 'POST' })
-	.inputValidator((input: unknown) => RemoveReactionInputSchema.parse(input))
+	.validator((input: unknown) => RemoveReactionInputSchema.parse(input))
 	.handler(async ({ data }): Promise<ApiResponse<ReactionState>> => {
 		const userIdentifier = await resolveUserIdentifier()
 

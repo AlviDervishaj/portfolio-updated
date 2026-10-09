@@ -54,14 +54,14 @@ async function requireSession() {
 }
 
 export const getCommentsServerFn = createServerFn({ method: 'GET' })
-	.inputValidator((input: unknown) => GetCommentsInputSchema.parse(input))
+	.validator((input: unknown) => GetCommentsInputSchema.parse(input))
 	.handler(async ({ data }): Promise<ApiResponse<CommentsPage>> => {
 		const page = await getCommentsForPost(data.postId, data.cursor, data.limit)
 		return createSuccessResponse(page)
 	})
 
 export const createCommentServerFn = createServerFn({ method: 'POST' })
-	.inputValidator((input: unknown) => CreateCommentInputSchema.parse(input))
+	.validator((input: unknown) => CreateCommentInputSchema.parse(input))
 	.handler(async ({ data }): Promise<ApiResponse<CommentWithReplies>> => {
 		const session = await requireSession()
 
@@ -92,7 +92,7 @@ export const createCommentServerFn = createServerFn({ method: 'POST' })
 	})
 
 export const deleteCommentServerFn = createServerFn({ method: 'POST' })
-	.inputValidator((input: unknown) => DeleteCommentInputSchema.parse(input))
+	.validator((input: unknown) => DeleteCommentInputSchema.parse(input))
 	.handler(async ({ data }): Promise<ApiResponse<{ deleted: boolean }>> => {
 		const session = await requireSession()
 

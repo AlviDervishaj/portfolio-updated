@@ -28,13 +28,13 @@ const GetPostBySlugInputSchema = z.object({
 })
 
 export const getPostsServerFn = createServerFn({ method: 'GET' })
-	.inputValidator((input: unknown) => GetPostsInputSchema.parse(input))
+	.validator((input: unknown) => GetPostsInputSchema.parse(input))
 	.handler(async ({ data }) => {
 		return getPublishedPostsPage(data.strategy as PostSortStrategy, data.cursor, data.limit)
 	})
 
 export const getPostBySlugServerFn = createServerFn({ method: 'GET' })
-	.inputValidator((input: unknown) => GetPostBySlugInputSchema.parse(input))
+	.validator((input: unknown) => GetPostBySlugInputSchema.parse(input))
 	.handler(async ({ data }) => {
 		const post = await getPublishedPostBySlug(data.slug)
 		if (!post) return null

@@ -35,14 +35,14 @@ export const getTagsServerFn = createServerFn({ method: 'GET' }).handler(
 )
 
 export const getTagsForPostServerFn = createServerFn({ method: 'GET' })
-	.inputValidator((input: unknown) => z.object({ postId: z.uuid() }).parse(input))
+	.validator((input: unknown) => z.object({ postId: z.uuid() }).parse(input))
 	.handler(async ({ data }): Promise<ApiResponse<Tag[]>> => {
 		const postTags = await getTagsForPost(data.postId)
 		return createSuccessResponse(postTags)
 	})
 
 export const getPostsByTagServerFn = createServerFn({ method: 'GET' })
-	.inputValidator((input: unknown) =>
+	.validator((input: unknown) =>
 		z
 			.object({
 				tagSlug: z.string().min(1),
@@ -55,7 +55,7 @@ export const getPostsByTagServerFn = createServerFn({ method: 'GET' })
 	})
 
 export const adminCreateTagServerFn = createServerFn({ method: 'POST' })
-	.inputValidator((input: unknown) =>
+	.validator((input: unknown) =>
 		z
 			.object({
 				name: z.string().min(1).max(50),
@@ -71,7 +71,7 @@ export const adminCreateTagServerFn = createServerFn({ method: 'POST' })
 	})
 
 export const adminDeleteTagServerFn = createServerFn({ method: 'POST' })
-	.inputValidator((input: unknown) => z.object({ tagId: z.uuid() }).parse(input))
+	.validator((input: unknown) => z.object({ tagId: z.uuid() }).parse(input))
 	.handler(async ({ data }): Promise<ApiResponse<null>> => {
 		const isAdmin = await requireAdmin()
 		if (!isAdmin) return createErrorResponse('Forbidden', ERROR_CODE_FORBIDDEN)
@@ -80,7 +80,7 @@ export const adminDeleteTagServerFn = createServerFn({ method: 'POST' })
 	})
 
 export const adminSetTagsForPostServerFn = createServerFn({ method: 'POST' })
-	.inputValidator((input: unknown) =>
+	.validator((input: unknown) =>
 		z
 			.object({
 				postId: z.uuid(),

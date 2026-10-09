@@ -17,7 +17,7 @@ async function requireSession() {
 }
 
 export const savePostServerFn = createServerFn({ method: 'POST' })
-	.inputValidator((input: unknown) => z.object({ postId: z.uuid() }).parse(input))
+	.validator((input: unknown) => z.object({ postId: z.uuid() }).parse(input))
 	.handler(async ({ data }): Promise<ApiResponse<null>> => {
 		const session = await requireSession()
 		if (!session?.user) return createErrorResponse('Unauthorized', ERROR_CODE_UNAUTHORIZED)
@@ -26,7 +26,7 @@ export const savePostServerFn = createServerFn({ method: 'POST' })
 	})
 
 export const unsavePostServerFn = createServerFn({ method: 'POST' })
-	.inputValidator((input: unknown) => z.object({ postId: z.uuid() }).parse(input))
+	.validator((input: unknown) => z.object({ postId: z.uuid() }).parse(input))
 	.handler(async ({ data }): Promise<ApiResponse<null>> => {
 		const session = await requireSession()
 		if (!session?.user) return createErrorResponse('Unauthorized', ERROR_CODE_UNAUTHORIZED)
@@ -35,7 +35,7 @@ export const unsavePostServerFn = createServerFn({ method: 'POST' })
 	})
 
 export const getIsPostSavedServerFn = createServerFn({ method: 'GET' })
-	.inputValidator((input: unknown) => z.object({ postId: z.uuid() }).parse(input))
+	.validator((input: unknown) => z.object({ postId: z.uuid() }).parse(input))
 	.handler(async ({ data }): Promise<ApiResponse<boolean>> => {
 		const session = await requireSession()
 		if (!session?.user) return createSuccessResponse(false)

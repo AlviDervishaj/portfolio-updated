@@ -1,4 +1,4 @@
-import { createFileRoute, Link, notFound } from '@tanstack/react-router'
+import { createFileRoute, type ErrorComponentProps, Link, notFound } from '@tanstack/react-router'
 import { ArrowLeft, Eye, Heart } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { BookmarkButton } from '#/components/BookmarkButton.tsx'
@@ -113,7 +113,7 @@ export const Route = createFileRoute('/blog/$slug')({
 	pendingComponent: PostPageSkeleton,
 })
 
-function PostPageError({ error }: Readonly<{ error: Error }>) {
+function PostPageError({ error }: Readonly<ErrorComponentProps>) {
 	return (
 		<main className="mx-auto max-w-300 px-6 py-32 text-center">
 			<span className="mb-8 block font-mono text-[clamp(4rem,15vw,10rem)] font-bold leading-none text-acid opacity-20">
@@ -122,7 +122,7 @@ function PostPageError({ error }: Readonly<{ error: Error }>) {
 			<p className="mb-3 font-mono text-[0.75rem] uppercase tracking-[0.15em] text-muted-foreground">
 				Something went wrong loading this post
 			</p>
-			{error.message && (
+			{error instanceof Error && error.message && (
 				<p className="mb-10 font-mono text-mono-sm tracking-mono-sm text-muted-foreground opacity-60">
 					{error.message}
 				</p>

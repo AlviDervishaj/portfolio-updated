@@ -18,7 +18,7 @@ import {
 import type { ApiResponse } from '#/types/api.ts'
 
 export const subscribeNewsletterServerFn = createServerFn({ method: 'POST' })
-	.inputValidator((input: unknown) => z.object({ email: z.email() }).parse(input))
+	.validator((input: unknown) => z.object({ email: z.email() }).parse(input))
 	.handler(async ({ data }): Promise<ApiResponse<null>> => {
 		const ip = getRequestHeader('x-forwarded-for') ?? getRequestHeader('x-real-ip') ?? 'unknown'
 		const key = buildRateLimitKey('newsletter', ip)
@@ -38,7 +38,7 @@ export const subscribeNewsletterServerFn = createServerFn({ method: 'POST' })
 	})
 
 export const confirmNewsletterServerFn = createServerFn({ method: 'POST' })
-	.inputValidator((input: unknown) => z.object({ token: z.uuid() }).parse(input))
+	.validator((input: unknown) => z.object({ token: z.uuid() }).parse(input))
 	.handler(async ({ data }): Promise<ApiResponse<null>> => {
 		const confirmed = await confirmNewsletterSubscription(data.token)
 		if (!confirmed) {
@@ -49,7 +49,7 @@ export const confirmNewsletterServerFn = createServerFn({ method: 'POST' })
 	})
 
 export const unsubscribeNewsletterServerFn = createServerFn({ method: 'POST' })
-	.inputValidator((input: unknown) => z.object({ token: z.uuid() }).parse(input))
+	.validator((input: unknown) => z.object({ token: z.uuid() }).parse(input))
 	.handler(async ({ data }): Promise<ApiResponse<null>> => {
 		await unsubscribeFromNewsletter(data.token)
 		return createSuccessResponse(null)

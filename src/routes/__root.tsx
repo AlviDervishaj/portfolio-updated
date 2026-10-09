@@ -44,7 +44,7 @@ function RootErrorComponent({ error }: Readonly<ErrorComponentProps>) {
 				An unexpected error occurred
 			</p>
 			<p className="mb-8 font-mono text-mono-lg text-muted-foreground opacity-60">
-				{error.message}
+				{error instanceof Error ? error.message : 'An unexpected error occurred.'}
 			</p>
 			<a href="/" className="ghost-btn">
 				<ArrowLeft aria-hidden="true" className="size-4" />

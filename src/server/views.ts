@@ -37,7 +37,7 @@ async function resolveViewIdentifier(): Promise<string> {
 }
 
 export const incrementViewServerFn = createServerFn({ method: 'POST' })
-	.inputValidator((input: unknown) => IncrementViewInputSchema.parse(input))
+	.validator((input: unknown) => IncrementViewInputSchema.parse(input))
 	.handler(async ({ data }): Promise<ApiResponse<null>> => {
 		const identifier = await resolveViewIdentifier()
 		const key = buildRateLimitKey('view', `${data.postId}:${identifier}`)
